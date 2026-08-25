@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package velony.identity.api.v1;
+
+import "velony/identity/api/v1/user.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velony-app/identity/gen/api/v1;apiv1";
+
+message LoginAuthRequest {
+  string identity = 1 [(google.api.field_behavior) = REQUIRED];
+  string password = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message LoginAuthResponse {
+  string access_token  = 2;
+  string refresh_token = 3;
+}
+
+message RegisterAuthRequest {
+  string full_name = 1 [(google.api.field_behavior) = REQUIRED];
+  string username  = 2 [(google.api.field_behavior) = REQUIRED];
+  string password  = 3[(google.api.field_behavior) = REQUIRED];
+}
+
+message RegisterAuthResponse {
+  string access_token  = 2;
+  string refresh_token = 3;
+}
+
+message RefreshAuthRequest {
+  string refresh_token = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RefreshAuthResponse {
+  string access_token  = 2;
+  string refresh_token = 3;
+}

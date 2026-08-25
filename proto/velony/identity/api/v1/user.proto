@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package velony.identity.api.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velony-app/identity/gen/api/v1;apiv1";
+
+// A user.
+message User {
+  option (google.api.resource) = {
+    type    : "identity.velony.app/User"
+    pattern : "users/{user}"
+    singular: "user"
+    plural  : "users"
+  };
+
+  // The storage key of the user.
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  // The username of the user.
+  string username = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // The avatar key of the user.
+  optional string email = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // The full name of the user.
+  string full_name = 5 [(google.api.field_behavior) = REQUIRED];
+
+  // The avatar key of the user.
+  optional string avatar_key = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// The request message for retrieving a user.
+message GetUserRequest {
+  // The storage key of the user to retrieve.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "identity.velony.app/User"
+    }
+  ];
+}
+
+// The request message for retrieving multiple users.
+message BatchGetUsersRequest {
+  // The storage keys of the users to retrieve.
+  //
+  // A maximum of 100 users can be retrieved in a batch.
+  repeated string names = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "identity.velony.app/User"
+    }
+  ];
+}
+
+// The response message for retrieving multiple users.
+message BatchGetUsersResponse {
+  // The requested users, in the same order as the requested names.
+  repeated User users = 1;
+}
+
+// The request message for updating a user.
+message UpdateUserRequest {
+  // The user to update.
+  //
+  // The user's `name` field is used to identify the user to update.
+  User user = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The fields to update.
+  google.protobuf.FieldMask update_mask = 2[(google.api.field_behavior) = OPTIONAL];
+}
+
+// The request message for replacing a user avatar.
+message ReplaceUserAvatarRequest {
+  // The storage key of the user.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "identity.velony.app/User"
+    }
+  ];
+
+  // The avatar image data.
+  bytes data = 2 [(google.api.field_behavior) = REQUIRED];
+
+  // The MIME type of the avatar image data.
+  string mime_type = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+// The request message for deleting a user.
+message DeleteUserRequest {
+  // The resource name of the user to delete.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "user.velony.app/User"
+    }
+  ];
+}

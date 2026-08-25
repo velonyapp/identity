@@ -1,0 +1,291 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: IdentityService API
+    description: The identity service.
+    version: 0.0.1
+servers:
+    - url: https://identity.velony.app
+paths:
+    /v1/auth:login:
+        post:
+            tags:
+                - IdentityService
+            description: Login a user.
+            operationId: IdentityService_LoginAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthResponse'
+    /v1/auth:refresh:
+        post:
+            tags:
+                - IdentityService
+            description: Refresh user session.
+            operationId: IdentityService_RefreshAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthResponse'
+    /v1/auth:register:
+        post:
+            tags:
+                - IdentityService
+            description: Register a user.
+            operationId: IdentityService_RegisterAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthResponse'
+    /v1/users/{user}:
+        get:
+            tags:
+                - IdentityService
+            description: Retrieves a user.
+            operationId: IdentityService_GetUser
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+        delete:
+            tags:
+                - IdentityService
+            description: Deletes a user.
+            operationId: IdentityService_DeleteUser
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        patch:
+            tags:
+                - IdentityService
+            description: Updates a user.
+            operationId: IdentityService_UpdateUser
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+                - name: updateMask
+                  in: query
+                  description: The fields to update.
+                  schema:
+                    type: string
+                    format: field-mask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.User'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users/{user}:replaceAvatar:
+        post:
+            tags:
+                - IdentityService
+            description: Replaces the avatar of a user.
+            operationId: IdentityService_ReplaceUserAvatar
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.ReplaceUserAvatarRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users:batchGet:
+        get:
+            tags:
+                - IdentityService
+            description: Retrieves multiple users.
+            operationId: IdentityService_BatchGetUsers
+            parameters:
+                - name: names
+                  in: query
+                  description: |-
+                    The storage keys of the users to retrieve.
+
+                     A maximum of 100 users can be retrieved in a batch.
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.BatchGetUsersResponse'
+components:
+    schemas:
+        velony.identity.api.v1.BatchGetUsersResponse:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.identity.api.v1.User'
+                    description: The requested users, in the same order as the requested names.
+            description: The response message for retrieving multiple users.
+        velony.identity.api.v1.LoginAuthRequest:
+            required:
+                - identity
+                - password
+            type: object
+            properties:
+                identity:
+                    type: string
+                password:
+                    type: string
+        velony.identity.api.v1.LoginAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RefreshAuthRequest:
+            required:
+                - refreshToken
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RefreshAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RegisterAuthRequest:
+            required:
+                - fullName
+                - username
+                - password
+            type: object
+            properties:
+                fullName:
+                    type: string
+                username:
+                    type: string
+                password:
+                    type: string
+        velony.identity.api.v1.RegisterAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.ReplaceUserAvatarRequest:
+            required:
+                - name
+                - data
+                - mimeType
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: The storage key of the user.
+                data:
+                    type: string
+                    description: The avatar image data.
+                    format: bytes
+                mimeType:
+                    type: string
+                    description: The MIME type of the avatar image data.
+            description: The request message for replacing a user avatar.
+        velony.identity.api.v1.User:
+            required:
+                - fullName
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: The storage key of the user.
+                username:
+                    readOnly: true
+                    type: string
+                    description: The username of the user.
+                email:
+                    readOnly: true
+                    type: string
+                    description: The avatar key of the user.
+                fullName:
+                    type: string
+                    description: The full name of the user.
+                avatarKey:
+                    readOnly: true
+                    type: string
+                    description: The avatar key of the user.
+            description: A user.
+tags:
+    - name: IdentityService

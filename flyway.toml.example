@@ -1,0 +1,10 @@
+[flyway]
+environment = "default"
+locations = ["filesystem:migrations"]
+jarDirs = ["drivers"]
+
+[environments.default]
+url = "jdbc:mysql://<MYSQL_HOST>:<MYSQL_PORT>/<DATABASE_NAME>?sslMode=REQUIRED"
+user = "<MYSQL_USERNAME>"
+password = "<MYSQL_PASSWORD>"
+driver = "com.mysql.cj.jdbc.Driver"

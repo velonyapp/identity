@@ -1,0 +1,115 @@
+package command
+
+import (
+	"context"
+
+	"github.com/velony-app/identity/internal/application/common"
+	"github.com/velony-app/identity/internal/application/port"
+	"github.com/velony-app/identity/internal/domain/entity"
+	"github.com/velony-app/identity/internal/domain/repo"
+	"github.com/velony-app/identity/internal/domain/service"
+	"github.com/velony-app/identity/internal/domain/vo"
+)
+
+type UpdateUser struct {
+	UserID   string
+	Username *string
+	FullName *string
+}
+
+type UpdateUserResult struct {
+	User *common.UserResult
+}
+
+type UpdateUserHandler struct {
+	userRepo             repo.User
+	unitOfWork           port.UnitOfWork
+	cache                port.Cache
+	usernameAvailability *service.UsernameAvailability
+}
+
+func NewUpdateUserHandler(
+	userRepo repo.User,
+	unitOfWork port.UnitOfWork,
+	cache port.Cache,
+	usernameAvailability *service.UsernameAvailability,
+) *UpdateUserHandler {
+	return &UpdateUserHandler{
+		userRepo:             userRepo,
+		unitOfWork:           unitOfWork,
+		cache:                cache,
+		usernameAvailability: usernameAvailability,
+	}
+}
+
+func (h *UpdateUserHandler) Execute(
+	ctx context.Context,
+	cmd *UpdateUser,
+) (*UpdateUserResult, error) {
+	userID := vo.NewUserID(cmd.UserID)
+
+	var user *entity.User
+
+	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+		var err error
+
+		user, err = h.userRepo.FindByID(ctx, userID)
+		if err != nil {
+			return err
+		}
+		if user == nil {
+			return common.ErrUserNotFound
+		}
+
+		changed := false
+
+		if cmd.Username != nil {
+			username, err := vo.NewUsername(*cmd.Username)
+			if err != nil {
+				return err
+			}
+
+			if err := h.usernameAvailability.EnsureAvailable(ctx, username); err != nil {
+				return err
+			}
+
+			if err := user.ChangeUsername(username); err != nil {
+				return err
+			}
+
+			changed = true
+		}
+		if cmd.FullName != nil {
+			fullName, err := vo.NewFullName(*cmd.FullName)
+			if err != nil {
+				return err
+			}
+
+			if err := user.ChangeFullName(fullName); err != nil {
+				return err
+			}
+
+			changed = true
+		}
+
+		if changed {
+			if err := h.userRepo.Save(ctx, user); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	userResult := common.NewUserResult(user)
+
+	h.cache.Set(ctx,
+		common.UserResultCacheKey(user.ID),
+		userResult,
+		common.UserResultCacheTTL,
+	)
+
+	return &UpdateUserResult{User: userResult}, nil
+}

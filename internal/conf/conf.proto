@@ -1,0 +1,86 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "github.com/velony-app/identity/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Transport     transport     = 1;
+  Data          data          = 2;
+  Observability observability = 3;
+  Auth          auth          = 4;
+}
+
+message Transport {
+  message HTTP {
+    string address = 1;
+
+    google.protobuf.Duration timeout = 2;
+  }
+
+  message GRPC {
+    string address = 1;
+
+    google.protobuf.Duration timeout = 2;
+  }
+
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+message Data {
+  message MySQL {
+    string dsn = 1;
+
+    uint32 max_open_connections = 2;
+    uint32 max_idle_connections = 3;
+
+    google.protobuf.Duration max_connection_lifetime = 4;
+  }
+
+  message Redis {
+    string dsn = 1;
+
+    uint32 max_active_connections = 2;
+  }
+
+  MySQL mysql = 1;
+  Redis redis = 2;
+}
+
+message Observability {
+  message Logging {
+    string level = 1;
+  }
+
+  message Tracing {
+    string endpoint = 1;
+
+    double sample_ratio = 2;
+  }
+
+  message Metrics {
+    string endpoint = 1;
+
+    google.protobuf.Duration export_interval = 2;
+  }
+
+  Logging logging = 1;
+  Tracing tracing = 2;
+  Metrics metrics = 3;
+}
+
+message Auth {
+  message AccessToken {
+    string                   secret = 1;
+    google.protobuf.Duration ttl    = 2;
+  }
+
+  message RefreshToken {
+    google.protobuf.Duration ttl = 1;
+  }
+
+  AccessToken  access_token  = 1;
+  RefreshToken refresh_token = 2;
+}

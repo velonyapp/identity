@@ -1,0 +1,43 @@
+package transport
+
+import (
+	v1 "github.com/velony-app/identity/gen/api/v1"
+	"github.com/velony-app/identity/internal/conf"
+	"github.com/velony-app/identity/internal/presentation/api"
+
+	"github.com/go-kratos/kratos/v3/middleware"
+	"github.com/go-kratos/kratos/v3/middleware/recovery"
+	"github.com/go-kratos/kratos/v3/transport/grpc"
+)
+
+func NewGRPCServer(
+	c *conf.Transport,
+	service *api.Service,
+	tracingMiddleware TracesMiddleware,
+	metricsMiddleware MetricsMiddleware,
+	authMiddleware AuthMiddleware,
+	validationMiddleware ValidationMiddleware,
+) *grpc.Server {
+	opts := []grpc.ServerOption{
+		grpc.Middleware(
+			recovery.Recovery(),
+			middleware.Middleware(tracingMiddleware),
+			middleware.Middleware(metricsMiddleware),
+			middleware.Middleware(authMiddleware),
+			middleware.Middleware(validationMiddleware),
+		),
+	}
+
+	if c.GetGrpc().GetAddress() != "" {
+		opts = append(opts, grpc.Address(c.GetGrpc().GetAddress()))
+	}
+	if c.GetGrpc().GetTimeout() != nil {
+		opts = append(opts, grpc.Timeout(c.GetGrpc().GetTimeout().AsDuration()))
+	}
+
+	srv := grpc.NewServer(opts...)
+
+	v1.RegisterIdentityServiceServer(srv, service)
+
+	return srv
+}
