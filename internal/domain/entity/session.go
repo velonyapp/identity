@@ -27,7 +27,7 @@ func NewSession(
 		ID:         vo.NewSessionIDRandom(),
 		UserID:     userID,
 		Token:      token,
-		ExpireTime: vo.NewTimeNow().AddHours(24),
+		ExpireTime: vo.NewTimeNow().AddHours(24), // TODO: configure it from conv somehow
 	}
 }
 
@@ -43,7 +43,7 @@ func (s *Session) Refresh(token vo.SessionToken) error {
 	}
 
 	s.Token = token
-	s.ExpireTime = now.AddHours(24)
+	s.ExpireTime = now.AddHours(24) // TODO: configure it from conv somehow
 
 	return nil
 }
