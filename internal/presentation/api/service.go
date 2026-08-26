@@ -60,6 +60,15 @@ func (s *Service) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.User
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	if isSelf(userID) {
+		subject, err := subjectFromContext(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		userID = subject
+	}
+
 	result, err := s.getUserHandler.Execute(ctx, &query.GetUser{UserID: userID})
 	if err != nil {
 		return nil, mapError(err)
@@ -129,6 +138,10 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 
 	if err := resourcename.Sscan(user.GetName(), userResourcePattern, &userID); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if isSelf(userID) {
+		userID = subject
 	}
 
 	if userID != subject {
@@ -206,6 +219,10 @@ func (s *Service) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*e
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	if isSelf(userID) {
+		userID = subject
+	}
+
 	if userID != subject {
 		return nil, status.Error(codes.PermissionDenied, "cannot delete another user")
 	}
@@ -262,6 +279,10 @@ func (s *Service) RefreshAuth(ctx context.Context, req *v1.RefreshAuthRequest) (
 		AccessToken:  result.AccessToken,
 		RefreshToken: result.RefreshToken,
 	}, nil
+}
+
+func isSelf(userID string) bool {
+	return userID == "me"
 }
 
 func subjectFromContext(ctx context.Context) (string, error) {
