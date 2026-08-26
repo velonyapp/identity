@@ -15,4 +15,5 @@ enum ErrorReason {
   INVALID_EMAIL         = 5;
   INVALID_PASSWORD      = 6;
   INVALID_REFRESH_TOKEN = 7;
+  INVALID_CREDENTIALS   = 8;
 }

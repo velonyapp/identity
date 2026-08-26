@@ -3,11 +3,12 @@ package api
 import (
 	"errors"
 
-	v1 "github.com/velony-app/identity/gen/api/v1"
-	"github.com/velony-app/identity/internal/application/command"
-	"github.com/velony-app/identity/internal/application/common"
-	"github.com/velony-app/identity/internal/domain/entity"
-	"github.com/velony-app/identity/internal/domain/vo"
+	apiv1 "github.com/velony-app/identity/gen/api/v1"
+	applicationcommand "github.com/velony-app/identity/internal/application/command"
+	applicationcommon "github.com/velony-app/identity/internal/application/common"
+	domainentity "github.com/velony-app/identity/internal/domain/entity"
+	domainservice "github.com/velony-app/identity/internal/domain/service"
+	domainvo "github.com/velony-app/identity/internal/domain/vo"
 
 	kerrors "github.com/go-kratos/kratos/v3/errors"
 )
@@ -18,112 +19,124 @@ func mapError(err error) error {
 	}
 
 	switch {
-	case errors.Is(err, vo.ErrFullNameTooShort):
+	case errors.Is(err, domainvo.ErrFullNameTooShort):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_FULL_NAME.String(),
-			vo.ErrFullNameTooShort.Error(),
+			apiv1.ErrorReason_INVALID_FULL_NAME.String(),
+			domainvo.ErrFullNameTooShort.Error(),
 		)
 
-	case errors.Is(err, vo.ErrFullNameTooLong):
+	case errors.Is(err, domainvo.ErrFullNameTooLong):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_FULL_NAME.String(),
-			vo.ErrFullNameTooLong.Error(),
+			apiv1.ErrorReason_INVALID_FULL_NAME.String(),
+			domainvo.ErrFullNameTooLong.Error(),
 		)
 
-	case errors.Is(err, vo.ErrUsernameTooShort):
+	case errors.Is(err, domainvo.ErrUsernameTooShort):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_USERNAME.String(),
-			vo.ErrUsernameTooShort.Error(),
+			apiv1.ErrorReason_INVALID_USERNAME.String(),
+			domainvo.ErrUsernameTooShort.Error(),
 		)
 
-	case errors.Is(err, vo.ErrUsernameTooLong):
+	case errors.Is(err, domainvo.ErrUsernameTooLong):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_USERNAME.String(),
-			vo.ErrUsernameTooLong.Error(),
+			apiv1.ErrorReason_INVALID_USERNAME.String(),
+			domainvo.ErrUsernameTooLong.Error(),
 		)
 
-	case errors.Is(err, vo.ErrUsernameInvalidCharacter):
+	case errors.Is(err, domainvo.ErrUsernameInvalidCharacter):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_USERNAME.String(),
-			vo.ErrUsernameInvalidCharacter.Error(),
+			apiv1.ErrorReason_INVALID_USERNAME.String(),
+			domainvo.ErrUsernameInvalidCharacter.Error(),
 		)
 
-	case errors.Is(err, vo.ErrInvalidEmail):
+	case errors.Is(err, domainvo.ErrInvalidEmail):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_EMAIL.String(),
-			vo.ErrInvalidEmail.Error(),
+			apiv1.ErrorReason_INVALID_EMAIL.String(),
+			domainvo.ErrInvalidEmail.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordTooShort):
+	case errors.Is(err, domainvo.ErrPasswordTooShort):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordTooShort.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordTooShort.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordTooLong):
+	case errors.Is(err, domainvo.ErrPasswordTooLong):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordTooLong.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordTooLong.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordMissingUppercase):
+	case errors.Is(err, domainvo.ErrPasswordMissingUppercase):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordMissingUppercase.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordMissingUppercase.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordMissingLowercase):
+	case errors.Is(err, domainvo.ErrPasswordMissingLowercase):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordMissingLowercase.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordMissingLowercase.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordMissingNumber):
+	case errors.Is(err, domainvo.ErrPasswordMissingNumber):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordMissingNumber.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordMissingNumber.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordMissingSymbol):
+	case errors.Is(err, domainvo.ErrPasswordMissingSymbol):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordMissingSymbol.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordMissingSymbol.Error(),
 		)
 
-	case errors.Is(err, vo.ErrPasswordContainsWhitespace):
+	case errors.Is(err, domainvo.ErrPasswordContainsWhitespace):
 		return kerrors.BadRequest(
-			v1.ErrorReason_INVALID_PASSWORD.String(),
-			vo.ErrPasswordContainsWhitespace.Error(),
+			apiv1.ErrorReason_INVALID_PASSWORD.String(),
+			domainvo.ErrPasswordContainsWhitespace.Error(),
 		)
 
-	case errors.Is(err, entity.ErrUserDeleted):
+	case errors.Is(err, domainentity.ErrUserDeleted):
 		return kerrors.NotFound(
-			v1.ErrorReason_USER_NOT_FOUND.String(),
-			common.ErrUserNotFound.Error(),
+			apiv1.ErrorReason_USER_NOT_FOUND.String(),
+			applicationcommon.ErrUserNotFound.Error(),
 		)
 
-	case errors.Is(err, common.ErrUserNotFound):
+	case errors.Is(err, applicationcommon.ErrUserNotFound):
 		return kerrors.NotFound(
-			v1.ErrorReason_USER_NOT_FOUND.String(),
-			common.ErrUserNotFound.Error(),
+			apiv1.ErrorReason_USER_NOT_FOUND.String(),
+			applicationcommon.ErrUserNotFound.Error(),
 		)
 
-	case errors.Is(err, entity.ErrSessionExpired):
+	case errors.Is(err, domainentity.ErrSessionExpired):
 		return kerrors.Unauthorized(
-			v1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
-			command.ErrInvalidRefreshToken.Error(),
+			apiv1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
+			applicationcommand.ErrInvalidRefreshToken.Error(),
 		)
 
-	case errors.Is(err, entity.ErrSessionRevoked):
+	case errors.Is(err, domainentity.ErrSessionRevoked):
 		return kerrors.Unauthorized(
-			v1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
-			command.ErrInvalidRefreshToken.Error(),
+			apiv1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
+			applicationcommand.ErrInvalidRefreshToken.Error(),
 		)
 
-	case errors.Is(err, command.ErrInvalidRefreshToken):
+	case errors.Is(err, applicationcommand.ErrInvalidRefreshToken):
 		return kerrors.Unauthorized(
-			v1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
-			command.ErrInvalidRefreshToken.Error(),
+			apiv1.ErrorReason_INVALID_REFRESH_TOKEN.String(),
+			applicationcommand.ErrInvalidRefreshToken.Error(),
+		)
+
+	case errors.Is(err, applicationcommand.ErrInvalidCredentials):
+		return kerrors.Unauthorized(
+			apiv1.ErrorReason_INVALID_CREDENTIALS.String(),
+			applicationcommand.ErrInvalidCredentials.Error(),
+		)
+
+	case errors.Is(err, domainservice.ErrUsernameAlreadyExists):
+		return kerrors.Conflict(
+			apiv1.ErrorReason_USERNAME_ALREADY_EXISTS.String(),
+			domainservice.ErrUsernameAlreadyExists.Error(),
 		)
 
 	default:

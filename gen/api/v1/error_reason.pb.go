@@ -32,6 +32,7 @@ const (
 	ErrorReason_INVALID_EMAIL            ErrorReason = 5
 	ErrorReason_INVALID_PASSWORD         ErrorReason = 6
 	ErrorReason_INVALID_REFRESH_TOKEN    ErrorReason = 7
+	ErrorReason_INVALID_CREDENTIALS      ErrorReason = 8
 )
 
 // Enum value maps for ErrorReason.
@@ -45,6 +46,7 @@ var (
 		5: "INVALID_EMAIL",
 		6: "INVALID_PASSWORD",
 		7: "INVALID_REFRESH_TOKEN",
+		8: "INVALID_CREDENTIALS",
 	}
 	ErrorReason_value = map[string]int32{
 		"ERROR_REASON_UNSPECIFIED": 0,
@@ -55,6 +57,7 @@ var (
 		"INVALID_EMAIL":            5,
 		"INVALID_PASSWORD":         6,
 		"INVALID_REFRESH_TOKEN":    7,
+		"INVALID_CREDENTIALS":      8,
 	}
 )
 
@@ -89,7 +92,7 @@ var File_velony_identity_api_v1_error_reason_proto protoreflect.FileDescriptor
 
 const file_velony_identity_api_v1_error_reason_proto_rawDesc = "" +
 	"\n" +
-	")velony/identity/api/v1/error_reason.proto\x12\x16velony.identity.api.v1*\xcd\x01\n" +
+	")velony/identity/api/v1/error_reason.proto\x12\x16velony.identity.api.v1*\xe6\x01\n" +
 	"\vErrorReason\x12\x1c\n" +
 	"\x18ERROR_REASON_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eUSER_NOT_FOUND\x10\x01\x12\x1b\n" +
@@ -98,7 +101,8 @@ const file_velony_identity_api_v1_error_reason_proto_rawDesc = "" +
 	"\x11INVALID_FULL_NAME\x10\x04\x12\x11\n" +
 	"\rINVALID_EMAIL\x10\x05\x12\x14\n" +
 	"\x10INVALID_PASSWORD\x10\x06\x12\x19\n" +
-	"\x15INVALID_REFRESH_TOKEN\x10\aB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
+	"\x15INVALID_REFRESH_TOKEN\x10\a\x12\x17\n" +
+	"\x13INVALID_CREDENTIALS\x10\bB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_identity_api_v1_error_reason_proto_rawDescOnce sync.Once
