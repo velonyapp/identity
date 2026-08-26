@@ -23,7 +23,7 @@ type AuthMiddleware middleware.Middleware
 func NewAuthMiddleware(c *conf.Auth) AuthMiddleware {
 	auth := kratosjwt.Server(
 		func(token *jwt.Token) (any, error) {
-			return []byte(c.GetAccessToken().GetSecret()), nil
+			return []byte(c.AccessToken.Secret), nil
 		},
 		kratosjwt.WithSigningMethod(jwt.SigningMethodHS256),
 	)

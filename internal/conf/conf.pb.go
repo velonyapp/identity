@@ -414,8 +414,8 @@ func (x *Transport_GRPC) GetTimeout() *durationpb.Duration {
 type Data_MySQL struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	Dsn                   string                 `protobuf:"bytes,1,opt,name=dsn,proto3" json:"dsn,omitempty"`
-	MaxOpenConnections    uint32                 `protobuf:"varint,2,opt,name=max_open_connections,json=maxOpenConnections,proto3" json:"max_open_connections,omitempty"`
-	MaxIdleConnections    uint32                 `protobuf:"varint,3,opt,name=max_idle_connections,json=maxIdleConnections,proto3" json:"max_idle_connections,omitempty"`
+	MaxOpenConnections    *uint32                `protobuf:"varint,2,opt,name=max_open_connections,json=maxOpenConnections,proto3,oneof" json:"max_open_connections,omitempty"`
+	MaxIdleConnections    *uint32                `protobuf:"varint,3,opt,name=max_idle_connections,json=maxIdleConnections,proto3,oneof" json:"max_idle_connections,omitempty"`
 	MaxConnectionLifetime *durationpb.Duration   `protobuf:"bytes,4,opt,name=max_connection_lifetime,json=maxConnectionLifetime,proto3" json:"max_connection_lifetime,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -459,15 +459,15 @@ func (x *Data_MySQL) GetDsn() string {
 }
 
 func (x *Data_MySQL) GetMaxOpenConnections() uint32 {
-	if x != nil {
-		return x.MaxOpenConnections
+	if x != nil && x.MaxOpenConnections != nil {
+		return *x.MaxOpenConnections
 	}
 	return 0
 }
 
 func (x *Data_MySQL) GetMaxIdleConnections() uint32 {
-	if x != nil {
-		return x.MaxIdleConnections
+	if x != nil && x.MaxIdleConnections != nil {
+		return *x.MaxIdleConnections
 	}
 	return 0
 }
@@ -482,7 +482,7 @@ func (x *Data_MySQL) GetMaxConnectionLifetime() *durationpb.Duration {
 type Data_Redis struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Dsn                  string                 `protobuf:"bytes,1,opt,name=dsn,proto3" json:"dsn,omitempty"`
-	MaxActiveConnections uint32                 `protobuf:"varint,2,opt,name=max_active_connections,json=maxActiveConnections,proto3" json:"max_active_connections,omitempty"`
+	MaxActiveConnections *uint32                `protobuf:"varint,2,opt,name=max_active_connections,json=maxActiveConnections,proto3,oneof" json:"max_active_connections,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -525,8 +525,8 @@ func (x *Data_Redis) GetDsn() string {
 }
 
 func (x *Data_Redis) GetMaxActiveConnections() uint32 {
-	if x != nil {
-		return x.MaxActiveConnections
+	if x != nil && x.MaxActiveConnections != nil {
+		return *x.MaxActiveConnections
 	}
 	return 0
 }
@@ -674,7 +674,7 @@ func (x *Observability_Logging) GetLevel() string {
 type Observability_Tracing struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Endpoint      string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	SampleRatio   float64                `protobuf:"fixed64,2,opt,name=sample_ratio,json=sampleRatio,proto3" json:"sample_ratio,omitempty"`
+	SampleRatio   *float64               `protobuf:"fixed64,2,opt,name=sample_ratio,json=sampleRatio,proto3,oneof" json:"sample_ratio,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -717,8 +717,8 @@ func (x *Observability_Tracing) GetEndpoint() string {
 }
 
 func (x *Observability_Tracing) GetSampleRatio() float64 {
-	if x != nil {
-		return x.SampleRatio
+	if x != nil && x.SampleRatio != nil {
+		return *x.SampleRatio
 	}
 	return 0
 }
@@ -794,19 +794,22 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xfc\x04\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xd8\x05\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12,\n" +
-	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x1a\xb5\x03\n" +
+	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x1a\xf1\x03\n" +
 	"\x05MySQL\x12\x19\n" +
-	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x120\n" +
-	"\x14max_open_connections\x18\x02 \x01(\rR\x12maxOpenConnections\x120\n" +
-	"\x14max_idle_connections\x18\x03 \x01(\rR\x12maxIdleConnections\x12[\n" +
+	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x125\n" +
+	"\x14max_open_connections\x18\x02 \x01(\rH\x00R\x12maxOpenConnections\x88\x01\x01\x125\n" +
+	"\x14max_idle_connections\x18\x03 \x01(\rH\x01R\x12maxIdleConnections\x88\x01\x01\x12[\n" +
 	"\x17max_connection_lifetime\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x022\x00R\x15maxConnectionLifetime:\xcf\x01\xbaH\xcb\x01\x1a\xc8\x01\n" +
-	"\x11mysql.pool_limits\x12Xmax_idle_connections cannot exceed max_open_connections unless max_open_connections is 0\x1aYthis.max_open_connections == 0u || this.max_idle_connections <= this.max_open_connections\x1aX\n" +
+	"\x11mysql.pool_limits\x12Xmax_idle_connections cannot exceed max_open_connections unless max_open_connections is 0\x1aYthis.max_open_connections == 0u || this.max_idle_connections <= this.max_open_connectionsB\x17\n" +
+	"\x15_max_open_connectionsB\x17\n" +
+	"\x15_max_idle_connections\x1ax\n" +
 	"\x05Redis\x12\x19\n" +
-	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x124\n" +
-	"\x16max_active_connections\x18\x02 \x01(\rR\x14maxActiveConnections\"\xcf\x02\n" +
+	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x129\n" +
+	"\x16max_active_connections\x18\x02 \x01(\rH\x00R\x14maxActiveConnections\x88\x01\x01B\x19\n" +
+	"\x17_max_active_connections\"\xcf\x02\n" +
 	"\x04Auth\x12G\n" +
 	"\faccess_token\x18\x01 \x01(\v2\x1c.kratos.api.Auth.AccessTokenB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\x12J\n" +
 	"\rrefresh_token\x18\x02 \x01(\v2\x1d.kratos.api.Auth.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x1ah\n" +
@@ -814,16 +817,17 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
 	"\fRefreshToken\x128\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\xf5\x03\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x8c\x04\n" +
 	"\rObservability\x12;\n" +
 	"\alogging\x18\x01 \x01(\v2!.kratos.api.Observability.LoggingR\alogging\x12;\n" +
 	"\atracing\x18\x02 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
 	"\ametrics\x18\x03 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a@\n" +
 	"\aLogging\x125\n" +
-	"\x05level\x18\x01 \x01(\tB\x1f\xbaH\x1cr\x1aR\x05debugR\x04infoR\x04warnR\x05errorR\x05level\x1aj\n" +
+	"\x05level\x18\x01 \x01(\tB\x1f\xbaH\x1cr\x1aR\x05debugR\x04infoR\x04warnR\x05errorR\x05level\x1a\x80\x01\n" +
 	"\aTracing\x12#\n" +
-	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12:\n" +
-	"\fsample_ratio\x18\x02 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00R\vsampleRatio\x1a\x7f\n" +
+	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12?\n" +
+	"\fsample_ratio\x18\x02 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00H\x00R\vsampleRatio\x88\x01\x01B\x0f\n" +
+	"\r_sample_ratio\x1a\x7f\n" +
 	"\aMetrics\x12#\n" +
 	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12O\n" +
 	"\x0fexport_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x0eexportIntervalB3Z1github.com/velony-app/identity/internal/conf;confb\x06proto3"
@@ -890,6 +894,9 @@ func file_conf_conf_proto_init() {
 	if File_conf_conf_proto != nil {
 		return
 	}
+	file_conf_conf_proto_msgTypes[7].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

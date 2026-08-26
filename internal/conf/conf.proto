@@ -51,13 +51,13 @@ message Transport {
 message Data {
   message MySQL {
     string dsn = 1 [
-      (buf.validate.field).string.min_len =  1
+      (buf.validate.field).string.min_len = 1
     ];
 
-    uint32 max_open_connections = 2;
-    uint32 max_idle_connections = 3;
+    optional uint32 max_open_connections = 2;
+    optional uint32 max_idle_connections = 3;
 
-    google.protobuf.Duration max_connection_lifetime = 4[
+    google.protobuf.Duration max_connection_lifetime = 4 [
       (buf.validate.field).duration.gte = {}
     ];
 
@@ -73,7 +73,7 @@ message Data {
       (buf.validate.field).string.min_len = 1
     ];
 
-    uint32 max_active_connections = 2;
+    optional uint32 max_active_connections = 2;
   }
 
   MySQL mysql = 1 [
@@ -121,7 +121,7 @@ message Observability {
       (buf.validate.field).string.min_len = 1
     ];
 
-    double sample_ratio = 2 [
+    optional double sample_ratio = 2 [
       (buf.validate.field).double = { gte: 0.0, lte: 1.0 }
     ];
   }

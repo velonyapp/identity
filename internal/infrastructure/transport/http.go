@@ -19,6 +19,7 @@ func NewHTTPServer(
 	validationMiddleware ValidationMiddleware,
 ) *http.Server {
 	opts := []http.ServerOption{
+		http.Address(c.Http.Address),
 		http.Middleware(
 			recovery.Recovery(),
 			middleware.Middleware(tracingMiddleware),
@@ -28,11 +29,8 @@ func NewHTTPServer(
 		),
 	}
 
-	if c.GetHttp().GetAddress() != "" {
-		opts = append(opts, http.Address(c.GetHttp().GetAddress()))
-	}
-	if c.GetHttp().GetTimeout() != nil {
-		opts = append(opts, http.Timeout(c.GetHttp().GetTimeout().AsDuration()))
+	if c.Http.Timeout != nil {
+		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 
 	srv := http.NewServer(opts...)

@@ -11,7 +11,7 @@ import (
 )
 
 func NewConnection(c *conf.Data) (*sql.DB, error) {
-	cfg, err := mysql.ParseDSN(c.GetMysql().GetDsn())
+	cfg, err := mysql.ParseDSN(c.Mysql.Dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -34,14 +34,14 @@ func NewConnection(c *conf.Data) (*sql.DB, error) {
 		return nil, err
 	}
 
-	if c.GetMysql().GetMaxOpenConnections() != 0 {
-		db.SetMaxOpenConns(int(c.GetMysql().GetMaxOpenConnections()))
+	if c.Mysql.MaxOpenConnections != nil {
+		db.SetMaxOpenConns(int(*c.Mysql.MaxOpenConnections))
 	}
-	if c.GetMysql().GetMaxIdleConnections() != 0 {
-		db.SetMaxIdleConns(int(c.GetMysql().GetMaxIdleConnections()))
+	if c.Mysql.MaxIdleConnections != nil {
+		db.SetMaxIdleConns(int(*c.Mysql.MaxIdleConnections))
 	}
-	if c.GetMysql().GetMaxConnectionLifetime() != nil {
-		db.SetConnMaxLifetime(c.GetMysql().GetMaxConnectionLifetime().AsDuration())
+	if c.Mysql.MaxConnectionLifetime != nil {
+		db.SetConnMaxLifetime(c.Mysql.MaxConnectionLifetime.AsDuration())
 	}
 
 	if err := db.Ping(); err != nil {

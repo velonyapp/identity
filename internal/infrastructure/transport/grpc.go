@@ -19,6 +19,7 @@ func NewGRPCServer(
 	validationMiddleware ValidationMiddleware,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
+		grpc.Address(c.Grpc.Address),
 		grpc.Middleware(
 			recovery.Recovery(),
 			middleware.Middleware(tracingMiddleware),
@@ -28,11 +29,8 @@ func NewGRPCServer(
 		),
 	}
 
-	if c.GetGrpc().GetAddress() != "" {
-		opts = append(opts, grpc.Address(c.GetGrpc().GetAddress()))
-	}
-	if c.GetGrpc().GetTimeout() != nil {
-		opts = append(opts, grpc.Timeout(c.GetGrpc().GetTimeout().AsDuration()))
+	if c.Grpc.Timeout != nil {
+		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 
 	srv := grpc.NewServer(opts...)

@@ -56,7 +56,7 @@ func NewOpenTelemetry(
 			return nil, fmt.Errorf("invalid tracing endpoint: %w", err)
 		}
 
-		if c.Tracing.SampleRatio < 0 || c.Tracing.SampleRatio > 1 {
+		if *c.Tracing.SampleRatio < 0 || *c.Tracing.SampleRatio > 1 {
 			return nil, fmt.Errorf(
 				"tracing sample ratio must be between 0 and 1: %f",
 				c.Tracing.SampleRatio,
@@ -77,7 +77,7 @@ func NewOpenTelemetry(
 			sdktrace.WithSampler(
 				sdktrace.ParentBased(
 					sdktrace.TraceIDRatioBased(
-						c.Tracing.SampleRatio,
+						*c.Tracing.SampleRatio,
 					),
 				),
 			),

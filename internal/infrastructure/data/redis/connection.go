@@ -8,19 +8,17 @@ import (
 )
 
 func NewConnection(c *conf.Data) (*redis.Client, error) {
-	dsn := c.GetRedis().GetDsn()
-
-	if dsn == "" {
+	if c.Redis == nil {
 		return nil, nil
 	}
 
-	cfg, err := redis.ParseURL(c.GetRedis().GetDsn())
+	cfg, err := redis.ParseURL(c.Redis.Dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	if c.GetRedis().GetMaxActiveConnections() != 0 {
-		cfg.MaxActiveConns = int(c.GetRedis().GetMaxActiveConnections())
+	if c.Redis.MaxActiveConnections != nil {
+		cfg.MaxActiveConns = int(*c.Redis.MaxActiveConnections)
 	}
 
 	client := redis.NewClient(cfg)
