@@ -7,6 +7,7 @@
 package conf
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -26,8 +27,8 @@ type Bootstrap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Transport     *Transport             `protobuf:"bytes,1,opt,name=transport,proto3" json:"transport,omitempty"`
 	Data          *Data                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Observability *Observability         `protobuf:"bytes,3,opt,name=observability,proto3" json:"observability,omitempty"`
-	Auth          *Auth                  `protobuf:"bytes,4,opt,name=auth,proto3" json:"auth,omitempty"`
+	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
+	Observability *Observability         `protobuf:"bytes,4,opt,name=observability,proto3" json:"observability,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -76,16 +77,16 @@ func (x *Bootstrap) GetData() *Data {
 	return nil
 }
 
-func (x *Bootstrap) GetObservability() *Observability {
+func (x *Bootstrap) GetAuth() *Auth {
 	if x != nil {
-		return x.Observability
+		return x.Auth
 	}
 	return nil
 }
 
-func (x *Bootstrap) GetAuth() *Auth {
+func (x *Bootstrap) GetObservability() *Observability {
 	if x != nil {
-		return x.Auth
+		return x.Observability
 	}
 	return nil
 }
@@ -194,6 +195,58 @@ func (x *Data) GetRedis() *Data_Redis {
 	return nil
 }
 
+type Auth struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken   *Auth_AccessToken      `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  *Auth_RefreshToken     `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Auth) Reset() {
+	*x = Auth{}
+	mi := &file_conf_conf_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Auth) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Auth) ProtoMessage() {}
+
+func (x *Auth) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
+func (*Auth) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Auth) GetAccessToken() *Auth_AccessToken {
+	if x != nil {
+		return x.AccessToken
+	}
+	return nil
+}
+
+func (x *Auth) GetRefreshToken() *Auth_RefreshToken {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return nil
+}
+
 type Observability struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Logging       *Observability_Logging `protobuf:"bytes,1,opt,name=logging,proto3" json:"logging,omitempty"`
@@ -205,7 +258,7 @@ type Observability struct {
 
 func (x *Observability) Reset() {
 	*x = Observability{}
-	mi := &file_conf_conf_proto_msgTypes[3]
+	mi := &file_conf_conf_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -217,7 +270,7 @@ func (x *Observability) String() string {
 func (*Observability) ProtoMessage() {}
 
 func (x *Observability) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[3]
+	mi := &file_conf_conf_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -230,7 +283,7 @@ func (x *Observability) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability.ProtoReflect.Descriptor instead.
 func (*Observability) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Observability) GetLogging() *Observability_Logging {
@@ -250,58 +303,6 @@ func (x *Observability) GetTracing() *Observability_Tracing {
 func (x *Observability) GetMetrics() *Observability_Metrics {
 	if x != nil {
 		return x.Metrics
-	}
-	return nil
-}
-
-type Auth struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   *Auth_AccessToken      `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  *Auth_RefreshToken     `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Auth) Reset() {
-	*x = Auth{}
-	mi := &file_conf_conf_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Auth) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Auth) ProtoMessage() {}
-
-func (x *Auth) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
-func (*Auth) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Auth) GetAccessToken() *Auth_AccessToken {
-	if x != nil {
-		return x.AccessToken
-	}
-	return nil
-}
-
-func (x *Auth) GetRefreshToken() *Auth_RefreshToken {
-	if x != nil {
-		return x.RefreshToken
 	}
 	return nil
 }
@@ -530,6 +531,102 @@ func (x *Data_Redis) GetMaxActiveConnections() uint32 {
 	return 0
 }
 
+type Auth_AccessToken struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Auth_AccessToken) Reset() {
+	*x = Auth_AccessToken{}
+	mi := &file_conf_conf_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Auth_AccessToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Auth_AccessToken) ProtoMessage() {}
+
+func (x *Auth_AccessToken) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Auth_AccessToken.ProtoReflect.Descriptor instead.
+func (*Auth_AccessToken) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *Auth_AccessToken) GetSecret() string {
+	if x != nil {
+		return x.Secret
+	}
+	return ""
+}
+
+func (x *Auth_AccessToken) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
+type Auth_RefreshToken struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,1,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Auth_RefreshToken) Reset() {
+	*x = Auth_RefreshToken{}
+	mi := &file_conf_conf_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Auth_RefreshToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Auth_RefreshToken) ProtoMessage() {}
+
+func (x *Auth_RefreshToken) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Auth_RefreshToken.ProtoReflect.Descriptor instead.
+func (*Auth_RefreshToken) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 1}
+}
+
+func (x *Auth_RefreshToken) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
 type Observability_Logging struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Level         string                 `protobuf:"bytes,1,opt,name=level,proto3" json:"level,omitempty"`
@@ -539,7 +636,7 @@ type Observability_Logging struct {
 
 func (x *Observability_Logging) Reset() {
 	*x = Observability_Logging{}
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -551,7 +648,7 @@ func (x *Observability_Logging) String() string {
 func (*Observability_Logging) ProtoMessage() {}
 
 func (x *Observability_Logging) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -564,7 +661,7 @@ func (x *Observability_Logging) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability_Logging.ProtoReflect.Descriptor instead.
 func (*Observability_Logging) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
 }
 
 func (x *Observability_Logging) GetLevel() string {
@@ -584,7 +681,7 @@ type Observability_Tracing struct {
 
 func (x *Observability_Tracing) Reset() {
 	*x = Observability_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -596,7 +693,7 @@ func (x *Observability_Tracing) String() string {
 func (*Observability_Tracing) ProtoMessage() {}
 
 func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -609,7 +706,7 @@ func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability_Tracing.ProtoReflect.Descriptor instead.
 func (*Observability_Tracing) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 1}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 1}
 }
 
 func (x *Observability_Tracing) GetEndpoint() string {
@@ -636,7 +733,7 @@ type Observability_Metrics struct {
 
 func (x *Observability_Metrics) Reset() {
 	*x = Observability_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -648,7 +745,7 @@ func (x *Observability_Metrics) String() string {
 func (*Observability_Metrics) ProtoMessage() {}
 
 func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -661,7 +758,7 @@ func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability_Metrics.ProtoReflect.Descriptor instead.
 func (*Observability_Metrics) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 2}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 2}
 }
 
 func (x *Observability_Metrics) GetEndpoint() string {
@@ -678,153 +775,58 @@ func (x *Observability_Metrics) GetExportInterval() *durationpb.Duration {
 	return nil
 }
 
-type Auth_AccessToken struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
-	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Auth_AccessToken) Reset() {
-	*x = Auth_AccessToken{}
-	mi := &file_conf_conf_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Auth_AccessToken) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Auth_AccessToken) ProtoMessage() {}
-
-func (x *Auth_AccessToken) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Auth_AccessToken.ProtoReflect.Descriptor instead.
-func (*Auth_AccessToken) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
-}
-
-func (x *Auth_AccessToken) GetSecret() string {
-	if x != nil {
-		return x.Secret
-	}
-	return ""
-}
-
-func (x *Auth_AccessToken) GetTtl() *durationpb.Duration {
-	if x != nil {
-		return x.Ttl
-	}
-	return nil
-}
-
-type Auth_RefreshToken struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ttl           *durationpb.Duration   `protobuf:"bytes,1,opt,name=ttl,proto3" json:"ttl,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Auth_RefreshToken) Reset() {
-	*x = Auth_RefreshToken{}
-	mi := &file_conf_conf_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Auth_RefreshToken) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Auth_RefreshToken) ProtoMessage() {}
-
-func (x *Auth_RefreshToken) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Auth_RefreshToken.ProtoReflect.Descriptor instead.
-func (*Auth_RefreshToken) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{4, 1}
-}
-
-func (x *Auth_RefreshToken) GetTtl() *durationpb.Duration {
-	if x != nil {
-		return x.Ttl
-	}
-	return nil
-}
-
 var File_conf_conf_proto protoreflect.FileDescriptor
 
 const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"\x0fconf/conf.proto\x12\n" +
-	"kratos.api\x1a\x1egoogle/protobuf/duration.proto\"\xcd\x01\n" +
-	"\tBootstrap\x123\n" +
-	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportR\ttransport\x12$\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataR\x04data\x12?\n" +
-	"\robservability\x18\x03 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\x12$\n" +
-	"\x04auth\x18\x04 \x01(\v2\x10.kratos.api.AuthR\x04auth\"\x99\x02\n" +
-	"\tTransport\x12.\n" +
-	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPR\x04http\x12.\n" +
-	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCR\x04grpc\x1aU\n" +
-	"\x04HTTP\x12\x18\n" +
-	"\aaddress\x18\x01 \x01(\tR\aaddress\x123\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x1aU\n" +
-	"\x04GRPC\x12\x18\n" +
-	"\aaddress\x18\x01 \x01(\tR\aaddress\x123\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\atimeout\"\x86\x03\n" +
-	"\x04Data\x12,\n" +
-	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLR\x05mysql\x12,\n" +
-	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x1a\xd0\x01\n" +
-	"\x05MySQL\x12\x10\n" +
-	"\x03dsn\x18\x01 \x01(\tR\x03dsn\x120\n" +
+	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xe5\x01\n" +
+	"\tBootstrap\x12;\n" +
+	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12,\n" +
+	"\x04auth\x18\x03 \x01(\v2\x10.kratos.api.AuthB\x06\xbaH\x03\xc8\x01\x01R\x04auth\x12?\n" +
+	"\robservability\x18\x04 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\"\xd1\x02\n" +
+	"\tTransport\x126\n" +
+	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
+	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x1ai\n" +
+	"\x04HTTP\x12\"\n" +
+	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
+	"\x04GRPC\x12\"\n" +
+	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xfc\x04\n" +
+	"\x04Data\x124\n" +
+	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12,\n" +
+	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x1a\xb5\x03\n" +
+	"\x05MySQL\x12\x19\n" +
+	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x120\n" +
 	"\x14max_open_connections\x18\x02 \x01(\rR\x12maxOpenConnections\x120\n" +
-	"\x14max_idle_connections\x18\x03 \x01(\rR\x12maxIdleConnections\x12Q\n" +
-	"\x17max_connection_lifetime\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\x15maxConnectionLifetime\x1aO\n" +
-	"\x05Redis\x12\x10\n" +
-	"\x03dsn\x18\x01 \x01(\tR\x03dsn\x124\n" +
-	"\x16max_active_connections\x18\x02 \x01(\rR\x14maxActiveConnections\"\x9c\x03\n" +
+	"\x14max_idle_connections\x18\x03 \x01(\rR\x12maxIdleConnections\x12[\n" +
+	"\x17max_connection_lifetime\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x022\x00R\x15maxConnectionLifetime:\xcf\x01\xbaH\xcb\x01\x1a\xc8\x01\n" +
+	"\x11mysql.pool_limits\x12Xmax_idle_connections cannot exceed max_open_connections unless max_open_connections is 0\x1aYthis.max_open_connections == 0u || this.max_idle_connections <= this.max_open_connections\x1aX\n" +
+	"\x05Redis\x12\x19\n" +
+	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x124\n" +
+	"\x16max_active_connections\x18\x02 \x01(\rR\x14maxActiveConnections\"\xcf\x02\n" +
+	"\x04Auth\x12G\n" +
+	"\faccess_token\x18\x01 \x01(\v2\x1c.kratos.api.Auth.AccessTokenB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\x12J\n" +
+	"\rrefresh_token\x18\x02 \x01(\v2\x1d.kratos.api.Auth.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x1ah\n" +
+	"\vAccessToken\x12\x1f\n" +
+	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
+	"\fRefreshToken\x128\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\xf5\x03\n" +
 	"\rObservability\x12;\n" +
 	"\alogging\x18\x01 \x01(\v2!.kratos.api.Observability.LoggingR\alogging\x12;\n" +
 	"\atracing\x18\x02 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
-	"\ametrics\x18\x03 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x1f\n" +
-	"\aLogging\x12\x14\n" +
-	"\x05level\x18\x01 \x01(\tR\x05level\x1aH\n" +
-	"\aTracing\x12\x1a\n" +
-	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12!\n" +
-	"\fsample_ratio\x18\x02 \x01(\x01R\vsampleRatio\x1ai\n" +
-	"\aMetrics\x12\x1a\n" +
-	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12B\n" +
-	"\x0fexport_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x0eexportInterval\"\x9c\x02\n" +
-	"\x04Auth\x12?\n" +
-	"\faccess_token\x18\x01 \x01(\v2\x1c.kratos.api.Auth.AccessTokenR\vaccessToken\x12B\n" +
-	"\rrefresh_token\x18\x02 \x01(\v2\x1d.kratos.api.Auth.RefreshTokenR\frefreshToken\x1aR\n" +
-	"\vAccessToken\x12\x16\n" +
-	"\x06secret\x18\x01 \x01(\tR\x06secret\x12+\n" +
-	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x1a;\n" +
-	"\fRefreshToken\x12+\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\x03ttlB3Z1github.com/velony-app/identity/internal/conf;confb\x06proto3"
+	"\ametrics\x18\x03 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a@\n" +
+	"\aLogging\x125\n" +
+	"\x05level\x18\x01 \x01(\tB\x1f\xbaH\x1cr\x1aR\x05debugR\x04infoR\x04warnR\x05errorR\x05level\x1aj\n" +
+	"\aTracing\x12#\n" +
+	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12:\n" +
+	"\fsample_ratio\x18\x02 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00R\vsampleRatio\x1a\x7f\n" +
+	"\aMetrics\x12#\n" +
+	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12O\n" +
+	"\x0fexport_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x0eexportIntervalB3Z1github.com/velony-app/identity/internal/conf;confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once
@@ -843,39 +845,39 @@ var file_conf_conf_proto_goTypes = []any{
 	(*Bootstrap)(nil),             // 0: kratos.api.Bootstrap
 	(*Transport)(nil),             // 1: kratos.api.Transport
 	(*Data)(nil),                  // 2: kratos.api.Data
-	(*Observability)(nil),         // 3: kratos.api.Observability
-	(*Auth)(nil),                  // 4: kratos.api.Auth
+	(*Auth)(nil),                  // 3: kratos.api.Auth
+	(*Observability)(nil),         // 4: kratos.api.Observability
 	(*Transport_HTTP)(nil),        // 5: kratos.api.Transport.HTTP
 	(*Transport_GRPC)(nil),        // 6: kratos.api.Transport.GRPC
 	(*Data_MySQL)(nil),            // 7: kratos.api.Data.MySQL
 	(*Data_Redis)(nil),            // 8: kratos.api.Data.Redis
-	(*Observability_Logging)(nil), // 9: kratos.api.Observability.Logging
-	(*Observability_Tracing)(nil), // 10: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil), // 11: kratos.api.Observability.Metrics
-	(*Auth_AccessToken)(nil),      // 12: kratos.api.Auth.AccessToken
-	(*Auth_RefreshToken)(nil),     // 13: kratos.api.Auth.RefreshToken
+	(*Auth_AccessToken)(nil),      // 9: kratos.api.Auth.AccessToken
+	(*Auth_RefreshToken)(nil),     // 10: kratos.api.Auth.RefreshToken
+	(*Observability_Logging)(nil), // 11: kratos.api.Observability.Logging
+	(*Observability_Tracing)(nil), // 12: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil), // 13: kratos.api.Observability.Metrics
 	(*durationpb.Duration)(nil),   // 14: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	1,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
 	2,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
-	3,  // 2: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
-	4,  // 3: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
+	3,  // 2: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
+	4,  // 3: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
 	5,  // 4: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	6,  // 5: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
 	7,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
 	8,  // 7: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	9,  // 8: kratos.api.Observability.logging:type_name -> kratos.api.Observability.Logging
-	10, // 9: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	11, // 10: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	12, // 11: kratos.api.Auth.access_token:type_name -> kratos.api.Auth.AccessToken
-	13, // 12: kratos.api.Auth.refresh_token:type_name -> kratos.api.Auth.RefreshToken
+	9,  // 8: kratos.api.Auth.access_token:type_name -> kratos.api.Auth.AccessToken
+	10, // 9: kratos.api.Auth.refresh_token:type_name -> kratos.api.Auth.RefreshToken
+	11, // 10: kratos.api.Observability.logging:type_name -> kratos.api.Observability.Logging
+	12, // 11: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	13, // 12: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
 	14, // 13: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
 	14, // 14: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
 	14, // 15: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	14, // 16: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	14, // 17: kratos.api.Auth.AccessToken.ttl:type_name -> google.protobuf.Duration
-	14, // 18: kratos.api.Auth.RefreshToken.ttl:type_name -> google.protobuf.Duration
+	14, // 16: kratos.api.Auth.AccessToken.ttl:type_name -> google.protobuf.Duration
+	14, // 17: kratos.api.Auth.RefreshToken.ttl:type_name -> google.protobuf.Duration
+	14, // 18: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
 	19, // [19:19] is the sub-list for method output_type
 	19, // [19:19] is the sub-list for method input_type
 	19, // [19:19] is the sub-list for extension type_name

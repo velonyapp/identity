@@ -29,7 +29,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, confAuth *conf.Auth, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err

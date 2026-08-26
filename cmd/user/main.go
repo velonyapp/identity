@@ -11,6 +11,7 @@ import (
 	"github.com/velony-app/identity/internal/conf"
 	"github.com/velony-app/identity/internal/infrastructure/observability"
 
+	"buf.build/go/protovalidate"
 	"github.com/go-kratos/kratos/contrib/otel/v3/tracing"
 	"github.com/go-kratos/kratos/v3"
 	"github.com/go-kratos/kratos/v3/config"
@@ -97,6 +98,10 @@ func main() {
 		panic(err)
 	}
 
+	if err := protovalidate.Validate(&bc); err != nil {
+		panic(err)
+	}
+
 	logger, err := newLogger(bc.Observability.GetLogging())
 	if err != nil {
 		panic(err)
@@ -135,8 +140,8 @@ func main() {
 	app, cleanup, err := wireApp(
 		bc.Data,
 		bc.Transport,
-		bc.Observability,
 		bc.Auth,
+		bc.Observability,
 		logger,
 	)
 	if err != nil {

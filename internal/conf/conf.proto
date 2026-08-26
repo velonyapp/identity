@@ -3,84 +3,141 @@ package kratos.api;
 
 option go_package = "github.com/velony-app/identity/internal/conf;conf";
 
+import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
-  Transport     transport     = 1;
-  Data          data          = 2;
-  Observability observability = 3;
-  Auth          auth          = 4;
+  Transport     transport     = 1 [
+    (buf.validate.field).required = true
+  ];
+  Data          data          = 2 [
+    (buf.validate.field).required = true
+  ];
+  Auth          auth          = 3 [
+    (buf.validate.field).required = true
+  ];
+  Observability observability = 4;
 }
 
 message Transport {
   message HTTP {
-    string address = 1;
+    string address = 1 [
+      (buf.validate.field).string.host_and_port = true
+    ];
 
-    google.protobuf.Duration timeout = 2;
+    google.protobuf.Duration timeout = 2 [
+      (buf.validate.field).duration.gt = {}
+    ];
   }
 
   message GRPC {
-    string address = 1;
+    string address = 1 [
+      (buf.validate.field).string.host_and_port = true
+    ];
 
-    google.protobuf.Duration timeout = 2;
+    google.protobuf.Duration timeout = 2 [
+      (buf.validate.field).duration.gt = {}
+    ];
   }
 
-  HTTP http = 1;
-  GRPC grpc = 2;
+  HTTP http = 1 [
+    (buf.validate.field).required = true
+  ];
+  GRPC grpc = 2 [
+    (buf.validate.field).required = true
+  ];
 }
 
 message Data {
   message MySQL {
-    string dsn = 1;
+    string dsn = 1 [
+      (buf.validate.field).string.min_len =  1
+    ];
 
     uint32 max_open_connections = 2;
     uint32 max_idle_connections = 3;
 
-    google.protobuf.Duration max_connection_lifetime = 4;
+    google.protobuf.Duration max_connection_lifetime = 4[
+      (buf.validate.field).duration.gte = {}
+    ];
+
+    option (buf.validate.message).cel = {
+      id        : "mysql.pool_limits"
+      message   : "max_idle_connections cannot exceed max_open_connections unless max_open_connections is 0"
+      expression: "this.max_open_connections == 0u || this.max_idle_connections <= this.max_open_connections"
+    };
   }
 
   message Redis {
-    string dsn = 1;
+    string dsn = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
 
     uint32 max_active_connections = 2;
   }
 
-  MySQL mysql = 1;
+  MySQL mysql = 1 [
+    (buf.validate.field).required = true
+  ];
   Redis redis = 2;
+}
+
+message Auth {
+  message AccessToken {
+    string secret = 1 [
+      (buf.validate.field).string.min_bytes = 32
+    ];
+
+    google.protobuf.Duration ttl = 2 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
+  }
+
+  message RefreshToken {
+    google.protobuf.Duration ttl = 1 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
+  }
+
+  AccessToken  access_token  = 1 [
+    (buf.validate.field).required = true
+  ];
+  RefreshToken refresh_token = 2 [
+    (buf.validate.field).required = true
+  ];
 }
 
 message Observability {
   message Logging {
-    string level = 1;
+    string level = 1 [
+      (buf.validate.field).string = { in: ["debug", "info", "warn", "error"] }
+    ];
   }
 
   message Tracing {
-    string endpoint = 1;
+    string endpoint = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
 
-    double sample_ratio = 2;
+    double sample_ratio = 2 [
+      (buf.validate.field).double = { gte: 0.0, lte: 1.0 }
+    ];
   }
 
   message Metrics {
-    string endpoint = 1;
+    string endpoint = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
 
-    google.protobuf.Duration export_interval = 2;
+    google.protobuf.Duration export_interval = 2 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
   }
 
   Logging logging = 1;
   Tracing tracing = 2;
   Metrics metrics = 3;
-}
-
-message Auth {
-  message AccessToken {
-    string                   secret = 1;
-    google.protobuf.Duration ttl    = 2;
-  }
-
-  message RefreshToken {
-    google.protobuf.Duration ttl = 1;
-  }
-
-  AccessToken  access_token  = 1;
-  RefreshToken refresh_token = 2;
 }
