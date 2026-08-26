@@ -69,15 +69,17 @@ func (h *UpdateUserHandler) Execute(
 				return err
 			}
 
-			if err := h.usernameAvailability.EnsureAvailable(ctx, username); err != nil {
-				return err
-			}
+			if username != user.Username {
+				if err := h.usernameAvailability.EnsureAvailable(ctx, username); err != nil {
+					return err
+				}
 
-			if err := user.ChangeUsername(username); err != nil {
-				return err
-			}
+				if err := user.ChangeUsername(username); err != nil {
+					return err
+				}
 
-			changed = true
+				changed = true
+			}
 		}
 		if cmd.FullName != nil {
 			fullName, err := vo.NewFullName(*cmd.FullName)
@@ -85,11 +87,13 @@ func (h *UpdateUserHandler) Execute(
 				return err
 			}
 
-			if err := user.ChangeFullName(fullName); err != nil {
-				return err
-			}
+			if fullName != user.FullName {
+				if err := user.ChangeFullName(fullName); err != nil {
+					return err
+				}
 
-			changed = true
+				changed = true
+			}
 		}
 
 		if changed {
