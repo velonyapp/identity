@@ -8,7 +8,6 @@ import (
 	"github.com/velony-app/identity/internal/application/query"
 
 	kratosjwt "github.com/go-kratos/kratos/contrib/middleware/jwt/v3"
-	"github.com/golang-jwt/jwt/v5"
 	"go.einride.tech/aip/resourcename"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -291,13 +290,11 @@ func subjectFromContext(ctx context.Context) (string, error) {
 		return "", status.Error(codes.Unauthenticated, "missing authentication")
 	}
 
-	mapClaims, ok := claims.(jwt.MapClaims)
-	if !ok {
-		return "", status.Error(codes.Unauthenticated, "invalid authentication claims")
+	subject, err := claims.GetSubject()
+	if err != nil {
+		return "", status.Error(codes.Unauthenticated, "invalid subject claim")
 	}
-
-	subject, err := mapClaims.GetSubject()
-	if err != nil || subject == "" {
+	if subject == "" {
 		return "", status.Error(codes.Unauthenticated, "missing subject claim")
 	}
 
