@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/url"
 
 	"github.com/velony-app/identity/internal/conf"
 
@@ -51,52 +50,30 @@ func NewOpenTelemetry(
 	var tracerProvider *sdktrace.TracerProvider
 	var meterProvider *sdkmetric.MeterProvider
 
-	if c != nil && c.Tracing != nil && c.Tracing.Endpoint != "" {
-		if err := validateEndpoint(c.Tracing.Endpoint); err != nil {
-			return nil, fmt.Errorf("invalid tracing endpoint: %w", err)
-		}
-
-		if *c.Tracing.SampleRatio < 0 || *c.Tracing.SampleRatio > 1 {
-			return nil, fmt.Errorf(
-				"tracing sample ratio must be between 0 and 1: %f",
-				c.Tracing.SampleRatio,
-			)
-		}
-
-		exporter, err := otlptracegrpc.New(
-			ctx,
+	if c != nil && c.Tracing != nil {
+		exporter, err := otlptracegrpc.New(ctx,
 			otlptracegrpc.WithEndpointURL(c.Tracing.Endpoint),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("create OTLP trace exporter: %w", err)
 		}
 
-		tracerProvider = sdktrace.NewTracerProvider(
+		opts := []sdktrace.TracerProviderOption{
 			sdktrace.WithResource(res),
-
-			sdktrace.WithSampler(
-				sdktrace.ParentBased(
-					sdktrace.TraceIDRatioBased(
-						*c.Tracing.SampleRatio,
-					),
-				),
-			),
-
 			sdktrace.WithBatcher(exporter),
-		)
-	}
-
-	if c != nil && c.Metrics != nil && c.Metrics.Endpoint != "" {
-		if err := validateEndpoint(c.Metrics.Endpoint); err != nil {
-			if tracerProvider != nil {
-				_ = tracerProvider.Shutdown(ctx)
-			}
-
-			return nil, fmt.Errorf("invalid metrics endpoint: %w", err)
 		}
 
-		exporter, err := otlpmetricgrpc.New(
-			ctx,
+		if c.Tracing.SampleRatio != nil {
+			opts = append(opts,
+				sdktrace.WithSampler(sdktrace.ParentBased(sdktrace.TraceIDRatioBased(*c.Tracing.SampleRatio))),
+			)
+		}
+
+		tracerProvider = sdktrace.NewTracerProvider(opts...)
+	}
+
+	if c != nil && c.Metrics != nil {
+		exporter, err := otlpmetricgrpc.New(ctx,
 			otlpmetricgrpc.WithEndpointURL(c.Metrics.Endpoint),
 		)
 		if err != nil {
@@ -107,26 +84,9 @@ func NewOpenTelemetry(
 			return nil, fmt.Errorf("create OTLP metric exporter: %w", err)
 		}
 
-		readerOptions := make(
-			[]sdkmetric.PeriodicReaderOption,
-			0,
-			1,
-		)
-
-		if c.Metrics.ExportInterval != nil {
-			interval := c.Metrics.ExportInterval.AsDuration()
-
-			if interval > 0 {
-				readerOptions = append(
-					readerOptions,
-					sdkmetric.WithInterval(interval),
-				)
-			}
-		}
-
 		reader := sdkmetric.NewPeriodicReader(
 			exporter,
-			readerOptions...,
+			sdkmetric.WithInterval(c.Metrics.ExportInterval.AsDuration()),
 		)
 
 		meterProvider = sdkmetric.NewMeterProvider(
@@ -147,16 +107,14 @@ func NewOpenTelemetry(
 
 		if meterProvider != nil {
 			if err := meterProvider.Shutdown(ctx); err != nil {
-				shutdownErrors = append(
-					shutdownErrors,
+				shutdownErrors = append(shutdownErrors,
 					fmt.Errorf("shutdown meter provider: %w", err),
 				)
 			}
 		}
 		if tracerProvider != nil {
 			if err := tracerProvider.Shutdown(ctx); err != nil {
-				shutdownErrors = append(
-					shutdownErrors,
+				shutdownErrors = append(shutdownErrors,
 					fmt.Errorf("shutdown tracer provider: %w", err),
 				)
 			}
@@ -164,23 +122,4 @@ func NewOpenTelemetry(
 
 		return errors.Join(shutdownErrors...)
 	}, nil
-}
-
-func validateEndpoint(endpoint string) error {
-	u, err := url.Parse(endpoint)
-	if err != nil {
-		return err
-	}
-
-	if u.Scheme != "http" && u.Scheme != "https" {
-		return fmt.Errorf(
-			"endpoint must use http or https scheme",
-		)
-	}
-
-	if u.Host == "" {
-		return fmt.Errorf("endpoint must contain a host")
-	}
-
-	return nil
 }
