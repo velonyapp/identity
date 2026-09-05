@@ -1,15 +1,13 @@
 package observability
 
 import (
-	"fmt"
-
 	"github.com/go-kratos/kratos/contrib/otel/v3/metrics"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/metric"
 )
 
-const instrumentationName = "github.com/velony-app/identity/internal/infrastructure/observability"
+const instrumentationName = "github.com/velonyapp/identity/internal/infrastructure/observability"
 
 type Metrics struct {
 	Requests metric.Int64Counter
@@ -24,10 +22,7 @@ func NewMetrics() (*Metrics, error) {
 		metrics.DefaultServerRequestsCounterName,
 	)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"create server Requests counter: %w",
-			err,
-		)
+		return nil, err
 	}
 
 	Seconds, err := metrics.DefaultSecondsHistogram(
@@ -35,10 +30,7 @@ func NewMetrics() (*Metrics, error) {
 		metrics.DefaultServerSecondsHistogramName,
 	)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"create server duration histogram: %w",
-			err,
-		)
+		return nil, err
 	}
 
 	return &Metrics{

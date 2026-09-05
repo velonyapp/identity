@@ -1,11 +1,11 @@
 package infrastructure
 
 import (
-	"github.com/velony-app/identity/internal/infrastructure/auth"
-	"github.com/velony-app/identity/internal/infrastructure/data/mysql"
-	"github.com/velony-app/identity/internal/infrastructure/data/redis"
-	"github.com/velony-app/identity/internal/infrastructure/observability"
-	"github.com/velony-app/identity/internal/infrastructure/transport"
+	"github.com/velonyapp/identity/internal/infrastructure/auth"
+	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
+	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
+	"github.com/velonyapp/identity/internal/infrastructure/observability"
+	"github.com/velonyapp/identity/internal/infrastructure/transport"
 
 	"github.com/google/wire"
 )
@@ -25,6 +25,7 @@ var ProviderSet = wire.NewSet(
 	transport.NewAuthMiddleware,
 	transport.NewValidationMiddleware,
 	observability.NewMetrics,
+	observability.NewOpenTelemetry,
 	auth.NewPasswordHasher,
 	auth.NewTokenProvider,
 )

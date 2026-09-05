@@ -3,7 +3,7 @@ package domainevent
 import (
 	"context"
 
-	"github.com/velony-app/identity/internal/domain/event"
+	"github.com/velonyapp/identity/internal/domain/event"
 )
 
 type Handler[T event.DomainEvent] interface {

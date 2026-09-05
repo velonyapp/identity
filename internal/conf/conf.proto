@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "github.com/velony-app/identity/internal/conf;conf";
+option go_package = "github.com/velonyapp/identity/internal/conf";
 
 import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
@@ -110,12 +110,6 @@ message Auth {
 }
 
 message Observability {
-  message Logging {
-    string level = 1 [
-      (buf.validate.field).string = { in: ["debug", "info", "warn", "error"] }
-    ];
-  }
-
   message Tracing {
     string endpoint = 1 [
       (buf.validate.field).string.min_len = 1
@@ -137,7 +131,6 @@ message Observability {
     ];
   }
 
-  Logging logging = 1;
-  Tracing tracing = 2;
-  Metrics metrics = 3;
+  Tracing tracing = 1;
+  Metrics metrics = 2;
 }

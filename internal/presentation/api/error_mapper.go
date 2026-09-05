@@ -3,12 +3,12 @@ package api
 import (
 	"errors"
 
-	apiv1 "github.com/velony-app/identity/gen/api/v1"
-	applicationcommand "github.com/velony-app/identity/internal/application/command"
-	applicationcommon "github.com/velony-app/identity/internal/application/common"
-	domainentity "github.com/velony-app/identity/internal/domain/entity"
-	domainservice "github.com/velony-app/identity/internal/domain/service"
-	domainvo "github.com/velony-app/identity/internal/domain/vo"
+	apiv1 "github.com/velonyapp/identity/gen/api/v1"
+	applicationcommand "github.com/velonyapp/identity/internal/application/command"
+	applicationcommon "github.com/velonyapp/identity/internal/application/common"
+	domainentity "github.com/velonyapp/identity/internal/domain/entity"
+	domainservice "github.com/velonyapp/identity/internal/domain/service"
+	domainvo "github.com/velonyapp/identity/internal/domain/vo"
 
 	kerrors "github.com/go-kratos/kratos/v3/errors"
 )

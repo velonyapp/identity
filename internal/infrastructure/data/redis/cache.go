@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/velony-app/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/application/port"
 
 	"github.com/redis/go-redis/v9"
 )

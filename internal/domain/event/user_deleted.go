@@ -1,6 +1,6 @@
 package event
 
-import "github.com/velony-app/identity/internal/domain/vo"
+import "github.com/velonyapp/identity/internal/domain/vo"
 
 type UserDeleted struct {
 	BaseDomainEvent

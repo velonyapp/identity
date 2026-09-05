@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 import "google/api/client.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/velony-app/identity/gen/api/v1;apiv1";
+option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
 
 // The identity service.
 service IdentityService {

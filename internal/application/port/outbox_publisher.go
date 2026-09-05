@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	v1 "github.com/velony-app/identity/gen/event/v1"
+	v1 "github.com/velonyapp/identity/gen/event/v1"
 )
 
 type OutboxMessage struct {

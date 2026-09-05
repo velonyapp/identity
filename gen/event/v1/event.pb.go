@@ -110,7 +110,7 @@ const file_velony_identity_event_v1_event_proto_rawDesc = "" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x129\n" +
 	"\n" +
 	"occur_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\toccurTime\x12.\n" +
-	"\apayload\x18\x05 \x01(\v2\x14.google.protobuf.AnyR\apayloadB5Z3github.com/velony-app/identity/gen/event/v1;eventv1b\x06proto3"
+	"\apayload\x18\x05 \x01(\v2\x14.google.protobuf.AnyR\apayloadB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_event_proto_rawDescOnce sync.Once

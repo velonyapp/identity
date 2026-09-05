@@ -37,7 +37,7 @@ const file_velony_identity_api_v1_service_proto_rawDesc = "" +
 	"DeleteUser\x12).velony.identity.api.v1.DeleteUserRequest\x1a\x16.google.protobuf.Empty\"!\xdaA\x04name\x82\xd3\xe4\x93\x02\x14*\x12/v1/{name=users/*}\x12\x8f\x01\n" +
 	"\tLoginAuth\x12(.velony.identity.api.v1.LoginAuthRequest\x1a).velony.identity.api.v1.LoginAuthResponse\"-\xdaA\x11identity,password\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth:login\x12\xa5\x01\n" +
 	"\fRegisterAuth\x12+.velony.identity.api.v1.RegisterAuthRequest\x1a,.velony.identity.api.v1.RegisterAuthResponse\":\xdaA\x1bfull_name,username,password\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/auth:register\x12\x93\x01\n" +
-	"\vRefreshAuth\x12*.velony.identity.api.v1.RefreshAuthRequest\x1a+.velony.identity.api.v1.RefreshAuthResponse\"+\xdaA\rrefresh_token\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/auth:refresh\x1a\x16\xcaA\x13identity.velony.appB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
+	"\vRefreshAuth\x12*.velony.identity.api.v1.RefreshAuthRequest\x1a+.velony.identity.api.v1.RefreshAuthResponse\"+\xdaA\rrefresh_token\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/auth:refresh\x1a\x16\xcaA\x13identity.velony.appB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var file_velony_identity_api_v1_service_proto_goTypes = []any{
 	(*GetUserRequest)(nil),           // 0: velony.identity.api.v1.GetUserRequest

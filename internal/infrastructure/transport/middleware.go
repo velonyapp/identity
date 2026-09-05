@@ -3,8 +3,8 @@ package transport
 import (
 	"context"
 
-	"github.com/velony-app/identity/internal/conf"
-	"github.com/velony-app/identity/internal/infrastructure/observability"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/infrastructure/observability"
 
 	kratosjwt "github.com/go-kratos/kratos/contrib/middleware/jwt/v3"
 	"github.com/go-kratos/kratos/contrib/otel/v3/metrics"

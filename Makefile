@@ -8,6 +8,11 @@ init:
 	go install github.com/google/wire/cmd/wire@latest
 	go install github.com/bufbuild/buf/cmd/buf@latest
 
+.PHONY: info
+# generate internal info
+info:
+	buf generate --template buf.gen.info.yaml
+
 .PHONY: config
 # generate internal proto
 config:
@@ -33,6 +38,7 @@ generate:
 # generate all
 all:
 	make proto
+	make info
 	make config
 	make generate
 

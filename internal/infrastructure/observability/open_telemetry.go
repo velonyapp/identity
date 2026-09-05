@@ -3,41 +3,42 @@ package observability
 import (
 	"context"
 	"errors"
-	"fmt"
+	"time"
 
-	"github.com/velony-app/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/info"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
-	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace"
 )
 
-type ShutdownFunc func(context.Context) error
+type OpenTelemetry struct {
+	tracerProvider *trace.TracerProvider
+	meterProvider  *metric.MeterProvider
+}
 
-func NewOpenTelemetry(
-	ctx context.Context,
-	c *conf.Observability,
-	serviceName string,
-	serviceVersion string,
-	serviceInstanceID string,
-) (ShutdownFunc, error) {
-	res, err := resource.New(
-		ctx,
+func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Service) (*OpenTelemetry, func(), error) {
+	if c == nil {
+		return &OpenTelemetry{}, func() {}, nil
+	}
+
+	res, err := resource.New(ctx,
 		resource.WithTelemetrySDK(),
 		resource.WithAttributes(
-			attribute.String("service.name", serviceName),
-			attribute.String("service.version", serviceVersion),
-			attribute.String("service.instance.id", serviceInstanceID),
+			attribute.String("service.name", i.Name),
+			attribute.String("service.version", i.Version),
+			attribute.String("service.instance.id", i.InstanceID),
 		),
 		resource.WithFromEnv(),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("create OpenTelemetry resource: %w", err)
+		return nil, nil, err
 	}
 
 	otel.SetTextMapPropagator(
@@ -47,79 +48,93 @@ func NewOpenTelemetry(
 		),
 	)
 
-	var tracerProvider *sdktrace.TracerProvider
-	var meterProvider *sdkmetric.MeterProvider
+	o := &OpenTelemetry{}
 
-	if c != nil && c.Tracing != nil {
-		exporter, err := otlptracegrpc.New(ctx,
+	shutdown := func(ctx context.Context) error {
+		var errs []error
+
+		if o.meterProvider != nil {
+			if err := o.meterProvider.Shutdown(ctx); err != nil {
+				errs = append(errs, err)
+			}
+		}
+
+		if o.tracerProvider != nil {
+			if err := o.tracerProvider.Shutdown(ctx); err != nil {
+				errs = append(errs, err)
+			}
+		}
+
+		return errors.Join(errs...)
+	}
+
+	if c.Tracing != nil {
+		exporter, err := otlptracegrpc.New(
+			ctx,
 			otlptracegrpc.WithEndpointURL(c.Tracing.Endpoint),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("create OTLP trace exporter: %w", err)
+			return nil, nil, err
 		}
 
-		opts := []sdktrace.TracerProviderOption{
-			sdktrace.WithResource(res),
-			sdktrace.WithBatcher(exporter),
+		opts := []trace.TracerProviderOption{
+			trace.WithResource(res),
+			trace.WithBatcher(exporter),
 		}
 
 		if c.Tracing.SampleRatio != nil {
-			opts = append(opts,
-				sdktrace.WithSampler(sdktrace.ParentBased(sdktrace.TraceIDRatioBased(*c.Tracing.SampleRatio))),
+			opts = append(
+				opts,
+				trace.WithSampler(
+					trace.ParentBased(
+						trace.TraceIDRatioBased(*c.Tracing.SampleRatio),
+					),
+				),
 			)
 		}
 
-		tracerProvider = sdktrace.NewTracerProvider(opts...)
+		o.tracerProvider = trace.NewTracerProvider(opts...)
 	}
 
-	if c != nil && c.Metrics != nil {
-		exporter, err := otlpmetricgrpc.New(ctx,
+	if c.Metrics != nil {
+		exporter, err := otlpmetricgrpc.New(
+			ctx,
 			otlpmetricgrpc.WithEndpointURL(c.Metrics.Endpoint),
 		)
 		if err != nil {
-			if tracerProvider != nil {
-				_ = tracerProvider.Shutdown(ctx)
-			}
+			_ = shutdown(ctx)
 
-			return nil, fmt.Errorf("create OTLP metric exporter: %w", err)
+			return nil, nil, err
 		}
 
-		reader := sdkmetric.NewPeriodicReader(
+		reader := metric.NewPeriodicReader(
 			exporter,
-			sdkmetric.WithInterval(c.Metrics.ExportInterval.AsDuration()),
+			metric.WithInterval(c.Metrics.ExportInterval.AsDuration()),
 		)
 
-		meterProvider = sdkmetric.NewMeterProvider(
-			sdkmetric.WithResource(res),
-			sdkmetric.WithReader(reader),
+		o.meterProvider = metric.NewMeterProvider(
+			metric.WithResource(res),
+			metric.WithReader(reader),
 		)
 	}
 
-	if tracerProvider != nil {
-		otel.SetTracerProvider(tracerProvider)
-	}
-	if meterProvider != nil {
-		otel.SetMeterProvider(meterProvider)
+	if o.tracerProvider != nil {
+		otel.SetTracerProvider(o.tracerProvider)
 	}
 
-	return func(ctx context.Context) error {
-		var shutdownErrors []error
+	if o.meterProvider != nil {
+		otel.SetMeterProvider(o.meterProvider)
+	}
 
-		if meterProvider != nil {
-			if err := meterProvider.Shutdown(ctx); err != nil {
-				shutdownErrors = append(shutdownErrors,
-					fmt.Errorf("shutdown meter provider: %w", err),
-				)
-			}
-		}
-		if tracerProvider != nil {
-			if err := tracerProvider.Shutdown(ctx); err != nil {
-				shutdownErrors = append(shutdownErrors,
-					fmt.Errorf("shutdown tracer provider: %w", err),
-				)
-			}
-		}
+	cleanup := func() {
+		ctx, cancel := context.WithTimeout(
+			context.Background(),
+			5*time.Second,
+		)
+		defer cancel()
 
-		return errors.Join(shutdownErrors...)
-	}, nil
+		_ = shutdown(ctx)
+	}
+
+	return o, cleanup, nil
 }

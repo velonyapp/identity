@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 
-	"github.com/velony-app/identity/internal/domain/entity"
-	"github.com/velony-app/identity/internal/domain/vo"
+	"github.com/velonyapp/identity/internal/domain/entity"
+	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type User interface {

@@ -111,7 +111,7 @@ const file_velony_identity_event_v1_user_created_proto_rawDesc = "" +
 	"avatar_key\x18\x04 \x01(\tH\x00R\tavatarKey\x88\x01\x01\x12;\n" +
 	"\vcreate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"createTimeB\r\n" +
-	"\v_avatar_keyB5Z3github.com/velony-app/identity/gen/event/v1;eventv1b\x06proto3"
+	"\v_avatar_keyB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_created_proto_rawDescOnce sync.Once

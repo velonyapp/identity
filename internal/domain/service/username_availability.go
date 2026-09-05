@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/velony-app/identity/internal/domain/repo"
-	"github.com/velony-app/identity/internal/domain/vo"
+	"github.com/velonyapp/identity/internal/domain/repo"
+	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 var (

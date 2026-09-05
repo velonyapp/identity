@@ -1,10 +1,9 @@
 package redis
 
 import (
-	"github.com/velony-app/identity/internal/conf"
-
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
+	"github.com/velonyapp/identity/internal/conf"
 )
 
 func NewConnection(c *conf.Data) (*redis.Client, error) {

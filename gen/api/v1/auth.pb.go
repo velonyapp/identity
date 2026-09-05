@@ -358,7 +358,7 @@ const file_velony_identity_api_v1_auth_proto_rawDesc = "" +
 	"\rrefresh_token\x18\x01 \x01(\tB\x03\xe0A\x02R\frefreshToken\"]\n" +
 	"\x13RefreshAuthResponse\x12!\n" +
 	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x03 \x01(\tR\frefreshTokenB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshTokenB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_identity_api_v1_auth_proto_rawDescOnce sync.Once

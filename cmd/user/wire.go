@@ -6,13 +6,15 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 
-	"github.com/velony-app/identity/internal/application"
-	"github.com/velony-app/identity/internal/conf"
-	"github.com/velony-app/identity/internal/domain"
-	"github.com/velony-app/identity/internal/infrastructure"
-	"github.com/velony-app/identity/internal/presentation"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/application"
+	"github.com/velonyapp/identity/internal/domain"
+	"github.com/velonyapp/identity/internal/info"
+	"github.com/velonyapp/identity/internal/infrastructure"
+	"github.com/velonyapp/identity/internal/presentation"
 
 	"github.com/go-kratos/kratos/v3"
 	"github.com/google/wire"
@@ -20,6 +22,8 @@ import (
 
 // wireApp init kratos application.
 func wireApp(
+	context.Context,
+	*info.Service,
 	*conf.Data,
 	*conf.Transport,
 	*conf.Auth,

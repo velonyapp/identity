@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/velony-app/identity/internal/application/port"
-	"github.com/velony-app/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/conf"
 )
 
 type TokenProvider struct {

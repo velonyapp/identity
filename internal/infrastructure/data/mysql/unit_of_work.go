@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/velony-app/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/application/port"
 )
 
 type unitOfWork struct {

@@ -8,7 +8,7 @@ import "google/api/resource.proto";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/velony-app/identity/gen/api/v1;apiv1";
+option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
 
 message LoginAuthRequest {
   string identity = 1 [(google.api.field_behavior) = REQUIRED];

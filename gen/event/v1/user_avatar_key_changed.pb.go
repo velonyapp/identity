@@ -92,7 +92,7 @@ const file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDesc = "" +
 	"\n" +
 	"avatar_key\x18\x02 \x01(\tR\tavatarKey\x12;\n" +
 	"\vupdate_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB5Z3github.com/velony-app/identity/gen/event/v1;eventv1b\x06proto3"
+	"updateTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDescOnce sync.Once

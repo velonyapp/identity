@@ -3,9 +3,9 @@ package api
 import (
 	"context"
 
-	v1 "github.com/velony-app/identity/gen/api/v1"
-	"github.com/velony-app/identity/internal/application/command"
-	"github.com/velony-app/identity/internal/application/query"
+	v1 "github.com/velonyapp/identity/gen/api/v1"
+	"github.com/velonyapp/identity/internal/application/command"
+	"github.com/velonyapp/identity/internal/application/query"
 
 	kratosjwt "github.com/go-kratos/kratos/contrib/middleware/jwt/v3"
 	"go.einride.tech/aip/resourcename"

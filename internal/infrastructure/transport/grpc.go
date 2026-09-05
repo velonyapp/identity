@@ -1,9 +1,9 @@
 package transport
 
 import (
-	v1 "github.com/velony-app/identity/gen/api/v1"
-	"github.com/velony-app/identity/internal/conf"
-	"github.com/velony-app/identity/internal/presentation/api"
+	v1 "github.com/velonyapp/identity/gen/api/v1"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/presentation/api"
 
 	"github.com/go-kratos/kratos/v3/middleware"
 	"github.com/go-kratos/kratos/v3/middleware/recovery"

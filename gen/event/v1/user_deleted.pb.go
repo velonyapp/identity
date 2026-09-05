@@ -82,7 +82,7 @@ const file_velony_identity_event_v1_user_deleted_proto_rawDesc = "" +
 	"\x12UserDeletedPayload\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12;\n" +
 	"\vdelete_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"deleteTimeB5Z3github.com/velony-app/identity/gen/event/v1;eventv1b\x06proto3"
+	"deleteTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_deleted_proto_rawDescOnce sync.Once

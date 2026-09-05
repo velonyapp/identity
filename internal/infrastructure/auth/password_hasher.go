@@ -5,8 +5,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/velony-app/identity/internal/application/port"
-	"github.com/velony-app/identity/internal/domain/vo"
+	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type PasswordHasher struct {

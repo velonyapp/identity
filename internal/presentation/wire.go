@@ -1,7 +1,7 @@
 package presentation
 
 import (
-	"github.com/velony-app/identity/internal/presentation/api"
+	"github.com/velonyapp/identity/internal/presentation/api"
 
 	"github.com/google/wire"
 )

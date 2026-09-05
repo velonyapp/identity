@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/velony-app/identity/internal/domain/service"
+	"github.com/velonyapp/identity/internal/domain/service"
 
 	"github.com/google/wire"
 )

@@ -3,10 +3,10 @@ package query
 import (
 	"context"
 
-	"github.com/velony-app/identity/internal/application/common"
-	"github.com/velony-app/identity/internal/application/port"
-	"github.com/velony-app/identity/internal/domain/repo"
-	"github.com/velony-app/identity/internal/domain/vo"
+	"github.com/velonyapp/identity/internal/application/common"
+	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/domain/repo"
+	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type GetUser struct {

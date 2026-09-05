@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/velony-app/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/application/port"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )

@@ -1,7 +1,7 @@
 package event
 
 import (
-	v1 "github.com/velony-app/identity/gen/event/v1"
+	v1 "github.com/velonyapp/identity/gen/event/v1"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"

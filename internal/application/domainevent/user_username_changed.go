@@ -3,10 +3,10 @@ package domainevent
 import (
 	"context"
 
-	v1 "github.com/velony-app/identity/gen/event/v1"
-	integrationevent "github.com/velony-app/identity/internal/application/event"
-	"github.com/velony-app/identity/internal/application/port"
-	domainevent "github.com/velony-app/identity/internal/domain/event"
+	v1 "github.com/velonyapp/identity/gen/event/v1"
+	integrationevent "github.com/velonyapp/identity/internal/application/event"
+	"github.com/velonyapp/identity/internal/application/port"
+	domainevent "github.com/velonyapp/identity/internal/domain/event"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

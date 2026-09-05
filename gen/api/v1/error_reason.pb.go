@@ -102,7 +102,7 @@ const file_velony_identity_api_v1_error_reason_proto_rawDesc = "" +
 	"\rINVALID_EMAIL\x10\x05\x12\x14\n" +
 	"\x10INVALID_PASSWORD\x10\x06\x12\x19\n" +
 	"\x15INVALID_REFRESH_TOKEN\x10\a\x12\x17\n" +
-	"\x13INVALID_CREDENTIALS\x10\bB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
+	"\x13INVALID_CREDENTIALS\x10\bB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_identity_api_v1_error_reason_proto_rawDescOnce sync.Once

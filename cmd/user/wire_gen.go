@@ -7,18 +7,20 @@
 package main
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v3"
-	"github.com/velony-app/identity/internal/application/command"
-	"github.com/velony-app/identity/internal/application/domainevent"
-	"github.com/velony-app/identity/internal/application/query"
-	"github.com/velony-app/identity/internal/conf"
-	"github.com/velony-app/identity/internal/domain/service"
-	"github.com/velony-app/identity/internal/infrastructure/auth"
-	"github.com/velony-app/identity/internal/infrastructure/data/mysql"
-	"github.com/velony-app/identity/internal/infrastructure/data/redis"
-	"github.com/velony-app/identity/internal/infrastructure/observability"
-	"github.com/velony-app/identity/internal/infrastructure/transport"
-	"github.com/velony-app/identity/internal/presentation/api"
+	"github.com/velonyapp/identity/internal/application/command"
+	"github.com/velonyapp/identity/internal/application/domainevent"
+	"github.com/velonyapp/identity/internal/application/query"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/domain/service"
+	"github.com/velonyapp/identity/internal/info"
+	"github.com/velonyapp/identity/internal/infrastructure/auth"
+	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
+	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
+	"github.com/velonyapp/identity/internal/infrastructure/observability"
+	"github.com/velonyapp/identity/internal/infrastructure/transport"
+	"github.com/velonyapp/identity/internal/presentation/api"
 	"log/slog"
 )
 
@@ -29,7 +31,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, infoService *info.Service, data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -70,7 +72,12 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth
 	validationMiddleware := transport.NewValidationMiddleware()
 	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
-	app := newApp(logger, server, httpServer)
+	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, infoService)
+	if err != nil {
+		return nil, nil, err
+	}
+	app := newApp(logger, server, httpServer, openTelemetry)
 	return app, func() {
+		cleanup()
 	}, nil
 }

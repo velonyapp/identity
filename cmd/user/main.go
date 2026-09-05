@@ -3,13 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log/slog"
 	"os"
-	"time"
 
-	"github.com/velony-app/identity/internal/conf"
-	"github.com/velony-app/identity/internal/infrastructure/observability"
+	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/info"
+	"github.com/velonyapp/identity/internal/infrastructure/observability"
 
 	"buf.build/go/protovalidate"
 	"github.com/go-kratos/kratos/contrib/otel/v3/tracing"
@@ -25,20 +24,18 @@ import (
 )
 
 var (
-	Name = "velony-identity"
-
-	Version = "dev"
-
+	Name          = "velony-identity"
+	Version       = "dev"
 	InstanceID, _ = os.Hostname()
 
 	flagconf string
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "config", "../../configs", "config path, eg: -config config.yaml")
 }
 
-func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, _ *observability.OpenTelemetry) *kratos.App {
 	return kratos.New(
 		kratos.ID(InstanceID),
 		kratos.Name(Name),
@@ -52,35 +49,22 @@ func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 	)
 }
 
-func newLogger(
-	c *conf.Observability_Logging,
-) (*slog.Logger, error) {
-	level := slog.LevelInfo
-
-	if c != nil && c.Level != "" {
-		if err := level.UnmarshalText([]byte(c.Level)); err != nil {
-			return nil, fmt.Errorf("parse log level %q: %w", c.Level, err)
-		}
-	}
-
-	logger := log.NewLogger(
-		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-			AddSource: true,
-			Level:     level,
-		}),
-		log.WithExtractor(tracing.TraceAttrs),
-	).With(
-		slog.String("service.InstanceID", InstanceID),
-		slog.String("service.name", Name),
-		slog.String("service.version", Version),
-	)
-
-	return logger, nil
-}
-
 func main() {
 	flag.Parse()
 
+	// Info
+	bi := info.Bootstrap{
+		Service: &info.Service{
+			Name:       Name,
+			Version:    Version,
+			InstanceID: InstanceID,
+		},
+	}
+	if err := protovalidate.Validate(&bi); err != nil {
+		panic(err)
+	}
+
+	// Config
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -88,56 +72,37 @@ func main() {
 		),
 	)
 	defer c.Close()
+
 	if err := c.Load(); err != nil {
 		panic(err)
 	}
 
 	var bc conf.Bootstrap
-
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
 	if err := protovalidate.Validate(&bc); err != nil {
 		panic(err)
 	}
 
-	logger, err := newLogger(bc.Observability.GetLogging())
-	if err != nil {
-		panic(err)
-	}
-
+	// Logger
+	logger := log.NewLogger(
+		slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelInfo,
+		}),
+		log.WithExtractor(tracing.TraceAttrs),
+	).With(
+		slog.String("service.name", Name),
+		slog.String("service.version", Version),
+		slog.String("service.instance.id", InstanceID),
+	)
 	log.SetDefault(logger)
 
-	ctx := context.Background()
-
-	shutdownOTel, err := observability.NewOpenTelemetry(
-		ctx,
-		bc.Observability,
-		Name,
-		Version,
-		InstanceID,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	defer func() {
-		ctx, cancel := context.WithTimeout(
-			context.Background(),
-			5*time.Second,
-		)
-		defer cancel()
-
-		if err := shutdownOTel(ctx); err != nil {
-			logger.Error(
-				"failed to shutdown OpenTelemetry",
-				"error", err,
-			)
-		}
-	}()
-
+	// App
 	app, cleanup, err := wireApp(
+		context.Background(),
+		bi.Service,
 		bc.Data,
 		bc.Transport,
 		bc.Auth,

@@ -1,9 +1,9 @@
 package application
 
 import (
-	"github.com/velony-app/identity/internal/application/command"
-	"github.com/velony-app/identity/internal/application/domainevent"
-	"github.com/velony-app/identity/internal/application/query"
+	"github.com/velonyapp/identity/internal/application/command"
+	"github.com/velonyapp/identity/internal/application/domainevent"
+	"github.com/velonyapp/identity/internal/application/query"
 
 	"github.com/google/wire"
 )

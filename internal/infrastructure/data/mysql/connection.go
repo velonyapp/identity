@@ -3,11 +3,11 @@ package mysql
 import (
 	"database/sql"
 
-	"github.com/velony-app/identity/internal/conf"
 	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
 
 	"github.com/XSAM/otelsql"
 	"github.com/go-sql-driver/mysql"
+	"github.com/velonyapp/identity/internal/conf"
 )
 
 func NewConnection(c *conf.Data) (*sql.DB, error) {

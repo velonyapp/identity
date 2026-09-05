@@ -447,7 +447,7 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\tmime_type\x18\x03 \x01(\tB\x03\xe0A\x02R\bmimeType\"E\n" +
 	"\x11DeleteUserRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14user.velony.app/UserR\x04nameB1Z/github.com/velony-app/identity/gen/api/v1;apiv1b\x06proto3"
+	"\x14user.velony.app/UserR\x04nameB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_identity_api_v1_user_proto_rawDescOnce sync.Once

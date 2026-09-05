@@ -4,7 +4,7 @@ package velony.identity.event.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/velony-app/identity/gen/event/v1;eventv1";
+option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
 
 message UserFullNameChangedPayload {
   string                    user_id     = 1;
