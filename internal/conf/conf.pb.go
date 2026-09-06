@@ -23,6 +23,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Observability_Protocol int32
+
+const (
+	Observability_PROTOCOL_UNSPECIFIED   Observability_Protocol = 0
+	Observability_PROTOCOL_GRPC          Observability_Protocol = 1
+	Observability_PROTOCOL_HTTP_PROTOBUF Observability_Protocol = 2
+)
+
+// Enum value maps for Observability_Protocol.
+var (
+	Observability_Protocol_name = map[int32]string{
+		0: "PROTOCOL_UNSPECIFIED",
+		1: "PROTOCOL_GRPC",
+		2: "PROTOCOL_HTTP_PROTOBUF",
+	}
+	Observability_Protocol_value = map[string]int32{
+		"PROTOCOL_UNSPECIFIED":   0,
+		"PROTOCOL_GRPC":          1,
+		"PROTOCOL_HTTP_PROTOBUF": 2,
+	}
+)
+
+func (x Observability_Protocol) Enum() *Observability_Protocol {
+	p := new(Observability_Protocol)
+	*p = x
+	return p
+}
+
+func (x Observability_Protocol) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Observability_Protocol) Descriptor() protoreflect.EnumDescriptor {
+	return file_conf_conf_proto_enumTypes[0].Descriptor()
+}
+
+func (Observability_Protocol) Type() protoreflect.EnumType {
+	return &file_conf_conf_proto_enumTypes[0]
+}
+
+func (x Observability_Protocol) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Observability_Protocol.Descriptor instead.
+func (Observability_Protocol) EnumDescriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
+}
+
 type Bootstrap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Transport     *Transport             `protobuf:"bytes,1,opt,name=transport,proto3" json:"transport,omitempty"`
@@ -621,8 +670,10 @@ func (x *Auth_RefreshToken) GetTtl() *durationpb.Duration {
 
 type Observability_Tracing struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	SampleRatio   *float64               `protobuf:"fixed64,2,opt,name=sample_ratio,json=sampleRatio,proto3,oneof" json:"sample_ratio,omitempty"`
+	Protocol      Observability_Protocol `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Observability_Protocol" json:"protocol,omitempty"`
+	Endpoint      string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Authorization *string                `protobuf:"bytes,3,opt,name=authorization,proto3,oneof" json:"authorization,omitempty"`
+	SampleRatio   *float64               `protobuf:"fixed64,4,opt,name=sample_ratio,json=sampleRatio,proto3,oneof" json:"sample_ratio,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -657,9 +708,23 @@ func (*Observability_Tracing) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
 }
 
+func (x *Observability_Tracing) GetProtocol() Observability_Protocol {
+	if x != nil {
+		return x.Protocol
+	}
+	return Observability_PROTOCOL_UNSPECIFIED
+}
+
 func (x *Observability_Tracing) GetEndpoint() string {
 	if x != nil {
 		return x.Endpoint
+	}
+	return ""
+}
+
+func (x *Observability_Tracing) GetAuthorization() string {
+	if x != nil && x.Authorization != nil {
+		return *x.Authorization
 	}
 	return ""
 }
@@ -673,8 +738,10 @@ func (x *Observability_Tracing) GetSampleRatio() float64 {
 
 type Observability_Metrics struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint       string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	ExportInterval *durationpb.Duration   `protobuf:"bytes,2,opt,name=export_interval,json=exportInterval,proto3" json:"export_interval,omitempty"`
+	Protocol       Observability_Protocol `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Observability_Protocol" json:"protocol,omitempty"`
+	Endpoint       string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	Authorization  *string                `protobuf:"bytes,3,opt,name=authorization,proto3,oneof" json:"authorization,omitempty"`
+	ExportInterval *durationpb.Duration   `protobuf:"bytes,4,opt,name=export_interval,json=exportInterval,proto3" json:"export_interval,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -709,9 +776,23 @@ func (*Observability_Metrics) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{4, 1}
 }
 
+func (x *Observability_Metrics) GetProtocol() Observability_Protocol {
+	if x != nil {
+		return x.Protocol
+	}
+	return Observability_PROTOCOL_UNSPECIFIED
+}
+
 func (x *Observability_Metrics) GetEndpoint() string {
 	if x != nil {
 		return x.Endpoint
+	}
+	return ""
+}
+
+func (x *Observability_Metrics) GetAuthorization() string {
+	if x != nil && x.Authorization != nil {
+		return *x.Authorization
 	}
 	return ""
 }
@@ -765,17 +846,29 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
 	"\fRefreshToken\x128\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x8d\x03\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x87\x06\n" +
 	"\rObservability\x12;\n" +
 	"\atracing\x18\x01 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
-	"\ametrics\x18\x02 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x80\x01\n" +
-	"\aTracing\x12#\n" +
-	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12?\n" +
-	"\fsample_ratio\x18\x02 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00H\x00R\vsampleRatio\x88\x01\x01B\x0f\n" +
-	"\r_sample_ratio\x1a\x7f\n" +
-	"\aMetrics\x12#\n" +
-	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12O\n" +
-	"\x0fexport_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x0eexportIntervalB-Z+github.com/velonyapp/identity/internal/confb\x06proto3"
+	"\ametrics\x18\x02 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x92\x02\n" +
+	"\aTracing\x12J\n" +
+	"\bprotocol\x18\x01 \x01(\x0e2\".kratos.api.Observability.ProtocolB\n" +
+	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bprotocol\x12#\n" +
+	"\bendpoint\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x122\n" +
+	"\rauthorization\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\rauthorization\x88\x01\x01\x12?\n" +
+	"\fsample_ratio\x18\x04 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00H\x01R\vsampleRatio\x88\x01\x01B\x10\n" +
+	"\x0e_authorizationB\x0f\n" +
+	"\r_sample_ratio\x1a\x91\x02\n" +
+	"\aMetrics\x12J\n" +
+	"\bprotocol\x18\x01 \x01(\x0e2\".kratos.api.Observability.ProtocolB\n" +
+	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bprotocol\x12#\n" +
+	"\bendpoint\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x122\n" +
+	"\rauthorization\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\rauthorization\x88\x01\x01\x12O\n" +
+	"\x0fexport_interval\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x0eexportIntervalB\x10\n" +
+	"\x0e_authorization\"S\n" +
+	"\bProtocol\x12\x18\n" +
+	"\x14PROTOCOL_UNSPECIFIED\x10\x00\x12\x11\n" +
+	"\rPROTOCOL_GRPC\x10\x01\x12\x1a\n" +
+	"\x16PROTOCOL_HTTP_PROTOBUF\x10\x02B-Z+github.com/velonyapp/identity/internal/confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once
@@ -789,47 +882,51 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 	return file_conf_conf_proto_rawDescData
 }
 
+var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_conf_conf_proto_goTypes = []any{
-	(*Bootstrap)(nil),             // 0: kratos.api.Bootstrap
-	(*Transport)(nil),             // 1: kratos.api.Transport
-	(*Data)(nil),                  // 2: kratos.api.Data
-	(*Auth)(nil),                  // 3: kratos.api.Auth
-	(*Observability)(nil),         // 4: kratos.api.Observability
-	(*Transport_HTTP)(nil),        // 5: kratos.api.Transport.HTTP
-	(*Transport_GRPC)(nil),        // 6: kratos.api.Transport.GRPC
-	(*Data_MySQL)(nil),            // 7: kratos.api.Data.MySQL
-	(*Data_Redis)(nil),            // 8: kratos.api.Data.Redis
-	(*Auth_AccessToken)(nil),      // 9: kratos.api.Auth.AccessToken
-	(*Auth_RefreshToken)(nil),     // 10: kratos.api.Auth.RefreshToken
-	(*Observability_Tracing)(nil), // 11: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil), // 12: kratos.api.Observability.Metrics
-	(*durationpb.Duration)(nil),   // 13: google.protobuf.Duration
+	(Observability_Protocol)(0),   // 0: kratos.api.Observability.Protocol
+	(*Bootstrap)(nil),             // 1: kratos.api.Bootstrap
+	(*Transport)(nil),             // 2: kratos.api.Transport
+	(*Data)(nil),                  // 3: kratos.api.Data
+	(*Auth)(nil),                  // 4: kratos.api.Auth
+	(*Observability)(nil),         // 5: kratos.api.Observability
+	(*Transport_HTTP)(nil),        // 6: kratos.api.Transport.HTTP
+	(*Transport_GRPC)(nil),        // 7: kratos.api.Transport.GRPC
+	(*Data_MySQL)(nil),            // 8: kratos.api.Data.MySQL
+	(*Data_Redis)(nil),            // 9: kratos.api.Data.Redis
+	(*Auth_AccessToken)(nil),      // 10: kratos.api.Auth.AccessToken
+	(*Auth_RefreshToken)(nil),     // 11: kratos.api.Auth.RefreshToken
+	(*Observability_Tracing)(nil), // 12: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil), // 13: kratos.api.Observability.Metrics
+	(*durationpb.Duration)(nil),   // 14: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
-	1,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
-	2,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
-	3,  // 2: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
-	4,  // 3: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
-	5,  // 4: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
-	6,  // 5: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
-	7,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
-	8,  // 7: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	9,  // 8: kratos.api.Auth.access_token:type_name -> kratos.api.Auth.AccessToken
-	10, // 9: kratos.api.Auth.refresh_token:type_name -> kratos.api.Auth.RefreshToken
-	11, // 10: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	12, // 11: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	13, // 12: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	13, // 13: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	13, // 14: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	13, // 15: kratos.api.Auth.AccessToken.ttl:type_name -> google.protobuf.Duration
-	13, // 16: kratos.api.Auth.RefreshToken.ttl:type_name -> google.protobuf.Duration
-	13, // 17: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
+	3,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
+	4,  // 2: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
+	5,  // 3: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
+	6,  // 4: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
+	7,  // 5: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
+	8,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
+	9,  // 7: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
+	10, // 8: kratos.api.Auth.access_token:type_name -> kratos.api.Auth.AccessToken
+	11, // 9: kratos.api.Auth.refresh_token:type_name -> kratos.api.Auth.RefreshToken
+	12, // 10: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	13, // 11: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	14, // 12: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	14, // 13: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	14, // 14: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
+	14, // 15: kratos.api.Auth.AccessToken.ttl:type_name -> google.protobuf.Duration
+	14, // 16: kratos.api.Auth.RefreshToken.ttl:type_name -> google.protobuf.Duration
+	0,  // 17: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
+	0,  // 18: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
+	14, // 19: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -840,18 +937,20 @@ func file_conf_conf_proto_init() {
 	file_conf_conf_proto_msgTypes[7].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[11].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_conf_conf_proto_goTypes,
 		DependencyIndexes: file_conf_conf_proto_depIdxs,
+		EnumInfos:         file_conf_conf_proto_enumTypes,
 		MessageInfos:      file_conf_conf_proto_msgTypes,
 	}.Build()
 	File_conf_conf_proto = out.File

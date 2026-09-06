@@ -68,7 +68,7 @@ func main() {
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
-			env.NewSource("VELONY_PROFILE_"),
+			env.NewSource("VELONY_IDENTITY_"),
 		),
 	)
 	defer c.Close()

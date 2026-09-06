@@ -110,22 +110,40 @@ message Auth {
 }
 
 message Observability {
+  enum Protocol {
+    PROTOCOL_UNSPECIFIED   = 0;
+    PROTOCOL_GRPC          = 1;
+    PROTOCOL_HTTP_PROTOBUF = 2;
+  }
+
   message Tracing {
-    string endpoint = 1 [
+    Protocol protocol = 1 [
+      (buf.validate.field).enum = { defined_only: true, not_in: [0] }
+    ];
+    string endpoint = 2 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    optional string authorization = 3 [
       (buf.validate.field).string.min_len = 1
     ];
 
-    optional double sample_ratio = 2 [
+    optional double sample_ratio = 4 [
       (buf.validate.field).double = { gte: 0.0, lte: 1.0 }
     ];
   }
 
   message Metrics {
-    string endpoint = 1 [
+    Protocol protocol = 1 [
+      (buf.validate.field).enum = { defined_only: true, not_in: [0] }
+    ];
+    string endpoint = 2 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    optional string authorization = 3 [
       (buf.validate.field).string.min_len = 1
     ];
 
-    google.protobuf.Duration export_interval = 2 [
+    google.protobuf.Duration export_interval = 4 [
       (buf.validate.field).required = true,
       (buf.validate.field).duration.gt = {}
     ];
