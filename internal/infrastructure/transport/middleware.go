@@ -69,7 +69,7 @@ func optionalAuthentication(auth middleware.Middleware) middleware.Middleware {
 
 type MetricsMiddleware middleware.Middleware
 
-func NewMetricsMiddleware(serverMetrics *observability.Metrics) MetricsMiddleware {
+func NewMetricsMiddleware(serverMetrics *observability.ServerMetrics) MetricsMiddleware {
 	return MetricsMiddleware(
 		metrics.Server(
 			metrics.WithSeconds(serverMetrics.Seconds),

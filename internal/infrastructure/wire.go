@@ -24,7 +24,7 @@ var ProviderSet = wire.NewSet(
 	transport.NewMetricsMiddleware,
 	transport.NewAuthMiddleware,
 	transport.NewValidationMiddleware,
-	observability.NewMetrics,
+	observability.NewServerMetrics,
 	observability.NewOpenTelemetry,
 	auth.NewPasswordHasher,
 	auth.NewTokenProvider,

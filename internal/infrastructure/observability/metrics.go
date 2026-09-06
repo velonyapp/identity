@@ -9,12 +9,12 @@ import (
 
 const instrumentationName = "github.com/velonyapp/identity/internal/infrastructure/observability"
 
-type Metrics struct {
+type ServerMetrics struct {
 	Requests metric.Int64Counter
 	Seconds  metric.Float64Histogram
 }
 
-func NewMetrics() (*Metrics, error) {
+func NewServerMetrics() (*ServerMetrics, error) {
 	meter := otel.Meter(instrumentationName)
 
 	Requests, err := metrics.DefaultRequestsCounter(
@@ -33,7 +33,7 @@ func NewMetrics() (*Metrics, error) {
 		return nil, err
 	}
 
-	return &Metrics{
+	return &ServerMetrics{
 		Requests: Requests,
 		Seconds:  Seconds,
 	}, nil

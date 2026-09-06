@@ -63,11 +63,11 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	deleteUserHandler := command.NewDeleteUserHandler(user, unitOfWork, cache)
 	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, deleteUserHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
-	metrics, err := observability.NewMetrics()
+	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
-	metricsMiddleware := transport.NewMetricsMiddleware(metrics)
+	metricsMiddleware := transport.NewMetricsMiddleware(serverMetrics)
 	authMiddleware := transport.NewAuthMiddleware(confAuth)
 	validationMiddleware := transport.NewValidationMiddleware()
 	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
