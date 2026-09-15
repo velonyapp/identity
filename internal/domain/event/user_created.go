@@ -8,7 +8,7 @@ type UserCreated struct {
 	Username   vo.Username
 	Email      *vo.Email
 	FullName   vo.FullName
-	AvatarKey  *vo.StorageKey
+	AvatarKey  *vo.AvatarKey
 	CreateTime vo.Time
 }
 
@@ -17,7 +17,7 @@ func NewUserCreated(
 	username vo.Username,
 	email *vo.Email,
 	fullName vo.FullName,
-	avatarKey *vo.StorageKey,
+	avatarKey *vo.AvatarKey,
 	createTime vo.Time,
 ) UserCreated {
 	return UserCreated{

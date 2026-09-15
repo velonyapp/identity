@@ -218,7 +218,7 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 
 		var avatarKey any
 		if user.AvatarKey != nil {
-			avatarKey = user.AvatarKey.Value()
+			avatarKey = user.AvatarKey.String()
 		}
 
 		if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
@@ -318,9 +318,9 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 
 	fullNameVO, _ := vo.NewFullName(fullName)
 
-	var avatarKeyVO *vo.StorageKey
+	var avatarKeyVO *vo.AvatarKey
 	if avatarKey.Valid {
-		value, _ := vo.NewStorageKey(avatarKey.String)
+		value, _ := vo.NewAvatarKey(avatarKey.String)
 		avatarKeyVO = &value
 	}
 

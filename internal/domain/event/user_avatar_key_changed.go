@@ -5,13 +5,13 @@ import "github.com/velonyapp/identity/internal/domain/vo"
 type UserAvatarKeyChanged struct {
 	BaseDomainEvent
 
-	AvatarKey  *vo.StorageKey
+	AvatarKey  *vo.AvatarKey
 	UpdateTime vo.Time
 }
 
 func NewUserAvatarKeyChanged(
 	userID vo.UserID,
-	avatarKey *vo.StorageKey,
+	avatarKey *vo.AvatarKey,
 	updateTime vo.Time,
 ) UserAvatarKeyChanged {
 	return UserAvatarKeyChanged{

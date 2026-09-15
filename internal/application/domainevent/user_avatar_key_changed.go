@@ -29,7 +29,7 @@ func (h *UserAvatarKeyChangedHandler) Execute(
 ) error {
 	payload := &v1.UserAvatarKeyChangedPayload{
 		UserId:     domainEvent.AggregateID(),
-		AvatarKey:  domainEvent.AvatarKey.Value(),
+		AvatarKey:  domainEvent.AvatarKey.String(),
 		UpdateTime: timestamppb.New(domainEvent.UpdateTime.Value()),
 	}
 

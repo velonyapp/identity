@@ -34,7 +34,7 @@ func (h *UserCreatedHandler) Execute(
 		CreateTime: timestamppb.New(domainEvent.CreateTime.Value()),
 	}
 	if domainEvent.AvatarKey != nil {
-		value := domainEvent.AvatarKey.Value()
+		value := domainEvent.AvatarKey.String()
 		payload.AvatarKey = &value
 	}
 

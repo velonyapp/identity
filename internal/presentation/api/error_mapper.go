@@ -55,6 +55,30 @@ func mapError(err error) error {
 			domainvo.ErrInvalidEmail.Error(),
 		)
 
+	case errors.Is(err, domainvo.ErrAvatarKeyEmpty):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_AVATAR_KEY.String(),
+			domainvo.ErrAvatarKeyEmpty.Error(),
+		)
+
+	case errors.Is(err, domainvo.ErrAvatarKeyInvalidFormat):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_AVATAR_KEY.String(),
+			domainvo.ErrAvatarKeyInvalidFormat.Error(),
+		)
+
+	case errors.Is(err, domainvo.ErrAvatarKeyInvalidUTF8):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_AVATAR_KEY.String(),
+			domainvo.ErrAvatarKeyInvalidUTF8.Error(),
+		)
+
+	case errors.Is(err, domainvo.ErrAvatarKeyTooLong):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_AVATAR_KEY.String(),
+			domainvo.ErrAvatarKeyTooLong.Error(),
+		)
+
 	case errors.Is(err, domainvo.ErrPasswordTooShort):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_PASSWORD.String(),

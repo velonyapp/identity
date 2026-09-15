@@ -14,6 +14,9 @@ var (
 	ErrCannotRemoveLastAuthStrategy = errors.New(
 		"cannot remove the last authentication strategy",
 	)
+	ErrAvatarKeyUserMismatch = errors.New(
+		"avatar key does not belong to user",
+	)
 )
 
 type User struct {
@@ -21,7 +24,7 @@ type User struct {
 	Username   vo.Username
 	Email      *vo.Email
 	FullName   vo.FullName
-	AvatarKey  *vo.StorageKey
+	AvatarKey  *vo.AvatarKey
 	CreateTime vo.Time
 	UpdateTime vo.Time
 	DeleteTime *vo.Time
@@ -36,7 +39,7 @@ func NewUser(
 	username vo.Username,
 	email *vo.Email,
 	fullName vo.FullName,
-	avatarKey *vo.StorageKey,
+	avatarKey *vo.AvatarKey,
 ) *User {
 	now := vo.NewTimeNow()
 	userID := vo.NewUserIDRandom()
@@ -126,9 +129,13 @@ func (u *User) ChangeFullName(fullName vo.FullName) error {
 	return nil
 }
 
-func (u *User) ChangeAvatarKey(avatarKey *vo.StorageKey) error {
+func (u *User) ChangeAvatarKey(avatarKey *vo.AvatarKey) error {
 	if u.DeleteTime != nil {
 		return ErrUserDeleted
+	}
+
+	if avatarKey != nil && avatarKey.UserID() != u.ID.Value() {
+		return ErrAvatarKeyUserMismatch
 	}
 
 	now := vo.NewTimeNow()

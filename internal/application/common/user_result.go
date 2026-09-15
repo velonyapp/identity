@@ -26,7 +26,7 @@ func NewUserResult(user *entity.User) *UserResult {
 		result.Email = &value
 	}
 	if user.AvatarKey != nil {
-		value := user.AvatarKey.Value()
+		value := user.AvatarKey.String()
 		result.AvatarKey = &value
 	}
 
