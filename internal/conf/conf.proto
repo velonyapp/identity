@@ -17,6 +17,9 @@ message Bootstrap {
     (buf.validate.field).required = true
   ];
   Observability observability = 4;
+  Gateway       gateway       = 5 [
+    (buf.validate.field).required = true
+  ];
 }
 
 message Transport {
@@ -151,4 +154,21 @@ message Observability {
 
   Tracing tracing = 1;
   Metrics metrics = 2;
+}
+
+message Gateway {
+  message Asset {
+    string endpoint = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
+
+    google.protobuf.Duration timeout = 2 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
+  }
+
+  Asset asset = 1 [
+    (buf.validate.field).required = true
+  ];
 }

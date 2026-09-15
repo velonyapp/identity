@@ -133,12 +133,12 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.User'
-    /v1/users/{user}:replaceAvatar:
+    /v1/users/{user}:presignAvatar:
         post:
             tags:
                 - IdentityService
-            description: Replaces the avatar of a user.
-            operationId: IdentityService_ReplaceUserAvatar
+            description: Presigns a user avatar upload.
+            operationId: IdentityService_PresignUserAvatar
             parameters:
                 - name: user
                   in: path
@@ -150,7 +150,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/velony.identity.api.v1.ReplaceUserAvatarRequest'
+                            $ref: '#/components/schemas/velony.identity.api.v1.PresignUserAvatarRequest'
                 required: true
             responses:
                 "200":
@@ -158,7 +158,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+                                $ref: '#/components/schemas/velony.identity.api.v1.PresignUserAvatarResponse'
     /v1/users:batchGet:
         get:
             tags:
@@ -211,6 +211,22 @@ components:
                     type: string
                 refreshToken:
                     type: string
+        velony.identity.api.v1.PresignUserAvatarRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: The resource name of the user.
+            description: The request message for presigning a user avatar upload.
+        velony.identity.api.v1.PresignUserAvatarResponse:
+            type: object
+            properties:
+                uploadUrl:
+                    type: string
+                    description: The presigned upload URL.
+            description: The response message for presigning a user avatar upload.
         velony.identity.api.v1.RefreshAuthRequest:
             required:
                 - refreshToken
@@ -245,24 +261,6 @@ components:
                     type: string
                 refreshToken:
                     type: string
-        velony.identity.api.v1.ReplaceUserAvatarRequest:
-            required:
-                - name
-                - data
-                - mimeType
-            type: object
-            properties:
-                name:
-                    type: string
-                    description: The storage key of the user.
-                data:
-                    type: string
-                    description: The avatar image data.
-                    format: bytes
-                mimeType:
-                    type: string
-                    description: The MIME type of the avatar image data.
-            description: The request message for replacing a user avatar.
         velony.identity.api.v1.User:
             required:
                 - fullName

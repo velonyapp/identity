@@ -75,21 +75,21 @@ message UpdateUserRequest {
   google.protobuf.FieldMask update_mask = 2[(google.api.field_behavior) = OPTIONAL];
 }
 
-// The request message for replacing a user avatar.
-message ReplaceUserAvatarRequest {
-  // The storage key of the user.
+// The request message for presigning a user avatar upload.
+message PresignUserAvatarRequest {
+  // The resource name of the user.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
     type: "identity.velony.app/User"
     }
   ];
+}
 
-  // The avatar image data.
-  bytes data = 2 [(google.api.field_behavior) = REQUIRED];
-
-  // The MIME type of the avatar image data.
-  string mime_type = 3 [(google.api.field_behavior) = REQUIRED];
+// The response message for presigning a user avatar upload.
+message PresignUserAvatarResponse {
+  // The presigned upload URL.
+  string upload_url = 1;
 }
 
 // The request message for deleting a user.

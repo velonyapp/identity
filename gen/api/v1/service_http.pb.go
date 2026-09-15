@@ -22,9 +22,9 @@ const OperationIdentityServiceBatchGetUsers = "/velony.identity.api.v1.IdentityS
 const OperationIdentityServiceDeleteUser = "/velony.identity.api.v1.IdentityService/DeleteUser"
 const OperationIdentityServiceGetUser = "/velony.identity.api.v1.IdentityService/GetUser"
 const OperationIdentityServiceLoginAuth = "/velony.identity.api.v1.IdentityService/LoginAuth"
+const OperationIdentityServicePresignUserAvatar = "/velony.identity.api.v1.IdentityService/PresignUserAvatar"
 const OperationIdentityServiceRefreshAuth = "/velony.identity.api.v1.IdentityService/RefreshAuth"
 const OperationIdentityServiceRegisterAuth = "/velony.identity.api.v1.IdentityService/RegisterAuth"
-const OperationIdentityServiceReplaceUserAvatar = "/velony.identity.api.v1.IdentityService/ReplaceUserAvatar"
 const OperationIdentityServiceUpdateUser = "/velony.identity.api.v1.IdentityService/UpdateUser"
 
 type IdentityServiceHTTPServer interface {
@@ -36,12 +36,12 @@ type IdentityServiceHTTPServer interface {
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	// LoginAuth Login a user.
 	LoginAuth(context.Context, *LoginAuthRequest) (*LoginAuthResponse, error)
+	// PresignUserAvatar Presigns a user avatar upload.
+	PresignUserAvatar(context.Context, *PresignUserAvatarRequest) (*PresignUserAvatarResponse, error)
 	// RefreshAuth Refresh user session.
 	RefreshAuth(context.Context, *RefreshAuthRequest) (*RefreshAuthResponse, error)
 	// RegisterAuth Register a user.
 	RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error)
-	// ReplaceUserAvatar Replaces the avatar of a user.
-	ReplaceUserAvatar(context.Context, *ReplaceUserAvatarRequest) (*User, error)
 	// UpdateUser Updates a user.
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 }
@@ -51,7 +51,7 @@ func RegisterIdentityServiceHTTPServer(s *http.Server, srv IdentityServiceHTTPSe
 	r.Handle("GET", "/v1/{name:users/[^/]+}", _IdentityService_GetUser0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/users:batchGet", _IdentityService_BatchGetUsers0_HTTP_Handler(srv))
 	r.Handle("PATCH", "/v1/{user.name:users/[^/]+}", _IdentityService_UpdateUser0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/{name:users/[^/]+}:replaceAvatar", _IdentityService_ReplaceUserAvatar0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:users/[^/]+}:presignAvatar", _IdentityService_PresignUserAvatar0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:users/[^/]+}", _IdentityService_DeleteUser0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/auth:login", _IdentityService_LoginAuth0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/auth:register", _IdentityService_RegisterAuth0_HTTP_Handler(srv))
@@ -124,24 +124,24 @@ func _IdentityService_UpdateUser0_HTTP_Handler(srv IdentityServiceHTTPServer) fu
 	}
 }
 
-func _IdentityService_ReplaceUserAvatar0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+func _IdentityService_PresignUserAvatar0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ReplaceUserAvatarRequest
+		var in PresignUserAvatarRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationIdentityServiceReplaceUserAvatar)
+		http.SetOperation(ctx, OperationIdentityServicePresignUserAvatar)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ReplaceUserAvatar(ctx, req.(*ReplaceUserAvatarRequest))
+			return srv.PresignUserAvatar(ctx, req.(*PresignUserAvatarRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*User)
+		reply := out.(*PresignUserAvatarResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -234,12 +234,12 @@ type IdentityServiceHTTPClient interface {
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	// LoginAuth Login a user.
 	LoginAuth(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthResponse, err error)
+	// PresignUserAvatar Presigns a user avatar upload.
+	PresignUserAvatar(ctx context.Context, req *PresignUserAvatarRequest, opts ...http.CallOption) (rsp *PresignUserAvatarResponse, err error)
 	// RefreshAuth Refresh user session.
 	RefreshAuth(ctx context.Context, req *RefreshAuthRequest, opts ...http.CallOption) (rsp *RefreshAuthResponse, err error)
 	// RegisterAuth Register a user.
 	RegisterAuth(ctx context.Context, req *RegisterAuthRequest, opts ...http.CallOption) (rsp *RegisterAuthResponse, err error)
-	// ReplaceUserAvatar Replaces the avatar of a user.
-	ReplaceUserAvatar(ctx context.Context, req *ReplaceUserAvatarRequest, opts ...http.CallOption) (rsp *User, err error)
 	// UpdateUser Updates a user.
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 }
@@ -321,6 +321,24 @@ func (c *IdentityServiceHTTPClientImpl) LoginAuth(ctx context.Context, in *Login
 	return &out, nil
 }
 
+// PresignUserAvatar Presigns a user avatar upload.
+func (c *IdentityServiceHTTPClientImpl) PresignUserAvatar(ctx context.Context, in *PresignUserAvatarRequest, opts ...http.CallOption) (*PresignUserAvatarResponse, error) {
+	var out PresignUserAvatarResponse
+	pattern := "/v1/{name=users/*}:presignAvatar"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationIdentityServicePresignUserAvatar),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // RefreshAuth Refresh user session.
 func (c *IdentityServiceHTTPClientImpl) RefreshAuth(ctx context.Context, in *RefreshAuthRequest, opts ...http.CallOption) (*RefreshAuthResponse, error) {
 	var out RefreshAuthResponse
@@ -348,24 +366,6 @@ func (c *IdentityServiceHTTPClientImpl) RegisterAuth(ctx context.Context, in *Re
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
 		http.Operation(OperationIdentityServiceRegisterAuth),
-		http.PathTemplate(pattern),
-	}, opts...)
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// ReplaceUserAvatar Replaces the avatar of a user.
-func (c *IdentityServiceHTTPClientImpl) ReplaceUserAvatar(ctx context.Context, in *ReplaceUserAvatarRequest, opts ...http.CallOption) (*User, error) {
-	var out User
-	pattern := "/v1/{name=users/*}:replaceAvatar"
-	path := http.BuildPath(pattern, in)
-	opts = append([]http.CallOption{
-		http.Accept("application/protojson"),
-		http.ContentType("application/protojson"),
-		http.Operation(OperationIdentityServiceReplaceUserAvatar),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

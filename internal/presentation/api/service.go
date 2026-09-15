@@ -23,13 +23,14 @@ const (
 type Service struct {
 	v1.UnimplementedIdentityServiceServer
 
-	getUserHandler       *query.GetUserHandler
-	batchGetUsersHandler *query.BatchGetUsersHandler
-	registerAuthHandler  *command.RegisterAuthHandler
-	loginAuthHandler     *command.LoginAuthHandler
-	refreshAuthHandler   *command.RefreshAuthHandler
-	updateUserHandler    *command.UpdateUserHandler
-	deleteUserHandler    *command.DeleteUserHandler
+	getUserHandler           *query.GetUserHandler
+	batchGetUsersHandler     *query.BatchGetUsersHandler
+	registerAuthHandler      *command.RegisterAuthHandler
+	loginAuthHandler         *command.LoginAuthHandler
+	refreshAuthHandler       *command.RefreshAuthHandler
+	updateUserHandler        *command.UpdateUserHandler
+	presignUserAvatarHandler *command.PresignUserAvatarHandler
+	deleteUserHandler        *command.DeleteUserHandler
 }
 
 func NewService(
@@ -39,16 +40,18 @@ func NewService(
 	loginAuthHandler *command.LoginAuthHandler,
 	refreshAuthHandler *command.RefreshAuthHandler,
 	updateUserHandler *command.UpdateUserHandler,
+	presignUserAvatarHandler *command.PresignUserAvatarHandler,
 	deleteUserHandler *command.DeleteUserHandler,
 ) *Service {
 	return &Service{
-		getUserHandler:       getUserHandler,
-		batchGetUsersHandler: batchGetUsersHandler,
-		registerAuthHandler:  registerAuthHandler,
-		loginAuthHandler:     loginAuthHandler,
-		refreshAuthHandler:   refreshAuthHandler,
-		updateUserHandler:    updateUserHandler,
-		deleteUserHandler:    deleteUserHandler,
+		getUserHandler:           getUserHandler,
+		batchGetUsersHandler:     batchGetUsersHandler,
+		registerAuthHandler:      registerAuthHandler,
+		loginAuthHandler:         loginAuthHandler,
+		refreshAuthHandler:       refreshAuthHandler,
+		updateUserHandler:        updateUserHandler,
+		presignUserAvatarHandler: presignUserAvatarHandler,
+		deleteUserHandler:        deleteUserHandler,
 	}
 }
 
@@ -203,6 +206,38 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 		Email:     result.User.Email,
 		FullName:  result.User.FullName,
 		AvatarKey: result.User.AvatarKey,
+	}, nil
+}
+
+func (s *Service) PresignUserAvatar(ctx context.Context, req *v1.PresignUserAvatarRequest) (*v1.PresignUserAvatarResponse, error) {
+	subject, err := subjectFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var userID string
+
+	if err := resourcename.Sscan(req.GetName(), userResourcePattern, &userID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if isSelf(userID) {
+		userID = subject
+	}
+
+	if userID != subject {
+		return nil, status.Error(codes.PermissionDenied, "cannot presign avatar for another user")
+	}
+
+	result, err := s.presignUserAvatarHandler.Execute(ctx, &command.PresignUserAvatar{
+		UserID: userID,
+	})
+	if err != nil {
+		return nil, mapError(err)
+	}
+
+	return &v1.PresignUserAvatarResponse{
+		UploadUrl: result.UploadURL,
 	}, nil
 }
 

@@ -18,6 +18,7 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/auth"
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
+	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 	"github.com/velonyapp/identity/internal/presentation/api"
@@ -31,7 +32,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, infoService *info.Service, data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, infoService *info.Service, data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, confGateway *conf.Gateway, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -60,11 +61,18 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	loginAuthHandler := command.NewLoginAuthHandler(user, session, unitOfWork, tokenProvider, passwordHasher, cache)
 	refreshAuthHandler := command.NewRefreshAuthHandler(user, session, unitOfWork, tokenProvider, cache)
 	updateUserHandler := command.NewUpdateUserHandler(user, unitOfWork, cache, usernameAvailability)
+	assetServiceClient, cleanup, err := gateway.NewAssetClient(confGateway)
+	if err != nil {
+		return nil, nil, err
+	}
+	assetService := gateway.NewAssetService(assetServiceClient)
+	presignUserAvatarHandler := command.NewPresignUserAvatarHandler(assetService)
 	deleteUserHandler := command.NewDeleteUserHandler(user, unitOfWork, cache)
-	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, deleteUserHandler)
+	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, presignUserAvatarHandler, deleteUserHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	metricsMiddleware := transport.NewMetricsMiddleware(serverMetrics)
@@ -72,12 +80,14 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	validationMiddleware := transport.NewValidationMiddleware()
 	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
-	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, infoService)
+	openTelemetry, cleanup2, err := observability.NewOpenTelemetry(contextContext, confObservability, infoService)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	app := newApp(logger, server, httpServer, openTelemetry)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }

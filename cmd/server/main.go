@@ -107,6 +107,7 @@ func main() {
 		bc.Transport,
 		bc.Auth,
 		bc.Observability,
+		bc.Gateway,
 		logger,
 	)
 	if err != nil {

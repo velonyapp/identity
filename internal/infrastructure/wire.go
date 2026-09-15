@@ -4,6 +4,7 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/auth"
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
+	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 
@@ -28,4 +29,6 @@ var ProviderSet = wire.NewSet(
 	observability.NewOpenTelemetry,
 	auth.NewPasswordHasher,
 	auth.NewTokenProvider,
+	gateway.NewAssetClient,
+	gateway.NewAssetService,
 )

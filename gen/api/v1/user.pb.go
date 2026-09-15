@@ -303,33 +303,29 @@ func (x *UpdateUserRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
-// The request message for replacing a user avatar.
-type ReplaceUserAvatarRequest struct {
+// The request message for presigning a user avatar upload.
+type PresignUserAvatarRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The storage key of the user.
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The avatar image data.
-	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	// The MIME type of the avatar image data.
-	MimeType      string `protobuf:"bytes,3,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	// The resource name of the user.
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReplaceUserAvatarRequest) Reset() {
-	*x = ReplaceUserAvatarRequest{}
+func (x *PresignUserAvatarRequest) Reset() {
+	*x = PresignUserAvatarRequest{}
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ReplaceUserAvatarRequest) String() string {
+func (x *PresignUserAvatarRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReplaceUserAvatarRequest) ProtoMessage() {}
+func (*PresignUserAvatarRequest) ProtoMessage() {}
 
-func (x *ReplaceUserAvatarRequest) ProtoReflect() protoreflect.Message {
+func (x *PresignUserAvatarRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -341,28 +337,60 @@ func (x *ReplaceUserAvatarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReplaceUserAvatarRequest.ProtoReflect.Descriptor instead.
-func (*ReplaceUserAvatarRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PresignUserAvatarRequest.ProtoReflect.Descriptor instead.
+func (*PresignUserAvatarRequest) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ReplaceUserAvatarRequest) GetName() string {
+func (x *PresignUserAvatarRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *ReplaceUserAvatarRequest) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
+// The response message for presigning a user avatar upload.
+type PresignUserAvatarResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The presigned upload URL.
+	UploadUrl     string `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReplaceUserAvatarRequest) GetMimeType() string {
+func (x *PresignUserAvatarResponse) Reset() {
+	*x = PresignUserAvatarResponse{}
+	mi := &file_velony_identity_api_v1_user_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PresignUserAvatarResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PresignUserAvatarResponse) ProtoMessage() {}
+
+func (x *PresignUserAvatarResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_identity_api_v1_user_proto_msgTypes[6]
 	if x != nil {
-		return x.MimeType
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PresignUserAvatarResponse.ProtoReflect.Descriptor instead.
+func (*PresignUserAvatarResponse) Descriptor() ([]byte, []int) {
+	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PresignUserAvatarResponse) GetUploadUrl() string {
+	if x != nil {
+		return x.UploadUrl
 	}
 	return ""
 }
@@ -378,7 +406,7 @@ type DeleteUserRequest struct {
 
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
-	mi := &file_velony_identity_api_v1_user_proto_msgTypes[6]
+	mi := &file_velony_identity_api_v1_user_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -390,7 +418,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_identity_api_v1_user_proto_msgTypes[6]
+	mi := &file_velony_identity_api_v1_user_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -403,7 +431,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{6}
+	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteUserRequest) GetName() string {
@@ -439,12 +467,13 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\x11UpdateUserRequest\x125\n" +
 	"\x04user\x18\x01 \x01(\v2\x1c.velony.identity.api.v1.UserB\x03\xe0A\x02R\x04user\x12@\n" +
 	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskB\x03\xe0A\x01R\n" +
-	"updateMask\"\x8b\x01\n" +
-	"\x18ReplaceUserAvatarRequest\x124\n" +
+	"updateMask\"P\n" +
+	"\x18PresignUserAvatarRequest\x124\n" +
 	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
-	"\x18identity.velony.app/UserR\x04name\x12\x17\n" +
-	"\x04data\x18\x02 \x01(\fB\x03\xe0A\x02R\x04data\x12 \n" +
-	"\tmime_type\x18\x03 \x01(\tB\x03\xe0A\x02R\bmimeType\"E\n" +
+	"\x18identity.velony.app/UserR\x04name\":\n" +
+	"\x19PresignUserAvatarResponse\x12\x1d\n" +
+	"\n" +
+	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"E\n" +
 	"\x11DeleteUserRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
 	"\x14user.velony.app/UserR\x04nameB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
@@ -461,21 +490,22 @@ func file_velony_identity_api_v1_user_proto_rawDescGZIP() []byte {
 	return file_velony_identity_api_v1_user_proto_rawDescData
 }
 
-var file_velony_identity_api_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_velony_identity_api_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_velony_identity_api_v1_user_proto_goTypes = []any{
-	(*User)(nil),                     // 0: velony.identity.api.v1.User
-	(*GetUserRequest)(nil),           // 1: velony.identity.api.v1.GetUserRequest
-	(*BatchGetUsersRequest)(nil),     // 2: velony.identity.api.v1.BatchGetUsersRequest
-	(*BatchGetUsersResponse)(nil),    // 3: velony.identity.api.v1.BatchGetUsersResponse
-	(*UpdateUserRequest)(nil),        // 4: velony.identity.api.v1.UpdateUserRequest
-	(*ReplaceUserAvatarRequest)(nil), // 5: velony.identity.api.v1.ReplaceUserAvatarRequest
-	(*DeleteUserRequest)(nil),        // 6: velony.identity.api.v1.DeleteUserRequest
-	(*fieldmaskpb.FieldMask)(nil),    // 7: google.protobuf.FieldMask
+	(*User)(nil),                      // 0: velony.identity.api.v1.User
+	(*GetUserRequest)(nil),            // 1: velony.identity.api.v1.GetUserRequest
+	(*BatchGetUsersRequest)(nil),      // 2: velony.identity.api.v1.BatchGetUsersRequest
+	(*BatchGetUsersResponse)(nil),     // 3: velony.identity.api.v1.BatchGetUsersResponse
+	(*UpdateUserRequest)(nil),         // 4: velony.identity.api.v1.UpdateUserRequest
+	(*PresignUserAvatarRequest)(nil),  // 5: velony.identity.api.v1.PresignUserAvatarRequest
+	(*PresignUserAvatarResponse)(nil), // 6: velony.identity.api.v1.PresignUserAvatarResponse
+	(*DeleteUserRequest)(nil),         // 7: velony.identity.api.v1.DeleteUserRequest
+	(*fieldmaskpb.FieldMask)(nil),     // 8: google.protobuf.FieldMask
 }
 var file_velony_identity_api_v1_user_proto_depIdxs = []int32{
 	0, // 0: velony.identity.api.v1.BatchGetUsersResponse.users:type_name -> velony.identity.api.v1.User
 	0, // 1: velony.identity.api.v1.UpdateUserRequest.user:type_name -> velony.identity.api.v1.User
-	7, // 2: velony.identity.api.v1.UpdateUserRequest.update_mask:type_name -> google.protobuf.FieldMask
+	8, // 2: velony.identity.api.v1.UpdateUserRequest.update_mask:type_name -> google.protobuf.FieldMask
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
@@ -495,7 +525,7 @@ func file_velony_identity_api_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_identity_api_v1_user_proto_rawDesc), len(file_velony_identity_api_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

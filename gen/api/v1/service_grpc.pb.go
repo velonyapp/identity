@@ -23,7 +23,7 @@ const (
 	IdentityService_GetUser_FullMethodName           = "/velony.identity.api.v1.IdentityService/GetUser"
 	IdentityService_BatchGetUsers_FullMethodName     = "/velony.identity.api.v1.IdentityService/BatchGetUsers"
 	IdentityService_UpdateUser_FullMethodName        = "/velony.identity.api.v1.IdentityService/UpdateUser"
-	IdentityService_ReplaceUserAvatar_FullMethodName = "/velony.identity.api.v1.IdentityService/ReplaceUserAvatar"
+	IdentityService_PresignUserAvatar_FullMethodName = "/velony.identity.api.v1.IdentityService/PresignUserAvatar"
 	IdentityService_DeleteUser_FullMethodName        = "/velony.identity.api.v1.IdentityService/DeleteUser"
 	IdentityService_LoginAuth_FullMethodName         = "/velony.identity.api.v1.IdentityService/LoginAuth"
 	IdentityService_RegisterAuth_FullMethodName      = "/velony.identity.api.v1.IdentityService/RegisterAuth"
@@ -42,8 +42,8 @@ type IdentityServiceClient interface {
 	BatchGetUsers(ctx context.Context, in *BatchGetUsersRequest, opts ...grpc.CallOption) (*BatchGetUsersResponse, error)
 	// Updates a user.
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
-	// Replaces the avatar of a user.
-	ReplaceUserAvatar(ctx context.Context, in *ReplaceUserAvatarRequest, opts ...grpc.CallOption) (*User, error)
+	// Presigns a user avatar upload.
+	PresignUserAvatar(ctx context.Context, in *PresignUserAvatarRequest, opts ...grpc.CallOption) (*PresignUserAvatarResponse, error)
 	// Deletes a user.
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Login a user.
@@ -92,10 +92,10 @@ func (c *identityServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRe
 	return out, nil
 }
 
-func (c *identityServiceClient) ReplaceUserAvatar(ctx context.Context, in *ReplaceUserAvatarRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *identityServiceClient) PresignUserAvatar(ctx context.Context, in *PresignUserAvatarRequest, opts ...grpc.CallOption) (*PresignUserAvatarResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(User)
-	err := c.cc.Invoke(ctx, IdentityService_ReplaceUserAvatar_FullMethodName, in, out, cOpts...)
+	out := new(PresignUserAvatarResponse)
+	err := c.cc.Invoke(ctx, IdentityService_PresignUserAvatar_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +154,8 @@ type IdentityServiceServer interface {
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
 	// Updates a user.
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
-	// Replaces the avatar of a user.
-	ReplaceUserAvatar(context.Context, *ReplaceUserAvatarRequest) (*User, error)
+	// Presigns a user avatar upload.
+	PresignUserAvatar(context.Context, *PresignUserAvatarRequest) (*PresignUserAvatarResponse, error)
 	// Deletes a user.
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	// Login a user.
@@ -183,8 +183,8 @@ func (UnimplementedIdentityServiceServer) BatchGetUsers(context.Context, *BatchG
 func (UnimplementedIdentityServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
 }
-func (UnimplementedIdentityServiceServer) ReplaceUserAvatar(context.Context, *ReplaceUserAvatarRequest) (*User, error) {
-	return nil, status.Error(codes.Unimplemented, "method ReplaceUserAvatar not implemented")
+func (UnimplementedIdentityServiceServer) PresignUserAvatar(context.Context, *PresignUserAvatarRequest) (*PresignUserAvatarResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PresignUserAvatar not implemented")
 }
 func (UnimplementedIdentityServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
@@ -273,20 +273,20 @@ func _IdentityService_UpdateUser_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityService_ReplaceUserAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReplaceUserAvatarRequest)
+func _IdentityService_PresignUserAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PresignUserAvatarRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityServiceServer).ReplaceUserAvatar(ctx, in)
+		return srv.(IdentityServiceServer).PresignUserAvatar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityService_ReplaceUserAvatar_FullMethodName,
+		FullMethod: IdentityService_PresignUserAvatar_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).ReplaceUserAvatar(ctx, req.(*ReplaceUserAvatarRequest))
+		return srv.(IdentityServiceServer).PresignUserAvatar(ctx, req.(*PresignUserAvatarRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -383,8 +383,8 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IdentityService_UpdateUser_Handler,
 		},
 		{
-			MethodName: "ReplaceUserAvatar",
-			Handler:    _IdentityService_ReplaceUserAvatar_Handler,
+			MethodName: "PresignUserAvatar",
+			Handler:    _IdentityService_PresignUserAvatar_Handler,
 		},
 		{
 			MethodName: "DeleteUser",

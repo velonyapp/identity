@@ -38,12 +38,13 @@ service IdentityService {
     option (google.api.method_signature) = "user,update_mask";
   }
 
-  // Replaces the avatar of a user.
-  rpc ReplaceUserAvatar(ReplaceUserAvatarRequest) returns (User) {
+  // Presigns a user avatar upload.
+  rpc PresignUserAvatar(PresignUserAvatarRequest) returns (PresignUserAvatarResponse) {
     option (google.api.http) = {
-      post: "/v1/{name=users/*}:replaceAvatar"
+      post: "/v1/{name=users/*}:presignAvatar"
       body: "*"
     };
+    option (google.api.method_signature) = "name";
   }
 
   // Deletes a user.
