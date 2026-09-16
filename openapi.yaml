@@ -263,6 +263,7 @@ components:
                     type: string
         velony.identity.api.v1.User:
             required:
+                - username
                 - fullName
             type: object
             properties:
@@ -270,7 +271,6 @@ components:
                     type: string
                     description: The storage key of the user.
                 username:
-                    readOnly: true
                     type: string
                     description: The username of the user.
                 email:
