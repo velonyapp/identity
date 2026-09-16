@@ -276,12 +276,11 @@ components:
                 email:
                     readOnly: true
                     type: string
-                    description: The avatar key of the user.
+                    description: The email of the user.
                 fullName:
                     type: string
                     description: The full name of the user.
                 avatarKey:
-                    readOnly: true
                     type: string
                     description: The avatar key of the user.
             description: A user.

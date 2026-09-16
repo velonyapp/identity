@@ -12,9 +12,10 @@ import (
 )
 
 type UpdateUser struct {
-	UserID   string
-	Username *string
-	FullName *string
+	UserID    string
+	Username  *string
+	FullName  *string
+	AvatarKey **string
 }
 
 type UpdateUserResult struct {
@@ -41,7 +42,6 @@ func NewUpdateUserHandler(
 		usernameAvailability: usernameAvailability,
 	}
 }
-
 func (h *UpdateUserHandler) Execute(
 	ctx context.Context,
 	cmd *UpdateUser,
@@ -89,6 +89,26 @@ func (h *UpdateUserHandler) Execute(
 
 			if fullName != user.FullName {
 				if err := user.ChangeFullName(fullName); err != nil {
+					return err
+				}
+
+				changed = true
+			}
+		}
+		if cmd.AvatarKey != nil {
+			var avatarKey *vo.AvatarKey
+
+			if *cmd.AvatarKey != nil {
+				value, err := vo.NewAvatarKey(**cmd.AvatarKey)
+				if err != nil {
+					return err
+				}
+
+				avatarKey = &value
+			}
+
+			if avatarKey != user.AvatarKey {
+				if err := user.ChangeAvatarKey(avatarKey); err != nil {
 					return err
 				}
 

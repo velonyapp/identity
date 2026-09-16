@@ -31,7 +31,7 @@ type User struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The username of the user.
 	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	// The avatar key of the user.
+	// The email of the user.
 	Email *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	// The full name of the user.
 	FullName string `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
@@ -452,7 +452,7 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tB\x03\xe0A\x03H\x00R\x05email\x88\x01\x01\x12 \n" +
 	"\tfull_name\x18\x04 \x01(\tB\x03\xe0A\x02R\bfullName\x12'\n" +
 	"\n" +
-	"avatar_key\x18\x05 \x01(\tB\x03\xe0A\x03H\x01R\tavatarKey\x88\x01\x01:8\xeaA5\n" +
+	"avatar_key\x18\x05 \x01(\tB\x03\xe0A\x01H\x01R\tavatarKey\x88\x01\x01:8\xeaA5\n" +
 	"\x18identity.velony.app/User\x12\fusers/{user}*\x05users2\x04userB\b\n" +
 	"\x06_emailB\r\n" +
 	"\v_avatar_key\"F\n" +
