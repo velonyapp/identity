@@ -11,6 +11,9 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+// TODO:
+// Move protobuf-specific integration event construction out of
+// the application layer into an anti-corruption layer.
 func NewIntegrationEvent(
 	eventType string,
 	aggregateID string,
