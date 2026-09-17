@@ -5,23 +5,28 @@ import "github.com/velonyapp/identity/internal/domain/vo"
 type UserUsernameChanged struct {
 	BaseDomainEvent
 
-	Username   vo.Username
-	UpdateTime vo.Time
+	OldUsername vo.Username
+	NewUsername vo.Username
 }
 
 func NewUserUsernameChanged(
 	userID vo.UserID,
-	username vo.Username,
-	updateTime vo.Time,
+	oldUsername vo.Username,
+	newUsername vo.Username,
+	occurTime vo.Time,
 ) UserUsernameChanged {
 	return UserUsernameChanged{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
+		BaseDomainEvent: NewBaseDomainEvent(userID.String(), occurTime.Value()),
 
-		Username:   username,
-		UpdateTime: updateTime,
+		OldUsername: oldUsername,
+		NewUsername: newUsername,
 	}
 }
 
 func (e UserUsernameChanged) Type() string {
 	return "user.username.changed"
+}
+
+func (e UserUsernameChanged) AggregateType() string {
+	return "user"
 }

@@ -26,10 +26,11 @@ const (
 type Event struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Source        string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	OccurTime     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=occur_time,json=occurTime,proto3" json:"occur_time,omitempty"`
-	Payload       *anypb.Any             `protobuf:"bytes,5,opt,name=payload,proto3" json:"payload,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	AggregateId   string                 `protobuf:"bytes,3,opt,name=aggregate_id,json=aggregateId,proto3" json:"aggregate_id,omitempty"`
+	AggregateType string                 `protobuf:"bytes,4,opt,name=aggregate_type,json=aggregateType,proto3" json:"aggregate_type,omitempty"`
+	OccurTime     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=occur_time,json=occurTime,proto3" json:"occur_time,omitempty"`
+	Payload       *anypb.Any             `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -71,16 +72,23 @@ func (x *Event) GetId() string {
 	return ""
 }
 
-func (x *Event) GetSource() string {
+func (x *Event) GetType() string {
 	if x != nil {
-		return x.Source
+		return x.Type
 	}
 	return ""
 }
 
-func (x *Event) GetType() string {
+func (x *Event) GetAggregateId() string {
 	if x != nil {
-		return x.Type
+		return x.AggregateId
+	}
+	return ""
+}
+
+func (x *Event) GetAggregateType() string {
+	if x != nil {
+		return x.AggregateType
 	}
 	return ""
 }
@@ -103,14 +111,15 @@ var File_velony_identity_event_v1_event_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_event_proto_rawDesc = "" +
 	"\n" +
-	"$velony/identity/event/v1/event.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19google/protobuf/any.proto\"\xae\x01\n" +
+	"$velony/identity/event/v1/event.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19google/protobuf/any.proto\"\xe0\x01\n" +
 	"\x05Event\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06source\x18\x02 \x01(\tR\x06source\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12!\n" +
+	"\faggregate_id\x18\x03 \x01(\tR\vaggregateId\x12%\n" +
+	"\x0eaggregate_type\x18\x04 \x01(\tR\raggregateType\x129\n" +
 	"\n" +
-	"occur_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\toccurTime\x12.\n" +
-	"\apayload\x18\x05 \x01(\v2\x14.google.protobuf.AnyR\apayloadB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"occur_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\toccurTime\x12.\n" +
+	"\apayload\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\apayloadB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_event_proto_rawDescOnce sync.Once

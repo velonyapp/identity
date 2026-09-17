@@ -5,11 +5,10 @@ import "github.com/velonyapp/identity/internal/domain/vo"
 type UserCreated struct {
 	BaseDomainEvent
 
-	Username   vo.Username
-	Email      *vo.Email
-	FullName   vo.FullName
-	AvatarKey  *vo.AvatarKey
-	CreateTime vo.Time
+	Username  vo.Username
+	Email     *vo.Email
+	FullName  vo.FullName
+	AvatarKey *vo.AvatarKey
 }
 
 func NewUserCreated(
@@ -18,19 +17,22 @@ func NewUserCreated(
 	email *vo.Email,
 	fullName vo.FullName,
 	avatarKey *vo.AvatarKey,
-	createTime vo.Time,
+	occurTime vo.Time,
 ) UserCreated {
 	return UserCreated{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
+		BaseDomainEvent: NewBaseDomainEvent(userID.String(), occurTime.Value()),
 
-		Username:   username,
-		Email:      email,
-		FullName:   fullName,
-		AvatarKey:  avatarKey,
-		CreateTime: createTime,
+		Username:  username,
+		Email:     email,
+		FullName:  fullName,
+		AvatarKey: avatarKey,
 	}
 }
 
 func (e UserCreated) Type() string {
 	return "user.created"
+}
+
+func (e UserCreated) AggregateType() string {
+	return "user"
 }

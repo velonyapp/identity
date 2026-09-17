@@ -66,20 +66,22 @@ func NewUser(
 	return user
 }
 
-func (u *User) ChangeUsername(username vo.Username) error {
+func (u *User) ChangeUsername(newUsername vo.Username) error {
 	if u.DeleteTime != nil {
 		return ErrUserDeleted
 	}
 
+	oldUsername := u.Username
 	now := vo.NewTimeNow()
 
-	u.Username = username
+	u.Username = newUsername
 	u.UpdateTime = now
 
 	u.recordEvent(
 		event.NewUserUsernameChanged(
 			u.ID,
-			username,
+			oldUsername,
+			newUsername,
 			now,
 		),
 	)
@@ -87,20 +89,22 @@ func (u *User) ChangeUsername(username vo.Username) error {
 	return nil
 }
 
-func (u *User) ChangeEmail(email *vo.Email) error {
+func (u *User) ChangeEmail(newEmail *vo.Email) error {
 	if u.DeleteTime != nil {
 		return ErrUserDeleted
 	}
 
+	oldEmail := u.Email
 	now := vo.NewTimeNow()
 
-	u.Email = email
+	u.Email = newEmail
 	u.UpdateTime = now
 
 	u.recordEvent(
 		event.NewUserEmailChanged(
 			u.ID,
-			email,
+			oldEmail,
+			newEmail,
 			now,
 		),
 	)
@@ -108,20 +112,22 @@ func (u *User) ChangeEmail(email *vo.Email) error {
 	return nil
 }
 
-func (u *User) ChangeFullName(fullName vo.FullName) error {
+func (u *User) ChangeFullName(newFullName vo.FullName) error {
 	if u.DeleteTime != nil {
 		return ErrUserDeleted
 	}
 
+	oldFullName := u.FullName
 	now := vo.NewTimeNow()
 
-	u.FullName = fullName
+	u.FullName = newFullName
 	u.UpdateTime = now
 
 	u.recordEvent(
 		event.NewUserFullNameChanged(
 			u.ID,
-			fullName,
+			oldFullName,
+			newFullName,
 			now,
 		),
 	)
@@ -129,24 +135,26 @@ func (u *User) ChangeFullName(fullName vo.FullName) error {
 	return nil
 }
 
-func (u *User) ChangeAvatarKey(avatarKey *vo.AvatarKey) error {
+func (u *User) ChangeAvatarKey(newAvatarKey *vo.AvatarKey) error {
 	if u.DeleteTime != nil {
 		return ErrUserDeleted
 	}
 
-	if avatarKey != nil && avatarKey.UserID() != u.ID.Value() {
+	if newAvatarKey != nil && newAvatarKey.UserID() != u.ID.Value() {
 		return ErrAvatarKeyUserMismatch
 	}
 
+	oldAvatarKey := u.AvatarKey
 	now := vo.NewTimeNow()
 
-	u.AvatarKey = avatarKey
+	u.AvatarKey = newAvatarKey
 	u.UpdateTime = now
 
 	u.recordEvent(
 		event.NewUserAvatarKeyChanged(
 			u.ID,
-			avatarKey,
+			oldAvatarKey,
+			newAvatarKey,
 			now,
 		),
 	)

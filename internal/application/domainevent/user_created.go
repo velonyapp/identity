@@ -7,8 +7,6 @@ import (
 	integrationevent "github.com/velonyapp/identity/internal/application/event"
 	"github.com/velonyapp/identity/internal/application/port"
 	domainevent "github.com/velonyapp/identity/internal/domain/event"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserCreatedHandler struct {
@@ -28,10 +26,13 @@ func (h *UserCreatedHandler) Execute(
 	domainEvent domainevent.UserCreated,
 ) error {
 	payload := &v1.UserCreatedPayload{
-		UserId:     domainEvent.AggregateID(),
-		Username:   domainEvent.Username.Value(),
-		FullName:   domainEvent.FullName.Value(),
-		CreateTime: timestamppb.New(domainEvent.CreateTime.Value()),
+		Username: domainEvent.Username.Value(),
+		FullName: domainEvent.FullName.Value(),
+	}
+
+	if domainEvent.Email != nil {
+		value := domainEvent.Email.Value()
+		payload.Email = &value
 	}
 	if domainEvent.AvatarKey != nil {
 		value := domainEvent.AvatarKey.String()
@@ -39,7 +40,10 @@ func (h *UserCreatedHandler) Execute(
 	}
 
 	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		"user.created.v1",
+		domainEvent.Type()+".v1",
+		domainEvent.AggregateID(),
+		domainEvent.AggregateType(),
+		domainEvent.OccurTime(),
 		payload,
 	)
 	if err != nil {

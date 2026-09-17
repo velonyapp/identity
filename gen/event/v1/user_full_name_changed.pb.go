@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,9 +24,8 @@ const (
 
 type UserFullNameChangedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	OldFullName   string                 `protobuf:"bytes,1,opt,name=old_full_name,json=oldFullName,proto3" json:"old_full_name,omitempty"`
+	NewFullName   string                 `protobuf:"bytes,2,opt,name=new_full_name,json=newFullName,proto3" json:"new_full_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,37 +60,28 @@ func (*UserFullNameChangedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_user_full_name_changed_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserFullNameChangedPayload) GetUserId() string {
+func (x *UserFullNameChangedPayload) GetOldFullName() string {
 	if x != nil {
-		return x.UserId
+		return x.OldFullName
 	}
 	return ""
 }
 
-func (x *UserFullNameChangedPayload) GetFullName() string {
+func (x *UserFullNameChangedPayload) GetNewFullName() string {
 	if x != nil {
-		return x.FullName
+		return x.NewFullName
 	}
 	return ""
-}
-
-func (x *UserFullNameChangedPayload) GetUpdateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdateTime
-	}
-	return nil
 }
 
 var File_velony_identity_event_v1_user_full_name_changed_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_user_full_name_changed_proto_rawDesc = "" +
 	"\n" +
-	"5velony/identity/event/v1/user_full_name_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8f\x01\n" +
-	"\x1aUserFullNameChangedPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
-	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12;\n" +
-	"\vupdate_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"5velony/identity/event/v1/user_full_name_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"d\n" +
+	"\x1aUserFullNameChangedPayload\x12\"\n" +
+	"\rold_full_name\x18\x01 \x01(\tR\voldFullName\x12\"\n" +
+	"\rnew_full_name\x18\x02 \x01(\tR\vnewFullNameB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_full_name_changed_proto_rawDescOnce sync.Once
@@ -108,15 +98,13 @@ func file_velony_identity_event_v1_user_full_name_changed_proto_rawDescGZIP() []
 var file_velony_identity_event_v1_user_full_name_changed_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_user_full_name_changed_proto_goTypes = []any{
 	(*UserFullNameChangedPayload)(nil), // 0: velony.identity.event.v1.UserFullNameChangedPayload
-	(*timestamppb.Timestamp)(nil),      // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_user_full_name_changed_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.UserFullNameChangedPayload.update_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_user_full_name_changed_proto_init() }

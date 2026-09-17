@@ -32,18 +32,20 @@ func (pub *outboxPublisher) PublishMessage(
 		INSERT INTO outbox_messages (
 			id,
 			partition_key,
-			source,
+			aggregate_id,
+			aggregate_type,
 			type,
 			occur_time,
 			payload
 		)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
 		message.Event.Id,
 		message.PartitionKey,
-		message.Event.Source,
+		message.Event.AggregateId,
+		message.Event.AggregateType,
 		message.Event.Type,
 		message.Event.OccurTime.AsTime(),
 		string(payload),
@@ -64,7 +66,8 @@ func (pub *outboxPublisher) PublishMessages(
 		INSERT INTO outbox_messages (
 			id,
 			partition_key,
-			source,
+			aggregate_id,
+			aggregate_type,
 			type,
 			occur_time,
 			payload
@@ -75,7 +78,7 @@ func (pub *outboxPublisher) PublishMessages(
 	var query strings.Builder
 	query.WriteString(prefix)
 
-	args := make([]any, 0, len(messages)*6)
+	args := make([]any, 0, len(messages)*7)
 
 	for i, message := range messages {
 		if message.Event == nil {
@@ -91,12 +94,13 @@ func (pub *outboxPublisher) PublishMessages(
 			query.WriteString(",")
 		}
 
-		query.WriteString("(?, ?, ?, ?, ?, ?)")
+		query.WriteString("(?, ?, ?, ?, ?, ?, ?)")
 
 		args = append(args,
 			message.Event.Id,
 			message.PartitionKey,
-			message.Event.Source,
+			message.Event.AggregateId,
+			message.Event.AggregateType,
 			message.Event.Type,
 			message.Event.OccurTime.AsTime(),
 			string(payload),

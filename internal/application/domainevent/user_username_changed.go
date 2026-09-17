@@ -7,8 +7,6 @@ import (
 	integrationevent "github.com/velonyapp/identity/internal/application/event"
 	"github.com/velonyapp/identity/internal/application/port"
 	domainevent "github.com/velonyapp/identity/internal/domain/event"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserUsernameChangedHandler struct {
@@ -28,13 +26,15 @@ func (h *UserUsernameChangedHandler) Execute(
 	domainEvent domainevent.UserUsernameChanged,
 ) error {
 	payload := &v1.UserUsernameChangedPayload{
-		UserId:     domainEvent.AggregateID(),
-		Username:   domainEvent.Username.Value(),
-		UpdateTime: timestamppb.New(domainEvent.UpdateTime.Value()),
+		OldUsername: domainEvent.OldUsername.Value(),
+		NewUsername: domainEvent.NewUsername.Value(),
 	}
 
 	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		"user.username.changed.v1",
+		domainEvent.Type()+".v1",
+		domainEvent.AggregateID(),
+		domainEvent.AggregateType(),
+		domainEvent.OccurTime(),
 		payload,
 	)
 	if err != nil {

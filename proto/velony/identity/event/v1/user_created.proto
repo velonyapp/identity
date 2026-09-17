@@ -7,9 +7,8 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
 
 message UserCreatedPayload {
-  string                    user_id      = 1;
-  string                    username     = 2;
-  string                    full_name    = 3;
-  optional string           avatar_key = 4;
-  google.protobuf.Timestamp create_time  = 5;
+  string          username   = 1;
+  optional string email      = 2;
+  string          full_name  = 3;
+  optional string avatar_key = 4;
 }

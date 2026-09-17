@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,9 +24,8 @@ const (
 
 type UserAvatarKeyChangedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AvatarKey     string                 `protobuf:"bytes,2,opt,name=avatar_key,json=avatarKey,proto3" json:"avatar_key,omitempty"`
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	OldAvatarKey  *string                `protobuf:"bytes,1,opt,name=old_avatar_key,json=oldAvatarKey,proto3,oneof" json:"old_avatar_key,omitempty"`
+	NewAvatarKey  *string                `protobuf:"bytes,2,opt,name=new_avatar_key,json=newAvatarKey,proto3,oneof" json:"new_avatar_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,38 +60,30 @@ func (*UserAvatarKeyChangedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserAvatarKeyChangedPayload) GetUserId() string {
-	if x != nil {
-		return x.UserId
+func (x *UserAvatarKeyChangedPayload) GetOldAvatarKey() string {
+	if x != nil && x.OldAvatarKey != nil {
+		return *x.OldAvatarKey
 	}
 	return ""
 }
 
-func (x *UserAvatarKeyChangedPayload) GetAvatarKey() string {
-	if x != nil {
-		return x.AvatarKey
+func (x *UserAvatarKeyChangedPayload) GetNewAvatarKey() string {
+	if x != nil && x.NewAvatarKey != nil {
+		return *x.NewAvatarKey
 	}
 	return ""
-}
-
-func (x *UserAvatarKeyChangedPayload) GetUpdateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdateTime
-	}
-	return nil
 }
 
 var File_velony_identity_event_v1_user_avatar_key_changed_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDesc = "" +
 	"\n" +
-	"6velony/identity/event/v1/user_avatar_key_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x92\x01\n" +
-	"\x1bUserAvatarKeyChangedPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
-	"\n" +
-	"avatar_key\x18\x02 \x01(\tR\tavatarKey\x12;\n" +
-	"\vupdate_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"6velony/identity/event/v1/user_avatar_key_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x01\n" +
+	"\x1bUserAvatarKeyChangedPayload\x12)\n" +
+	"\x0eold_avatar_key\x18\x01 \x01(\tH\x00R\foldAvatarKey\x88\x01\x01\x12)\n" +
+	"\x0enew_avatar_key\x18\x02 \x01(\tH\x01R\fnewAvatarKey\x88\x01\x01B\x11\n" +
+	"\x0f_old_avatar_keyB\x11\n" +
+	"\x0f_new_avatar_keyB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDescOnce sync.Once
@@ -109,15 +100,13 @@ func file_velony_identity_event_v1_user_avatar_key_changed_proto_rawDescGZIP() [
 var file_velony_identity_event_v1_user_avatar_key_changed_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_user_avatar_key_changed_proto_goTypes = []any{
 	(*UserAvatarKeyChangedPayload)(nil), // 0: velony.identity.event.v1.UserAvatarKeyChangedPayload
-	(*timestamppb.Timestamp)(nil),       // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_user_avatar_key_changed_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.UserAvatarKeyChangedPayload.update_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_user_avatar_key_changed_proto_init() }
@@ -125,6 +114,7 @@ func file_velony_identity_event_v1_user_avatar_key_changed_proto_init() {
 	if File_velony_identity_event_v1_user_avatar_key_changed_proto != nil {
 		return
 	}
+	file_velony_identity_event_v1_user_avatar_key_changed_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

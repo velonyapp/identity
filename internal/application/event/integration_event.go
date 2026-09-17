@@ -1,6 +1,8 @@
 package event
 
 import (
+	"time"
+
 	v1 "github.com/velonyapp/identity/gen/event/v1"
 
 	"github.com/google/uuid"
@@ -11,6 +13,9 @@ import (
 
 func NewIntegrationEvent(
 	eventType string,
+	aggregateID string,
+	aggregateType string,
+	occurTime time.Time,
 	payload proto.Message,
 ) (*v1.Event, error) {
 	packed, err := anypb.New(payload)
@@ -19,10 +24,11 @@ func NewIntegrationEvent(
 	}
 
 	return &v1.Event{
-		Id:        uuid.NewString(),
-		Source:    "velony.identity",
-		Type:      eventType,
-		OccurTime: timestamppb.Now(),
-		Payload:   packed,
+		Id:            uuid.NewString(),
+		Type:          eventType,
+		AggregateId:   aggregateID,
+		AggregateType: aggregateType,
+		OccurTime:     timestamppb.New(occurTime),
+		Payload:       packed,
 	}, nil
 }

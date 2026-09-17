@@ -29,12 +29,13 @@ CREATE TABLE google_auth_strategies (
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_messages (
-    id            CHAR(36) PRIMARY KEY,
-    partition_key TEXT,
-    source        TEXT NOT NULL,
-    type          TEXT NOT NULL,
-    payload       JSON NOT NULL,
-    occur_time    TIMESTAMP(6) NOT NULL
+    id             CHAR(36) PRIMARY KEY,
+    partition_key  TEXT,
+    aggregate_id   TEXT NOT NULL,
+    aggregate_type TEXT NOT NULL,
+    type           TEXT NOT NULL,
+    payload        JSON NOT NULL,
+    occur_time     TIMESTAMP(6) NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE sessions (

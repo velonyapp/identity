@@ -7,8 +7,6 @@ import (
 	integrationevent "github.com/velonyapp/identity/internal/application/event"
 	"github.com/velonyapp/identity/internal/application/port"
 	domainevent "github.com/velonyapp/identity/internal/domain/event"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserDeletedHandler struct {
@@ -27,13 +25,13 @@ func (h *UserDeletedHandler) Execute(
 	ctx context.Context,
 	domainEvent domainevent.UserDeleted,
 ) error {
-	payload := &v1.UserDeletedPayload{
-		UserId:     domainEvent.AggregateID(),
-		DeleteTime: timestamppb.New(domainEvent.DeleteTime.Value()),
-	}
+	payload := &v1.UserDeletedPayload{}
 
 	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		"user.deleted.v1",
+		domainEvent.Type()+".v1",
+		domainEvent.AggregateID(),
+		domainEvent.AggregateType(),
+		domainEvent.OccurTime(),
 		payload,
 	)
 	if err != nil {

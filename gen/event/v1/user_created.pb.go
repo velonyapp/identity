@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,11 +24,10 @@ const (
 
 type UserCreatedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	FullName      string                 `protobuf:"bytes,3,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
 	AvatarKey     *string                `protobuf:"bytes,4,opt,name=avatar_key,json=avatarKey,proto3,oneof" json:"avatar_key,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -63,16 +62,16 @@ func (*UserCreatedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_user_created_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserCreatedPayload) GetUserId() string {
+func (x *UserCreatedPayload) GetUsername() string {
 	if x != nil {
-		return x.UserId
+		return x.Username
 	}
 	return ""
 }
 
-func (x *UserCreatedPayload) GetUsername() string {
-	if x != nil {
-		return x.Username
+func (x *UserCreatedPayload) GetEmail() string {
+	if x != nil && x.Email != nil {
+		return *x.Email
 	}
 	return ""
 }
@@ -91,26 +90,18 @@ func (x *UserCreatedPayload) GetAvatarKey() string {
 	return ""
 }
 
-func (x *UserCreatedPayload) GetCreateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreateTime
-	}
-	return nil
-}
-
 var File_velony_identity_event_v1_user_created_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_user_created_proto_rawDesc = "" +
 	"\n" +
-	"+velony/identity/event/v1/user_created.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd6\x01\n" +
-	"\x12UserCreatedPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x1b\n" +
+	"+velony/identity/event/v1/user_created.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa5\x01\n" +
+	"\x12UserCreatedPayload\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x19\n" +
+	"\x05email\x18\x02 \x01(\tH\x00R\x05email\x88\x01\x01\x12\x1b\n" +
 	"\tfull_name\x18\x03 \x01(\tR\bfullName\x12\"\n" +
 	"\n" +
-	"avatar_key\x18\x04 \x01(\tH\x00R\tavatarKey\x88\x01\x01\x12;\n" +
-	"\vcreate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTimeB\r\n" +
+	"avatar_key\x18\x04 \x01(\tH\x01R\tavatarKey\x88\x01\x01B\b\n" +
+	"\x06_emailB\r\n" +
 	"\v_avatar_keyB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
@@ -127,16 +118,14 @@ func file_velony_identity_event_v1_user_created_proto_rawDescGZIP() []byte {
 
 var file_velony_identity_event_v1_user_created_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_user_created_proto_goTypes = []any{
-	(*UserCreatedPayload)(nil),    // 0: velony.identity.event.v1.UserCreatedPayload
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
+	(*UserCreatedPayload)(nil), // 0: velony.identity.event.v1.UserCreatedPayload
 }
 var file_velony_identity_event_v1_user_created_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.UserCreatedPayload.create_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_user_created_proto_init() }

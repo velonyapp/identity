@@ -7,8 +7,6 @@ import (
 	integrationevent "github.com/velonyapp/identity/internal/application/event"
 	"github.com/velonyapp/identity/internal/application/port"
 	domainevent "github.com/velonyapp/identity/internal/domain/event"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserAvatarKeyChangedHandler struct {
@@ -27,14 +25,28 @@ func (h *UserAvatarKeyChangedHandler) Execute(
 	ctx context.Context,
 	domainEvent domainevent.UserAvatarKeyChanged,
 ) error {
+	var oldAvatarKey *string
+	if domainEvent.OldAvatarKey != nil {
+		value := domainEvent.OldAvatarKey.String()
+		oldAvatarKey = &value
+	}
+
+	var newAvatarKey *string
+	if domainEvent.NewAvatarKey != nil {
+		value := domainEvent.NewAvatarKey.String()
+		newAvatarKey = &value
+	}
+
 	payload := &v1.UserAvatarKeyChangedPayload{
-		UserId:     domainEvent.AggregateID(),
-		AvatarKey:  domainEvent.AvatarKey.String(),
-		UpdateTime: timestamppb.New(domainEvent.UpdateTime.Value()),
+		OldAvatarKey: oldAvatarKey,
+		NewAvatarKey: newAvatarKey,
 	}
 
 	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		"user.full-name.changed.v1",
+		domainEvent.Type()+".v1",
+		domainEvent.AggregateID(),
+		domainEvent.AggregateType(),
+		domainEvent.OccurTime(),
 		payload,
 	)
 	if err != nil {
