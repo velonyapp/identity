@@ -5,6 +5,7 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/service"
@@ -23,6 +24,7 @@ type RegisterAuthResult struct {
 }
 
 type RegisterAuthHandler struct {
+	c                    *conf.Auth
 	userRepo             repo.User
 	sessionRepo          repo.Session
 	unitOfWork           port.UnitOfWork
@@ -33,6 +35,7 @@ type RegisterAuthHandler struct {
 }
 
 func NewRegisterAuthHandler(
+	c *conf.Auth,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
@@ -42,6 +45,7 @@ func NewRegisterAuthHandler(
 	usernameAvailability *service.UsernameAvailability,
 ) *RegisterAuthHandler {
 	return &RegisterAuthHandler{
+		c:                    c,
 		userRepo:             userRepo,
 		sessionRepo:          sessionRepo,
 		unitOfWork:           unitOfWork,
@@ -108,7 +112,7 @@ func (h *RegisterAuthHandler) Execute(
 			return err
 		}
 
-		session := entity.NewSession(user.ID, sessionToken)
+		session := entity.NewSession(user.ID, sessionToken, int(h.c.RefreshToken.Ttl.Seconds))
 
 		if err := h.sessionRepo.Save(ctx, session); err != nil {
 			return err

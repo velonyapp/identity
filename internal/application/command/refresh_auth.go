@@ -6,6 +6,7 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -25,6 +26,7 @@ type RefreshAuthResult struct {
 }
 
 type RefreshAuthHandler struct {
+	c             *conf.Auth
 	userRepo      repo.User
 	sessionRepo   repo.Session
 	unitOfWork    port.UnitOfWork
@@ -33,6 +35,7 @@ type RefreshAuthHandler struct {
 }
 
 func NewRefreshAuthHandler(
+	c *conf.Auth,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
@@ -40,6 +43,7 @@ func NewRefreshAuthHandler(
 	cache port.Cache,
 ) *RefreshAuthHandler {
 	return &RefreshAuthHandler{
+		c:             c,
 		userRepo:      userRepo,
 		sessionRepo:   sessionRepo,
 		unitOfWork:    unitOfWork,
@@ -92,7 +96,7 @@ func (h *RefreshAuthHandler) Execute(
 			return err
 		}
 
-		if err := session.Refresh(newSessionToken); err != nil {
+		if err := session.Refresh(newSessionToken, int(h.c.RefreshToken.Ttl.Seconds)); err != nil {
 			return err
 		}
 

@@ -22,16 +22,17 @@ type Session struct {
 func NewSession(
 	userID vo.UserID,
 	token vo.SessionToken,
+	ttlSeconds int,
 ) *Session {
 	return &Session{
 		ID:         vo.NewSessionIDRandom(),
 		UserID:     userID,
 		Token:      token,
-		ExpireTime: vo.NewTimeNow().AddHours(24), // TODO: configure it from conv somehow
+		ExpireTime: vo.NewTimeNow().AddSeconds(ttlSeconds),
 	}
 }
 
-func (s *Session) Refresh(token vo.SessionToken) error {
+func (s *Session) Refresh(token vo.SessionToken, ttlSeconds int) error {
 	if s.RevokeTime != nil {
 		return ErrSessionRevoked
 	}
@@ -43,7 +44,7 @@ func (s *Session) Refresh(token vo.SessionToken) error {
 	}
 
 	s.Token = token
-	s.ExpireTime = now.AddHours(24) // TODO: configure it from conv somehow
+	s.ExpireTime = now.AddSeconds(ttlSeconds)
 
 	return nil
 }
