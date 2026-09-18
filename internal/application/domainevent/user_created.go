@@ -3,10 +3,9 @@ package domainevent
 import (
 	"context"
 
-	v1 "github.com/velonyapp/identity/gen/event/v1"
-	integrationevent "github.com/velonyapp/identity/internal/application/event"
+	"github.com/velonyapp/identity/internal/application/integrationevent"
 	"github.com/velonyapp/identity/internal/application/port"
-	domainevent "github.com/velonyapp/identity/internal/domain/event"
+	"github.com/velonyapp/identity/internal/domain/event"
 )
 
 type UserCreatedHandler struct {
@@ -21,39 +20,31 @@ func NewUserCreatedHandler(
 	}
 }
 
-func (h *UserCreatedHandler) Execute(
-	ctx context.Context,
-	domainEvent domainevent.UserCreated,
-) error {
-	payload := &v1.UserCreatedPayload{
-		Username: domainEvent.Username.Value(),
-		FullName: domainEvent.FullName.Value(),
-	}
+func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent event.UserCreated) error {
+	var email, avatarKey *string
 
 	if domainEvent.Email != nil {
 		value := domainEvent.Email.Value()
-		payload.Email = &value
+		email = &value
 	}
 	if domainEvent.AvatarKey != nil {
 		value := domainEvent.AvatarKey.String()
-		payload.AvatarKey = &value
+		avatarKey = &value
 	}
 
-	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		domainEvent.Type()+".v1",
+	integrationEvent := integrationevent.NewUserCreated(
 		domainEvent.AggregateID(),
-		domainEvent.AggregateType(),
-		domainEvent.OccurTime(),
-		payload,
+		domainEvent.Username.Value(),
+		email,
+		domainEvent.FullName.Value(),
+		avatarKey,
+		domainEvent.CreateTime.Value(),
 	)
-	if err != nil {
-		return err
-	}
 
 	return h.outboxPublisher.PublishMessage(ctx,
 		port.OutboxMessage{
 			PartitionKey: domainEvent.AggregateID(),
-			Event:        integrationEvent,
+			Event:        &integrationEvent,
 		},
 	)
 }

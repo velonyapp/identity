@@ -7,26 +7,20 @@ type UserAvatarKeyChanged struct {
 
 	OldAvatarKey *vo.AvatarKey
 	NewAvatarKey *vo.AvatarKey
+	UpdateTime   vo.Time
 }
 
 func NewUserAvatarKeyChanged(
 	userID vo.UserID,
 	oldAvatarKey *vo.AvatarKey,
 	newAvatarKey *vo.AvatarKey,
-	occurTime vo.Time,
+	updateTime vo.Time,
 ) UserAvatarKeyChanged {
 	return UserAvatarKeyChanged{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String(), occurTime.Value()),
+		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
 
 		OldAvatarKey: oldAvatarKey,
 		NewAvatarKey: newAvatarKey,
+		UpdateTime:   updateTime,
 	}
-}
-
-func (e UserAvatarKeyChanged) Type() string {
-	return "user.avatar-key.changed"
-}
-
-func (e UserAvatarKeyChanged) AggregateType() string {
-	return "user"
 }

@@ -6,9 +6,9 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
 
-message UserAvatarKeyChangedPayload {
-  optional string old_avatar_key = 1;
-  optional string new_avatar_key = 2;
+message UserEmailChangedPayload {
+  optional string old_email = 1;
+  optional string new_email = 2;
 
   google.protobuf.Timestamp update_time = 3;
 }

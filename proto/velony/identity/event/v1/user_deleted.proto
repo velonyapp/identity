@@ -7,4 +7,5 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
 
 message UserDeletedPayload {
+  google.protobuf.Timestamp delete_time = 1;
 }

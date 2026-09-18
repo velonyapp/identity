@@ -3,12 +3,12 @@ package port
 import (
 	"context"
 
-	v1 "github.com/velonyapp/identity/gen/event/v1"
+	"github.com/velonyapp/identity/internal/application/integrationevent"
 )
 
 type OutboxMessage struct {
 	PartitionKey string
-	Event        *v1.Event
+	Event        integrationevent.IntegrationEvent
 }
 
 type OutboxPublisher interface {

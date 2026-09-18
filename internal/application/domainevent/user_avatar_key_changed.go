@@ -3,10 +3,9 @@ package domainevent
 import (
 	"context"
 
-	v1 "github.com/velonyapp/identity/gen/event/v1"
-	integrationevent "github.com/velonyapp/identity/internal/application/event"
+	"github.com/velonyapp/identity/internal/application/integrationevent"
 	"github.com/velonyapp/identity/internal/application/port"
-	domainevent "github.com/velonyapp/identity/internal/domain/event"
+	"github.com/velonyapp/identity/internal/domain/event"
 )
 
 type UserAvatarKeyChangedHandler struct {
@@ -23,35 +22,25 @@ func NewUserAvatarKeyChangedHandler(
 
 func (h *UserAvatarKeyChangedHandler) Execute(
 	ctx context.Context,
-	domainEvent domainevent.UserAvatarKeyChanged,
+	domainEvent event.UserAvatarKeyChanged,
 ) error {
-	var oldAvatarKey *string
+	var oldAvatarKey, newAvatarKey *string
+
 	if domainEvent.OldAvatarKey != nil {
 		value := domainEvent.OldAvatarKey.String()
 		oldAvatarKey = &value
 	}
-
-	var newAvatarKey *string
 	if domainEvent.NewAvatarKey != nil {
 		value := domainEvent.NewAvatarKey.String()
 		newAvatarKey = &value
 	}
 
-	payload := &v1.UserAvatarKeyChangedPayload{
-		OldAvatarKey: oldAvatarKey,
-		NewAvatarKey: newAvatarKey,
-	}
-
-	integrationEvent, err := integrationevent.NewIntegrationEvent(
-		domainEvent.Type()+".v1",
+	integrationEvent := integrationevent.NewUserAvatarKeyChanged(
 		domainEvent.AggregateID(),
-		domainEvent.AggregateType(),
-		domainEvent.OccurTime(),
-		payload,
+		oldAvatarKey,
+		newAvatarKey,
+		domainEvent.UpdateTime.Value(),
 	)
-	if err != nil {
-		return err
-	}
 
 	return h.outboxPublisher.PublishMessage(ctx,
 		port.OutboxMessage{

@@ -1,32 +1,23 @@
 package event
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
+import "github.com/google/uuid"
 
 type DomainEvent interface {
-	ID() uuid.UUID
-	Type() string
+	ID() string
 	AggregateID() string
-	OccurTime() time.Time
 }
 
 type BaseDomainEvent struct {
-	id          uuid.UUID
+	id          string
 	aggregateID string
-	occurTime   time.Time
 }
 
-func NewBaseDomainEvent(aggregateID string, occurTime time.Time) BaseDomainEvent {
+func NewBaseDomainEvent(aggregateID string) BaseDomainEvent {
 	return BaseDomainEvent{
-		id:          uuid.Must(uuid.NewV7()),
+		id:          uuid.Must(uuid.NewV7()).String(),
 		aggregateID: aggregateID,
-		occurTime:   occurTime,
 	}
 }
 
-func (e BaseDomainEvent) ID() uuid.UUID        { return e.id }
-func (e BaseDomainEvent) AggregateID() string  { return e.aggregateID }
-func (e BaseDomainEvent) OccurTime() time.Time { return e.occurTime }
+func (e BaseDomainEvent) ID() string          { return e.id }
+func (e BaseDomainEvent) AggregateID() string { return e.aggregateID }

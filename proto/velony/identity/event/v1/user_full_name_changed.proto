@@ -9,4 +9,6 @@ option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
 message UserFullNameChangedPayload {
   string old_full_name = 1;
   string new_full_name = 2;
+
+  google.protobuf.Timestamp update_time = 3;
 }

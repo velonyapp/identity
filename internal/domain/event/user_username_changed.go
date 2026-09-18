@@ -7,26 +7,20 @@ type UserUsernameChanged struct {
 
 	OldUsername vo.Username
 	NewUsername vo.Username
+	UpdateTime  vo.Time
 }
 
 func NewUserUsernameChanged(
 	userID vo.UserID,
 	oldUsername vo.Username,
 	newUsername vo.Username,
-	occurTime vo.Time,
+	updateTime vo.Time,
 ) UserUsernameChanged {
 	return UserUsernameChanged{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String(), occurTime.Value()),
+		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
 
 		OldUsername: oldUsername,
 		NewUsername: newUsername,
+		UpdateTime:  updateTime,
 	}
-}
-
-func (e UserUsernameChanged) Type() string {
-	return "user.username.changed"
-}
-
-func (e UserUsernameChanged) AggregateType() string {
-	return "user"
 }

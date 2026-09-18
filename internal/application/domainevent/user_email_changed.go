@@ -8,23 +8,37 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
-type UserFullNameChangedHandler struct {
+type UserEmailChangedHandler struct {
 	outboxPublisher port.OutboxPublisher
 }
 
-func NewUserFullNameChangedHandler(
+func NewUserEmailChangedHandler(
 	outboxPublisher port.OutboxPublisher,
-) *UserFullNameChangedHandler {
-	return &UserFullNameChangedHandler{
+) *UserEmailChangedHandler {
+	return &UserEmailChangedHandler{
 		outboxPublisher: outboxPublisher,
 	}
 }
 
-func (h *UserFullNameChangedHandler) Execute(ctx context.Context, domainEvent event.UserFullNameChanged) error {
-	integrationEvent := integrationevent.NewUserFullNameChanged(
+func (h *UserEmailChangedHandler) Execute(
+	ctx context.Context,
+	domainEvent event.UserEmailChanged,
+) error {
+	var oldEmail, newEmail *string
+
+	if domainEvent.OldEmail != nil {
+		value := domainEvent.OldEmail.String()
+		oldEmail = &value
+	}
+	if domainEvent.NewEmail != nil {
+		value := domainEvent.NewEmail.String()
+		newEmail = &value
+	}
+
+	integrationEvent := integrationevent.NewUserEmailChanged(
 		domainEvent.AggregateID(),
-		domainEvent.OldFullName.Value(),
-		domainEvent.NewFullName.Value(),
+		oldEmail,
+		newEmail,
 		domainEvent.UpdateTime.Value(),
 	)
 

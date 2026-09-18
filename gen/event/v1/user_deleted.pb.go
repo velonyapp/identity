@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,6 +24,7 @@ const (
 
 type UserDeletedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	DeleteTime    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=delete_time,json=deleteTime,proto3" json:"delete_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,12 +59,21 @@ func (*UserDeletedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_user_deleted_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *UserDeletedPayload) GetDeleteTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DeleteTime
+	}
+	return nil
+}
+
 var File_velony_identity_event_v1_user_deleted_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_user_deleted_proto_rawDesc = "" +
 	"\n" +
-	"+velony/identity/event/v1/user_deleted.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x14\n" +
-	"\x12UserDeletedPayloadB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"+velony/identity/event/v1/user_deleted.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"Q\n" +
+	"\x12UserDeletedPayload\x12;\n" +
+	"\vdelete_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"deleteTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_deleted_proto_rawDescOnce sync.Once
@@ -79,14 +89,16 @@ func file_velony_identity_event_v1_user_deleted_proto_rawDescGZIP() []byte {
 
 var file_velony_identity_event_v1_user_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_user_deleted_proto_goTypes = []any{
-	(*UserDeletedPayload)(nil), // 0: velony.identity.event.v1.UserDeletedPayload
+	(*UserDeletedPayload)(nil),    // 0: velony.identity.event.v1.UserDeletedPayload
+	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_user_deleted_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: velony.identity.event.v1.UserDeletedPayload.delete_time:type_name -> google.protobuf.Timestamp
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_user_deleted_proto_init() }

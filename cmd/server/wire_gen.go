@@ -19,6 +19,7 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
 	"github.com/velonyapp/identity/internal/infrastructure/gateway"
+	"github.com/velonyapp/identity/internal/infrastructure/messaging/event"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 	"github.com/velonyapp/identity/internal/presentation/api"
@@ -37,13 +38,15 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	if err != nil {
 		return nil, nil, err
 	}
-	outboxPublisher := mysql.NewOutboxPublisher(db)
+	encoder := event.NewEncoder()
+	outboxPublisher := mysql.NewOutboxPublisher(db, encoder)
 	userCreatedHandler := domainevent.NewUserCreatedHandler(outboxPublisher)
 	userUsernameChangedHandler := domainevent.NewUserUsernameChangedHandler(outboxPublisher)
+	userEmailChangedHandler := domainevent.NewUserEmailChangedHandler(outboxPublisher)
 	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(outboxPublisher)
 	userAvatarKeyChangedHandler := domainevent.NewUserAvatarKeyChangedHandler(outboxPublisher)
 	userDeletedHandler := domainevent.NewUserDeletedHandler(outboxPublisher)
-	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler)
+	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler)
 	user := mysql.NewUserRepo(db, dispatcher)
 	client, err := redis.NewConnection(data)
 	if err != nil {

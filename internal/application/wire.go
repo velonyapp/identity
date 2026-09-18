@@ -20,6 +20,7 @@ var ProviderSet = wire.NewSet(
 	domainevent.NewDispatcher,
 	domainevent.NewUserCreatedHandler,
 	domainevent.NewUserUsernameChangedHandler,
+	domainevent.NewUserEmailChangedHandler,
 	domainevent.NewUserFullNameChangedHandler,
 	domainevent.NewUserAvatarKeyChangedHandler,
 	domainevent.NewUserDeletedHandler,

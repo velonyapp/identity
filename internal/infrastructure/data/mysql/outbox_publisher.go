@@ -3,27 +3,36 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"strings"
 
 	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/infrastructure/messaging/event"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type outboxPublisher struct {
-	db *sql.DB
+	db      *sql.DB
+	encoder *event.Encoder
 }
 
-func NewOutboxPublisher(db *sql.DB) port.OutboxPublisher {
-	return &outboxPublisher{db: db}
+func NewOutboxPublisher(
+	db *sql.DB,
+	encoder *event.Encoder,
+) port.OutboxPublisher {
+	return &outboxPublisher{
+		db:      db,
+		encoder: encoder,
+	}
 }
 
-func (pub *outboxPublisher) PublishMessage(
-	ctx context.Context,
-	message port.OutboxMessage,
-) error {
-	payload, err := protojson.Marshal(message.Event.Payload)
+func (pub *outboxPublisher) PublishMessage(ctx context.Context, message port.OutboxMessage) error {
+	event, err := pub.encoder.Encode(message.Event)
+	if err != nil {
+		return err
+	}
+
+	payload, err := protojson.Marshal(event)
 	if err != nil {
 		return err
 	}
@@ -31,33 +40,30 @@ func (pub *outboxPublisher) PublishMessage(
 	const query = `
 		INSERT INTO outbox_messages (
 			id,
-			partition_key,
+			type,
 			aggregate_id,
 			aggregate_type,
-			type,
 			occur_time,
-			payload
+			payload,
+			partition_key
 		)
 		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
-		message.Event.Id,
-		message.PartitionKey,
-		message.Event.AggregateId,
-		message.Event.AggregateType,
-		message.Event.Type,
-		message.Event.OccurTime.AsTime(),
+		event.Id,
+		event.Type,
+		event.AggregateId,
+		event.AggregateType,
+		event.OccurTime,
 		string(payload),
+		message.PartitionKey,
 	)
 
 	return err
 }
 
-func (pub *outboxPublisher) PublishMessages(
-	ctx context.Context,
-	messages []port.OutboxMessage,
-) error {
+func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port.OutboxMessage) error {
 	if len(messages) == 0 {
 		return nil
 	}
@@ -65,12 +71,12 @@ func (pub *outboxPublisher) PublishMessages(
 	const prefix = `
 		INSERT INTO outbox_messages (
 			id,
-			partition_key,
+			type,
 			aggregate_id,
 			aggregate_type,
-			type,
 			occur_time,
-			payload
+			payload,
+			partition_key
 		)
 		VALUES
 	`
@@ -81,11 +87,12 @@ func (pub *outboxPublisher) PublishMessages(
 	args := make([]any, 0, len(messages)*7)
 
 	for i, message := range messages {
-		if message.Event == nil {
-			return errors.New("outbox message event is nil")
+		event, err := pub.encoder.Encode(message.Event)
+		if err != nil {
+			return err
 		}
 
-		payload, err := protojson.Marshal(message.Event.Payload)
+		payload, err := protojson.Marshal(event)
 		if err != nil {
 			return err
 		}
@@ -93,17 +100,16 @@ func (pub *outboxPublisher) PublishMessages(
 		if i > 0 {
 			query.WriteString(",")
 		}
-
 		query.WriteString("(?, ?, ?, ?, ?, ?, ?)")
 
 		args = append(args,
-			message.Event.Id,
-			message.PartitionKey,
-			message.Event.AggregateId,
-			message.Event.AggregateType,
-			message.Event.Type,
-			message.Event.OccurTime.AsTime(),
+			event.Id,
+			event.Type,
+			event.AggregateId,
+			event.AggregateType,
+			event.OccurTime,
 			string(payload),
+			message.PartitionKey,
 		)
 	}
 
