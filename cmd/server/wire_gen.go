@@ -60,9 +60,9 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	tokenProvider := auth.NewTokenProvider(confAuth)
 	passwordHasher := auth.NewPasswordHasher()
 	usernameAvailability := service.NewUsernameAvailability(user)
-	registerAuthHandler := command.NewRegisterAuthHandler(user, session, unitOfWork, tokenProvider, passwordHasher, cache, usernameAvailability)
-	loginAuthHandler := command.NewLoginAuthHandler(user, session, unitOfWork, tokenProvider, passwordHasher, cache)
-	refreshAuthHandler := command.NewRefreshAuthHandler(user, session, unitOfWork, tokenProvider, cache)
+	registerAuthHandler := command.NewRegisterAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, passwordHasher, cache, usernameAvailability)
+	loginAuthHandler := command.NewLoginAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, passwordHasher, cache)
+	refreshAuthHandler := command.NewRefreshAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, cache)
 	updateUserHandler := command.NewUpdateUserHandler(user, unitOfWork, cache, usernameAvailability)
 	assetServiceClient, cleanup, err := gateway.NewAssetClient(confGateway)
 	if err != nil {
