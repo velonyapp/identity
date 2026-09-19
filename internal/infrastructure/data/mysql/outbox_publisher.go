@@ -55,7 +55,7 @@ func (pub *outboxPublisher) PublishMessage(ctx context.Context, message port.Out
 		event.Type,
 		event.AggregateId,
 		event.AggregateType,
-		event.OccurTime,
+		event.OccurTime.AsTime(),
 		string(payload),
 		message.PartitionKey,
 	)
@@ -107,7 +107,7 @@ func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port
 			event.Type,
 			event.AggregateId,
 			event.AggregateType,
-			event.OccurTime,
+			event.OccurTime.AsTime(),
 			string(payload),
 			message.PartitionKey,
 		)
