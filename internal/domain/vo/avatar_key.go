@@ -11,7 +11,7 @@ var (
 		"avatar key must not be empty",
 	)
 	ErrAvatarKeyTooLong = errors.New(
-		"avatar key must not exceed 1024 bytes",
+		"avatar key must not exceed 128 bytes",
 	)
 	ErrAvatarKeyInvalidUTF8 = errors.New(
 		"avatar key must contain valid UTF-8",
@@ -31,7 +31,7 @@ func NewAvatarKey(value string) (AvatarKey, error) {
 		return AvatarKey{}, ErrAvatarKeyEmpty
 	}
 
-	if len(value) > 1024 {
+	if len(value) > 128 {
 		return AvatarKey{}, ErrAvatarKeyTooLong
 	}
 
