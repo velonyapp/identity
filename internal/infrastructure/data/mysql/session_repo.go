@@ -7,20 +7,24 @@ import (
 	"errors"
 	"time"
 
+	"github.com/velonyapp/identity/internal/application/domainevent"
 	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type SessionRepo struct {
-	db *sql.DB
+	db         *sql.DB
+	dispatcher *domainevent.Dispatcher
 }
 
 func NewSessionRepo(
 	db *sql.DB,
+	dispatcher *domainevent.Dispatcher,
 ) repo.Session {
 	return &SessionRepo{
-		db: db,
+		db:         db,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -93,6 +97,12 @@ func (repo *SessionRepo) Save(ctx context.Context, session *entity.Session) erro
 		revokeTime,
 	); err != nil {
 		return err
+	}
+
+	for _, domainEvent := range session.PullEvents() {
+		if err := repo.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			return err
+		}
 	}
 
 	return nil

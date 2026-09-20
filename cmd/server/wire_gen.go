@@ -58,7 +58,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	cache := redis.NewCache(client)
 	getUserHandler := query.NewGetUserHandler(user, cache)
 	batchGetUsersHandler := query.NewBatchGetUsersHandler(user, cache)
-	session := mysql.NewSessionRepo(db)
+	session := mysql.NewSessionRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	tokenProvider := auth.NewTokenProvider(confAuth)
 	passwordHasher := auth.NewPasswordHasher()
