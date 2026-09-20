@@ -41,10 +41,5 @@ func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent event.User
 		domainEvent.CreateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx,
-		port.OutboxMessage{
-			PartitionKey: domainEvent.AggregateID(),
-			Event:        &integrationEvent,
-		},
-	)
+	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
 }

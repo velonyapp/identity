@@ -28,10 +28,5 @@ func (h *UserUsernameChangedHandler) Execute(ctx context.Context, domainEvent ev
 		domainEvent.UpdateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx,
-		port.OutboxMessage{
-			PartitionKey: domainEvent.AggregateID(),
-			Event:        integrationEvent,
-		},
-	)
+	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
 }

@@ -30,7 +30,6 @@ CREATE TABLE google_auth_strategies (
 
 CREATE TABLE outbox_messages (
     id             CHAR(36) PRIMARY KEY,
-    partition_key  TEXT,
     aggregate_id   TEXT NOT NULL,
     aggregate_type TEXT NOT NULL,
     type           TEXT NOT NULL,
