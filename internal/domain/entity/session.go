@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 
+	"github.com/velonyapp/identity/internal/domain/event"
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
@@ -17,6 +18,8 @@ type Session struct {
 	Token      vo.SessionToken
 	ExpireTime vo.Time
 	RevokeTime *vo.Time
+
+	domainEvents []event.DomainEvent
 }
 
 func NewSession(
@@ -24,12 +27,25 @@ func NewSession(
 	token vo.SessionToken,
 	ttlSeconds int,
 ) *Session {
-	return &Session{
-		ID:         vo.NewSessionIDRandom(),
+	now := vo.NewTimeNow()
+	sessionID := vo.NewSessionIDRandom()
+
+	session := &Session{
+		ID:         sessionID,
 		UserID:     userID,
 		Token:      token,
 		ExpireTime: vo.NewTimeNow().AddSeconds(ttlSeconds),
 	}
+
+	session.recordEvent(
+		event.NewSessionCreated(
+			sessionID,
+			userID,
+			now,
+		),
+	)
+
+	return session
 }
 
 func (s *Session) Refresh(token vo.SessionToken, ttlSeconds int) error {
@@ -46,6 +62,13 @@ func (s *Session) Refresh(token vo.SessionToken, ttlSeconds int) error {
 	s.Token = token
 	s.ExpireTime = now.AddSeconds(ttlSeconds)
 
+	s.recordEvent(
+		event.NewSessionRefreshed(
+			s.ID,
+			now,
+		),
+	)
+
 	return nil
 }
 
@@ -57,5 +80,22 @@ func (s *Session) Revoke() error {
 	now := vo.NewTimeNow()
 	s.RevokeTime = &now
 
+	s.recordEvent(
+		event.NewSessionRevoked(
+			s.ID,
+			now,
+		),
+	)
+
 	return nil
+}
+
+func (s *Session) PullEvents() []event.DomainEvent {
+	pulled := s.domainEvents
+	s.domainEvents = nil
+	return pulled
+}
+
+func (s *Session) recordEvent(domainEvent event.DomainEvent) {
+	s.domainEvents = append(s.domainEvents, domainEvent)
 }

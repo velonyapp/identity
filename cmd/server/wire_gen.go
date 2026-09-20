@@ -46,7 +46,10 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(outboxPublisher)
 	userAvatarKeyChangedHandler := domainevent.NewUserAvatarKeyChangedHandler(outboxPublisher)
 	userDeletedHandler := domainevent.NewUserDeletedHandler(outboxPublisher)
-	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler)
+	sessionCreatedHandler := domainevent.NewSessionCreatedHandler(outboxPublisher)
+	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(outboxPublisher)
+	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(outboxPublisher)
+	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
 	user := mysql.NewUserRepo(db, dispatcher)
 	client, err := redis.NewConnection(data)
 	if err != nil {

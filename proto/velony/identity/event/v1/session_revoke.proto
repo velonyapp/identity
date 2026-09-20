@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package velony.identity.event.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
+
+message SessionRevokedPayload {
+  google.protobuf.Timestamp revoke_time = 1;
+}

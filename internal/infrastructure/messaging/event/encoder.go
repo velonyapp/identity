@@ -104,6 +104,36 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userDeletedPayload(*event), nil
 
+	case integrationevent.SessionCreated:
+		return sessionCreatedPayload(event), nil
+
+	case *integrationevent.SessionCreated:
+		if event == nil {
+			return nil, fmt.Errorf("SessionCreated event is nil")
+		}
+
+		return sessionCreatedPayload(*event), nil
+
+	case integrationevent.SessionRefreshed:
+		return sessionRefreshedPayload(event), nil
+
+	case *integrationevent.SessionRefreshed:
+		if event == nil {
+			return nil, fmt.Errorf("SessionRefreshed event is nil")
+		}
+
+		return sessionRefreshedPayload(*event), nil
+
+	case integrationevent.SessionRevoked:
+		return sessionRevokedPayload(event), nil
+
+	case *integrationevent.SessionRevoked:
+		if event == nil {
+			return nil, fmt.Errorf("SessionRevoked event is nil")
+		}
+
+		return sessionRevokedPayload(*event), nil
+
 	default:
 		return nil, fmt.Errorf("unknown integration event %T", event)
 	}

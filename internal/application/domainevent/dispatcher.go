@@ -22,6 +22,9 @@ func NewDispatcher(
 	userFullNameChangedHandler *UserFullNameChangedHandler,
 	userAvatarKeyChangedHandler *UserAvatarKeyChangedHandler,
 	userDeletedHandler *UserDeletedHandler,
+	sessionCreatedHandler *SessionCreatedHandler,
+	sessionRefreshedHandler *SessionRefreshedHandler,
+	sessionRevokedHandler *SessionRevokedHandler,
 ) *Dispatcher {
 	dispatcher := &Dispatcher{
 		handlers: make(
@@ -38,6 +41,9 @@ func NewDispatcher(
 	registerHandler(dispatcher, userFullNameChangedHandler)
 	registerHandler(dispatcher, userAvatarKeyChangedHandler)
 	registerHandler(dispatcher, userDeletedHandler)
+	registerHandler(dispatcher, sessionCreatedHandler)
+	registerHandler(dispatcher, sessionRefreshedHandler)
+	registerHandler(dispatcher, sessionRevokedHandler)
 
 	return dispatcher
 }
