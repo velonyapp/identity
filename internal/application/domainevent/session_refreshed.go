@@ -9,14 +9,14 @@ import (
 )
 
 type SessionRefreshedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewSessionRefreshedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *SessionRefreshedHandler {
 	return &SessionRefreshedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -26,5 +26,5 @@ func (h *SessionRefreshedHandler) Execute(ctx context.Context, domainEvent event
 		domainEvent.RefreshTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

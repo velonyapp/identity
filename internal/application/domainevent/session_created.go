@@ -9,14 +9,14 @@ import (
 )
 
 type SessionCreatedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewSessionCreatedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *SessionCreatedHandler {
 	return &SessionCreatedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -27,5 +27,5 @@ func (h *SessionCreatedHandler) Execute(ctx context.Context, domainEvent event.S
 		domainEvent.CreateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

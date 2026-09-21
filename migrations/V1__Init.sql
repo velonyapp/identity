@@ -28,7 +28,7 @@ CREATE TABLE google_auth_strategies (
         ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE outbox_messages (
+CREATE TABLE outbox_events (
     id             CHAR(36) PRIMARY KEY,
     aggregate_id   TEXT NOT NULL,
     aggregate_type TEXT NOT NULL,

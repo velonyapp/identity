@@ -7,27 +7,27 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/integrationevent"
 	"github.com/velonyapp/identity/internal/application/port"
-	"github.com/velonyapp/identity/internal/infrastructure/messaging/event"
+	"github.com/velonyapp/identity/internal/infrastructure/event"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type outboxPublisher struct {
+type eventPublisher struct {
 	db      *sql.DB
 	encoder *event.Encoder
 }
 
-func NewOutboxPublisher(
+func NewEventPublisher(
 	db *sql.DB,
 	encoder *event.Encoder,
-) port.OutboxPublisher {
-	return &outboxPublisher{
+) port.EventPublisher {
+	return &eventPublisher{
 		db:      db,
 		encoder: encoder,
 	}
 }
 
-func (pub *outboxPublisher) PublishMessage(ctx context.Context, integrationEvent integrationevent.IntegrationEvent) error {
+func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integrationevent.IntegrationEvent) error {
 	event, err := pub.encoder.Encode(integrationEvent)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (pub *outboxPublisher) PublishMessage(ctx context.Context, integrationEvent
 	}
 
 	const query = `
-		INSERT INTO outbox_messages (
+		INSERT INTO outbox_events (
 			id,
 			type,
 			aggregate_id,
@@ -62,13 +62,13 @@ func (pub *outboxPublisher) PublishMessage(ctx context.Context, integrationEvent
 	return err
 }
 
-func (pub *outboxPublisher) PublishMessages(ctx context.Context, integrationEvents []integrationevent.IntegrationEvent) error {
+func (pub *eventPublisher) PublishBatch(ctx context.Context, integrationEvents []integrationevent.IntegrationEvent) error {
 	if len(integrationEvents) == 0 {
 		return nil
 	}
 
 	const prefix = `
-		INSERT INTO outbox_messages (
+		INSERT INTO outbox_events (
 			id,
 			type,
 			aggregate_id,

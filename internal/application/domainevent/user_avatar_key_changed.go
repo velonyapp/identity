@@ -9,14 +9,14 @@ import (
 )
 
 type UserAvatarKeyChangedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewUserAvatarKeyChangedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *UserAvatarKeyChangedHandler {
 	return &UserAvatarKeyChangedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -42,5 +42,5 @@ func (h *UserAvatarKeyChangedHandler) Execute(
 		domainEvent.UpdateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

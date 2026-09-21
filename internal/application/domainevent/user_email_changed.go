@@ -9,14 +9,14 @@ import (
 )
 
 type UserEmailChangedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewUserEmailChangedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *UserEmailChangedHandler {
 	return &UserEmailChangedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -42,5 +42,5 @@ func (h *UserEmailChangedHandler) Execute(
 		domainEvent.UpdateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

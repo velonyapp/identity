@@ -9,14 +9,14 @@ import (
 )
 
 type UserDeletedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewUserDeletedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *UserDeletedHandler {
 	return &UserDeletedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -26,5 +26,5 @@ func (h *UserDeletedHandler) Execute(ctx context.Context, domainEvent event.User
 		domainEvent.DeleteTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

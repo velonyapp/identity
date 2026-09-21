@@ -9,14 +9,14 @@ import (
 )
 
 type UserUsernameChangedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewUserUsernameChangedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *UserUsernameChangedHandler {
 	return &UserUsernameChangedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -28,5 +28,5 @@ func (h *UserUsernameChangedHandler) Execute(ctx context.Context, domainEvent ev
 		domainEvent.UpdateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

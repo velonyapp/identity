@@ -9,14 +9,14 @@ import (
 )
 
 type UserCreatedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewUserCreatedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *UserCreatedHandler {
 	return &UserCreatedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -41,5 +41,5 @@ func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent event.User
 		domainEvent.CreateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

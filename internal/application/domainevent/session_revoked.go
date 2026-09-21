@@ -9,14 +9,14 @@ import (
 )
 
 type SessionRevokedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewSessionRevokedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *SessionRevokedHandler {
 	return &SessionRevokedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -26,5 +26,5 @@ func (h *SessionRevokedHandler) Execute(ctx context.Context, domainEvent event.S
 		domainEvent.RevokeTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx, integrationEvent)
+	return h.eventPublisher.Publish(ctx, integrationEvent)
 }

@@ -18,8 +18,8 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/auth"
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
+	"github.com/velonyapp/identity/internal/infrastructure/event"
 	"github.com/velonyapp/identity/internal/infrastructure/gateway"
-	"github.com/velonyapp/identity/internal/infrastructure/messaging/event"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 	"github.com/velonyapp/identity/internal/presentation/api"
@@ -39,16 +39,16 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 		return nil, nil, err
 	}
 	encoder := event.NewEncoder()
-	outboxPublisher := mysql.NewOutboxPublisher(db, encoder)
-	userCreatedHandler := domainevent.NewUserCreatedHandler(outboxPublisher)
-	userUsernameChangedHandler := domainevent.NewUserUsernameChangedHandler(outboxPublisher)
-	userEmailChangedHandler := domainevent.NewUserEmailChangedHandler(outboxPublisher)
-	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(outboxPublisher)
-	userAvatarKeyChangedHandler := domainevent.NewUserAvatarKeyChangedHandler(outboxPublisher)
-	userDeletedHandler := domainevent.NewUserDeletedHandler(outboxPublisher)
-	sessionCreatedHandler := domainevent.NewSessionCreatedHandler(outboxPublisher)
-	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(outboxPublisher)
-	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(outboxPublisher)
+	eventPublisher := mysql.NewEventPublisher(db, encoder)
+	userCreatedHandler := domainevent.NewUserCreatedHandler(eventPublisher)
+	userUsernameChangedHandler := domainevent.NewUserUsernameChangedHandler(eventPublisher)
+	userEmailChangedHandler := domainevent.NewUserEmailChangedHandler(eventPublisher)
+	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(eventPublisher)
+	userAvatarKeyChangedHandler := domainevent.NewUserAvatarKeyChangedHandler(eventPublisher)
+	userDeletedHandler := domainevent.NewUserDeletedHandler(eventPublisher)
+	sessionCreatedHandler := domainevent.NewSessionCreatedHandler(eventPublisher)
+	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(eventPublisher)
+	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
 	user := mysql.NewUserRepo(db, dispatcher)
 	client, err := redis.NewConnection(data)
