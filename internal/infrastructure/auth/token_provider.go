@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/conf"
+	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type TokenProvider struct {
@@ -46,4 +47,19 @@ func (p *TokenProvider) GenerateRefreshToken() (string, error) {
 	}
 
 	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+func (p *TokenProvider) GenerateRequestToken() (vo.RequestToken, error) {
+	b := make([]byte, 32)
+
+	if _, err := rand.Read(b); err != nil {
+		return vo.RequestToken{}, port.ErrGenerateRequestToken
+	}
+
+	token, err := vo.NewRequestToken(base64.RawURLEncoding.EncodeToString(b))
+	if err != nil {
+		return vo.RequestToken{}, err
+	}
+
+	return token, nil
 }

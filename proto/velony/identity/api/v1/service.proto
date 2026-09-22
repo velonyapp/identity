@@ -38,6 +38,20 @@ service IdentityService {
     option (google.api.method_signature) = "user,update_mask";
   }
 
+  rpc RequestUserEmailChange(RequestUserEmailChangeRequest) returns (RequestUserEmailChangeResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:requestEmailChange"
+      body: "*"
+    };
+  }
+
+  rpc ConfirmUserEmailChange(ConfirmUserEmailChangeRequest) returns (ConfirmUserEmailChangeResponse) {
+    option (google.api.http) = {
+      post: "/v1/users:confirmEmailChange"
+      body: "*"
+    };
+  }
+
   // Presigns a user avatar upload.
   rpc PresignUserAvatar(PresignUserAvatarRequest) returns (PresignUserAvatarResponse) {
     option (google.api.http) = {

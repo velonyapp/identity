@@ -20,14 +20,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IdentityService_GetUser_FullMethodName           = "/velony.identity.api.v1.IdentityService/GetUser"
-	IdentityService_BatchGetUsers_FullMethodName     = "/velony.identity.api.v1.IdentityService/BatchGetUsers"
-	IdentityService_UpdateUser_FullMethodName        = "/velony.identity.api.v1.IdentityService/UpdateUser"
-	IdentityService_PresignUserAvatar_FullMethodName = "/velony.identity.api.v1.IdentityService/PresignUserAvatar"
-	IdentityService_DeleteUser_FullMethodName        = "/velony.identity.api.v1.IdentityService/DeleteUser"
-	IdentityService_LoginAuth_FullMethodName         = "/velony.identity.api.v1.IdentityService/LoginAuth"
-	IdentityService_RegisterAuth_FullMethodName      = "/velony.identity.api.v1.IdentityService/RegisterAuth"
-	IdentityService_RefreshAuth_FullMethodName       = "/velony.identity.api.v1.IdentityService/RefreshAuth"
+	IdentityService_GetUser_FullMethodName                = "/velony.identity.api.v1.IdentityService/GetUser"
+	IdentityService_BatchGetUsers_FullMethodName          = "/velony.identity.api.v1.IdentityService/BatchGetUsers"
+	IdentityService_UpdateUser_FullMethodName             = "/velony.identity.api.v1.IdentityService/UpdateUser"
+	IdentityService_RequestUserEmailChange_FullMethodName = "/velony.identity.api.v1.IdentityService/RequestUserEmailChange"
+	IdentityService_ConfirmUserEmailChange_FullMethodName = "/velony.identity.api.v1.IdentityService/ConfirmUserEmailChange"
+	IdentityService_PresignUserAvatar_FullMethodName      = "/velony.identity.api.v1.IdentityService/PresignUserAvatar"
+	IdentityService_DeleteUser_FullMethodName             = "/velony.identity.api.v1.IdentityService/DeleteUser"
+	IdentityService_LoginAuth_FullMethodName              = "/velony.identity.api.v1.IdentityService/LoginAuth"
+	IdentityService_RegisterAuth_FullMethodName           = "/velony.identity.api.v1.IdentityService/RegisterAuth"
+	IdentityService_RefreshAuth_FullMethodName            = "/velony.identity.api.v1.IdentityService/RefreshAuth"
 )
 
 // IdentityServiceClient is the client API for IdentityService service.
@@ -42,6 +44,8 @@ type IdentityServiceClient interface {
 	BatchGetUsers(ctx context.Context, in *BatchGetUsersRequest, opts ...grpc.CallOption) (*BatchGetUsersResponse, error)
 	// Updates a user.
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
+	RequestUserEmailChange(ctx context.Context, in *RequestUserEmailChangeRequest, opts ...grpc.CallOption) (*RequestUserEmailChangeResponse, error)
+	ConfirmUserEmailChange(ctx context.Context, in *ConfirmUserEmailChangeRequest, opts ...grpc.CallOption) (*ConfirmUserEmailChangeResponse, error)
 	// Presigns a user avatar upload.
 	PresignUserAvatar(ctx context.Context, in *PresignUserAvatarRequest, opts ...grpc.CallOption) (*PresignUserAvatarResponse, error)
 	// Deletes a user.
@@ -86,6 +90,26 @@ func (c *identityServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(User)
 	err := c.cc.Invoke(ctx, IdentityService_UpdateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) RequestUserEmailChange(ctx context.Context, in *RequestUserEmailChangeRequest, opts ...grpc.CallOption) (*RequestUserEmailChangeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RequestUserEmailChangeResponse)
+	err := c.cc.Invoke(ctx, IdentityService_RequestUserEmailChange_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) ConfirmUserEmailChange(ctx context.Context, in *ConfirmUserEmailChangeRequest, opts ...grpc.CallOption) (*ConfirmUserEmailChangeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmUserEmailChangeResponse)
+	err := c.cc.Invoke(ctx, IdentityService_ConfirmUserEmailChange_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,6 +178,8 @@ type IdentityServiceServer interface {
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
 	// Updates a user.
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
+	RequestUserEmailChange(context.Context, *RequestUserEmailChangeRequest) (*RequestUserEmailChangeResponse, error)
+	ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*ConfirmUserEmailChangeResponse, error)
 	// Presigns a user avatar upload.
 	PresignUserAvatar(context.Context, *PresignUserAvatarRequest) (*PresignUserAvatarResponse, error)
 	// Deletes a user.
@@ -182,6 +208,12 @@ func (UnimplementedIdentityServiceServer) BatchGetUsers(context.Context, *BatchG
 }
 func (UnimplementedIdentityServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedIdentityServiceServer) RequestUserEmailChange(context.Context, *RequestUserEmailChangeRequest) (*RequestUserEmailChangeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RequestUserEmailChange not implemented")
+}
+func (UnimplementedIdentityServiceServer) ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*ConfirmUserEmailChangeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmUserEmailChange not implemented")
 }
 func (UnimplementedIdentityServiceServer) PresignUserAvatar(context.Context, *PresignUserAvatarRequest) (*PresignUserAvatarResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PresignUserAvatar not implemented")
@@ -269,6 +301,42 @@ func _IdentityService_UpdateUser_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_RequestUserEmailChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestUserEmailChangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).RequestUserEmailChange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityService_RequestUserEmailChange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).RequestUserEmailChange(ctx, req.(*RequestUserEmailChangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_ConfirmUserEmailChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmUserEmailChangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).ConfirmUserEmailChange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityService_ConfirmUserEmailChange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).ConfirmUserEmailChange(ctx, req.(*ConfirmUserEmailChangeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -381,6 +449,14 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUser",
 			Handler:    _IdentityService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "RequestUserEmailChange",
+			Handler:    _IdentityService_RequestUserEmailChange_Handler,
+		},
+		{
+			MethodName: "ConfirmUserEmailChange",
+			Handler:    _IdentityService_ConfirmUserEmailChange_Handler,
 		},
 		{
 			MethodName: "PresignUserAvatar",

@@ -19,17 +19,20 @@ var _ = new(context.Context)
 const _ = http.SupportPackageIsVersion3
 
 const OperationIdentityServiceBatchGetUsers = "/velony.identity.api.v1.IdentityService/BatchGetUsers"
+const OperationIdentityServiceConfirmUserEmailChange = "/velony.identity.api.v1.IdentityService/ConfirmUserEmailChange"
 const OperationIdentityServiceDeleteUser = "/velony.identity.api.v1.IdentityService/DeleteUser"
 const OperationIdentityServiceGetUser = "/velony.identity.api.v1.IdentityService/GetUser"
 const OperationIdentityServiceLoginAuth = "/velony.identity.api.v1.IdentityService/LoginAuth"
 const OperationIdentityServicePresignUserAvatar = "/velony.identity.api.v1.IdentityService/PresignUserAvatar"
 const OperationIdentityServiceRefreshAuth = "/velony.identity.api.v1.IdentityService/RefreshAuth"
 const OperationIdentityServiceRegisterAuth = "/velony.identity.api.v1.IdentityService/RegisterAuth"
+const OperationIdentityServiceRequestUserEmailChange = "/velony.identity.api.v1.IdentityService/RequestUserEmailChange"
 const OperationIdentityServiceUpdateUser = "/velony.identity.api.v1.IdentityService/UpdateUser"
 
 type IdentityServiceHTTPServer interface {
 	// BatchGetUsers Retrieves multiple users.
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
+	ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*ConfirmUserEmailChangeResponse, error)
 	// DeleteUser Deletes a user.
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	// GetUser Retrieves a user.
@@ -42,6 +45,7 @@ type IdentityServiceHTTPServer interface {
 	RefreshAuth(context.Context, *RefreshAuthRequest) (*RefreshAuthResponse, error)
 	// RegisterAuth Register a user.
 	RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error)
+	RequestUserEmailChange(context.Context, *RequestUserEmailChangeRequest) (*RequestUserEmailChangeResponse, error)
 	// UpdateUser Updates a user.
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 }
@@ -51,6 +55,8 @@ func RegisterIdentityServiceHTTPServer(s *http.Server, srv IdentityServiceHTTPSe
 	r.Handle("GET", "/v1/{name:users/[^/]+}", _IdentityService_GetUser0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/users:batchGet", _IdentityService_BatchGetUsers0_HTTP_Handler(srv))
 	r.Handle("PATCH", "/v1/{user.name:users/[^/]+}", _IdentityService_UpdateUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:users/[^/]+}:requestEmailChange", _IdentityService_RequestUserEmailChange0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/users:confirmEmailChange", _IdentityService_ConfirmUserEmailChange0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:users/[^/]+}:presignAvatar", _IdentityService_PresignUserAvatar0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:users/[^/]+}", _IdentityService_DeleteUser0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/auth:login", _IdentityService_LoginAuth0_HTTP_Handler(srv))
@@ -120,6 +126,47 @@ func _IdentityService_UpdateUser0_HTTP_Handler(srv IdentityServiceHTTPServer) fu
 			return err
 		}
 		reply := out.(*User)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _IdentityService_RequestUserEmailChange0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RequestUserEmailChangeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationIdentityServiceRequestUserEmailChange)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RequestUserEmailChange(ctx, req.(*RequestUserEmailChangeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RequestUserEmailChangeResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _IdentityService_ConfirmUserEmailChange0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ConfirmUserEmailChangeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationIdentityServiceConfirmUserEmailChange)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ConfirmUserEmailChange(ctx, req.(*ConfirmUserEmailChangeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ConfirmUserEmailChangeResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -228,6 +275,7 @@ func _IdentityService_RefreshAuth0_HTTP_Handler(srv IdentityServiceHTTPServer) f
 type IdentityServiceHTTPClient interface {
 	// BatchGetUsers Retrieves multiple users.
 	BatchGetUsers(ctx context.Context, req *BatchGetUsersRequest, opts ...http.CallOption) (rsp *BatchGetUsersResponse, err error)
+	ConfirmUserEmailChange(ctx context.Context, req *ConfirmUserEmailChangeRequest, opts ...http.CallOption) (rsp *ConfirmUserEmailChangeResponse, err error)
 	// DeleteUser Deletes a user.
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// GetUser Retrieves a user.
@@ -240,6 +288,7 @@ type IdentityServiceHTTPClient interface {
 	RefreshAuth(ctx context.Context, req *RefreshAuthRequest, opts ...http.CallOption) (rsp *RefreshAuthResponse, err error)
 	// RegisterAuth Register a user.
 	RegisterAuth(ctx context.Context, req *RegisterAuthRequest, opts ...http.CallOption) (rsp *RegisterAuthResponse, err error)
+	RequestUserEmailChange(ctx context.Context, req *RequestUserEmailChangeRequest, opts ...http.CallOption) (rsp *RequestUserEmailChangeResponse, err error)
 	// UpdateUser Updates a user.
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *User, err error)
 }
@@ -263,6 +312,23 @@ func (c *IdentityServiceHTTPClientImpl) BatchGetUsers(ctx context.Context, in *B
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *IdentityServiceHTTPClientImpl) ConfirmUserEmailChange(ctx context.Context, in *ConfirmUserEmailChangeRequest, opts ...http.CallOption) (*ConfirmUserEmailChangeResponse, error) {
+	var out ConfirmUserEmailChangeResponse
+	pattern := "/v1/users:confirmEmailChange"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationIdentityServiceConfirmUserEmailChange),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -366,6 +432,23 @@ func (c *IdentityServiceHTTPClientImpl) RegisterAuth(ctx context.Context, in *Re
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
 		http.Operation(OperationIdentityServiceRegisterAuth),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *IdentityServiceHTTPClientImpl) RequestUserEmailChange(ctx context.Context, in *RequestUserEmailChangeRequest, opts ...http.CallOption) (*RequestUserEmailChangeResponse, error) {
+	var out RequestUserEmailChangeResponse
+	pattern := "/v1/{name=users/*}:requestEmailChange"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationIdentityServiceRequestUserEmailChange),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

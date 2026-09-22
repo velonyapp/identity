@@ -4,8 +4,8 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/auth"
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
-	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/event"
+	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 
@@ -18,6 +18,7 @@ var ProviderSet = wire.NewSet(
 	mysql.NewUnitOfWork,
 	mysql.NewUserRepo,
 	mysql.NewSessionRepo,
+	mysql.NewEmailChangeRequestRepo,
 	mysql.NewEventPublisher,
 	redis.NewConnection,
 	redis.NewCache,

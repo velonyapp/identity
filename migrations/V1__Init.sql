@@ -51,3 +51,20 @@ CREATE TABLE sessions (
         REFERENCES users (id)
         ON DELETE CASCADE
 ) ENGINE = InnoDB;
+
+CREATE TABLE email_change_requests (
+    id          CHAR(36) PRIMARY KEY,
+    token_hash  BINARY(32) NOT NULL UNIQUE,
+    user_id     CHAR(36) NOT NULL,
+    new_email   VARCHAR(255) NOT NULL,
+    create_time TIMESTAMP(6) NOT NULL,
+    expire_time TIMESTAMP(6) NOT NULL,
+    confirm_time TIMESTAMP(6),
+
+    INDEX idx_change_email_requests_user_id (user_id),
+
+    CONSTRAINT fk_change_email_request_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE CASCADE
+) ENGINE = InnoDB;

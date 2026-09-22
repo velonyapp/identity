@@ -159,6 +159,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.PresignUserAvatarResponse'
+    /v1/users/{user}:requestEmailChange:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RequestUserEmailChange
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RequestUserEmailChangeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RequestUserEmailChangeResponse'
     /v1/users:batchGet:
         get:
             tags:
@@ -183,6 +208,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.BatchGetUsersResponse'
+    /v1/users:confirmEmailChange:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_ConfirmUserEmailChange
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.ConfirmUserEmailChangeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.ConfirmUserEmailChangeResponse'
 components:
     schemas:
         velony.identity.api.v1.BatchGetUsersResponse:
@@ -194,6 +237,19 @@ components:
                         $ref: '#/components/schemas/velony.identity.api.v1.User'
                     description: The requested users, in the same order as the requested names.
             description: The response message for retrieving multiple users.
+        velony.identity.api.v1.ConfirmUserEmailChangeRequest:
+            required:
+                - token
+            type: object
+            properties:
+                token:
+                    type: string
+                    description: The verification token from the email link.
+            description: The request message for verifying a user's email.
+        velony.identity.api.v1.ConfirmUserEmailChangeResponse:
+            type: object
+            properties: {}
+            description: The response message for verifying a user's email.
         velony.identity.api.v1.LoginAuthRequest:
             required:
                 - identity
@@ -261,6 +317,23 @@ components:
                     type: string
                 refreshToken:
                     type: string
+        velony.identity.api.v1.RequestUserEmailChangeRequest:
+            required:
+                - name
+                - email
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: The resource name of the user.
+                email:
+                    type: string
+                    description: The new email address.
+            description: The request message for changing a user's email.
+        velony.identity.api.v1.RequestUserEmailChangeResponse:
+            type: object
+            properties: {}
+            description: The response message for changing a user's email.
         velony.identity.api.v1.User:
             required:
                 - username
@@ -269,7 +342,7 @@ components:
             properties:
                 name:
                     type: string
-                    description: The storage key of the user.
+                    description: The resource name of the user.
                 username:
                     type: string
                     description: The username of the user.
@@ -281,6 +354,7 @@ components:
                     type: string
                     description: The full name of the user.
                 avatarKey:
+                    readOnly: true
                     type: string
                     description: The avatar key of the user.
             description: A user.

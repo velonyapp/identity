@@ -8,4 +8,5 @@ import (
 
 var ProviderSet = wire.NewSet(
 	service.NewUsernameAvailability,
+	service.NewEmailAvailability,
 )

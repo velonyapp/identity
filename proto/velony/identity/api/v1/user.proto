@@ -18,7 +18,7 @@ message User {
     plural  : "users"
   };
 
-  // The storage key of the user.
+  // The resource name of the user.
   string name = 1 [(google.api.field_behavior) = IDENTIFIER];
 
   // The username of the user.
@@ -31,7 +31,7 @@ message User {
   string full_name = 4 [(google.api.field_behavior) = REQUIRED];
 
   // The avatar key of the user.
-  optional string avatar_key = 5 [(google.api.field_behavior) = OPTIONAL];
+  optional string avatar_key = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 // The request message for retrieving a user.
@@ -67,13 +67,37 @@ message BatchGetUsersResponse {
 // The request message for updating a user.
 message UpdateUserRequest {
   // The user to update.
-  //
-  // The user's `name` field is used to identify the user to update.
   User user = 1 [(google.api.field_behavior) = REQUIRED];
 
   // The fields to update.
   google.protobuf.FieldMask update_mask = 2[(google.api.field_behavior) = OPTIONAL];
 }
+
+// The request message for changing a user's email.
+message RequestUserEmailChangeRequest {
+  // The resource name of the user.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "identity.velony.app/User"
+    }
+  ];
+
+  // The new email address.
+  string email = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// The response message for changing a user's email.
+message RequestUserEmailChangeResponse {}
+
+// The request message for verifying a user's email.
+message ConfirmUserEmailChangeRequest {
+  // The verification token from the email link.
+  string token = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// The response message for verifying a user's email.
+message ConfirmUserEmailChangeResponse {}
 
 // The request message for presigning a user avatar upload.
 message PresignUserAvatarRequest {

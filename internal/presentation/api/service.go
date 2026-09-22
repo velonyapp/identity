@@ -23,14 +23,16 @@ const (
 type Service struct {
 	v1.UnimplementedIdentityServiceServer
 
-	getUserHandler           *query.GetUserHandler
-	batchGetUsersHandler     *query.BatchGetUsersHandler
-	registerAuthHandler      *command.RegisterAuthHandler
-	loginAuthHandler         *command.LoginAuthHandler
-	refreshAuthHandler       *command.RefreshAuthHandler
-	updateUserHandler        *command.UpdateUserHandler
-	presignUserAvatarHandler *command.PresignUserAvatarHandler
-	deleteUserHandler        *command.DeleteUserHandler
+	getUserHandler                *query.GetUserHandler
+	batchGetUsersHandler          *query.BatchGetUsersHandler
+	registerAuthHandler           *command.RegisterAuthHandler
+	loginAuthHandler              *command.LoginAuthHandler
+	refreshAuthHandler            *command.RefreshAuthHandler
+	updateUserHandler             *command.UpdateUserHandler
+	requestUserEmailChangeHandler *command.RequestUserEmailChangeHandler
+	confirmUserEmailChangeHandler *command.ConfirmUserEmailChangeHandler
+	presignUserAvatarHandler      *command.PresignUserAvatarHandler
+	deleteUserHandler             *command.DeleteUserHandler
 }
 
 func NewService(
@@ -40,18 +42,22 @@ func NewService(
 	loginAuthHandler *command.LoginAuthHandler,
 	refreshAuthHandler *command.RefreshAuthHandler,
 	updateUserHandler *command.UpdateUserHandler,
+	requestUserEmailChangeHandler *command.RequestUserEmailChangeHandler,
+	confirmUserEmailChangeHandler *command.ConfirmUserEmailChangeHandler,
 	presignUserAvatarHandler *command.PresignUserAvatarHandler,
 	deleteUserHandler *command.DeleteUserHandler,
 ) *Service {
 	return &Service{
-		getUserHandler:           getUserHandler,
-		batchGetUsersHandler:     batchGetUsersHandler,
-		registerAuthHandler:      registerAuthHandler,
-		loginAuthHandler:         loginAuthHandler,
-		refreshAuthHandler:       refreshAuthHandler,
-		updateUserHandler:        updateUserHandler,
-		presignUserAvatarHandler: presignUserAvatarHandler,
-		deleteUserHandler:        deleteUserHandler,
+		getUserHandler:                getUserHandler,
+		batchGetUsersHandler:          batchGetUsersHandler,
+		registerAuthHandler:           registerAuthHandler,
+		loginAuthHandler:              loginAuthHandler,
+		refreshAuthHandler:            refreshAuthHandler,
+		updateUserHandler:             updateUserHandler,
+		requestUserEmailChangeHandler: requestUserEmailChangeHandler,
+		confirmUserEmailChangeHandler: confirmUserEmailChangeHandler,
+		presignUserAvatarHandler:      presignUserAvatarHandler,
+		deleteUserHandler:             deleteUserHandler,
 	}
 }
 
@@ -220,6 +226,46 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 		FullName:  result.User.FullName,
 		AvatarKey: result.User.AvatarKey,
 	}, nil
+}
+
+func (s *Service) RequestUserEmailChange(ctx context.Context, req *v1.RequestUserEmailChangeRequest) (*v1.RequestUserEmailChangeResponse, error) {
+	subject, err := subjectFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var userID string
+
+	if err := resourcename.Sscan(req.GetName(), userResourcePattern, &userID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if isSelf(userID) {
+		userID = subject
+	}
+
+	if userID != subject {
+		return nil, status.Error(codes.PermissionDenied, "cannot request email change for another user")
+	}
+
+	if _, err := s.requestUserEmailChangeHandler.Execute(ctx, &command.RequestUserEmailChange{
+		UserID:   userID,
+		NewEmail: req.Email,
+	}); err != nil {
+		return nil, mapError(err)
+	}
+
+	return &v1.RequestUserEmailChangeResponse{}, nil
+}
+
+func (s *Service) ConfirmUserEmailChange(ctx context.Context, req *v1.ConfirmUserEmailChangeRequest) (*v1.ConfirmUserEmailChangeResponse, error) {
+	if _, err := s.confirmUserEmailChangeHandler.Execute(ctx, &command.ConfirmUserEmailChange{
+		Token: req.Token,
+	}); err != nil {
+		return nil, mapError(err)
+	}
+
+	return &v1.ConfirmUserEmailChangeResponse{}, nil
 }
 
 func (s *Service) PresignUserAvatar(ctx context.Context, req *v1.PresignUserAvatarRequest) (*v1.PresignUserAvatarResponse, error) {

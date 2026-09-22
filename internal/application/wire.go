@@ -15,6 +15,8 @@ var ProviderSet = wire.NewSet(
 	command.NewLoginAuthHandler,
 	command.NewRefreshAuthHandler,
 	command.NewUpdateUserHandler,
+	command.NewRequestUserEmailChangeHandler,
+	command.NewConfirmUserEmailChangeHandler,
 	command.NewDeleteUserHandler,
 	command.NewPresignUserAvatarHandler,
 	domainevent.NewDispatcher,

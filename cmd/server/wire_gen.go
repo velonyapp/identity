@@ -67,6 +67,10 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	loginAuthHandler := command.NewLoginAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, passwordHasher, cache)
 	refreshAuthHandler := command.NewRefreshAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, cache)
 	updateUserHandler := command.NewUpdateUserHandler(user, unitOfWork, cache, usernameAvailability)
+	emailChangeRequest := mysql.NewEmailChangeRequestRepo(db)
+	emailAvailability := service.NewEmailAvailability(user)
+	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(emailChangeRequest, unitOfWork, tokenProvider, emailAvailability)
+	confirmUserEmailChangeHandler := command.NewConfirmUserEmailChangeHandler(emailChangeRequest, user, unitOfWork, cache, emailAvailability)
 	assetServiceClient, cleanup, err := gateway.NewAssetClient(confGateway)
 	if err != nil {
 		return nil, nil, err
@@ -74,7 +78,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	assetService := gateway.NewAssetService(assetServiceClient)
 	presignUserAvatarHandler := command.NewPresignUserAvatarHandler(assetService)
 	deleteUserHandler := command.NewDeleteUserHandler(user, unitOfWork, cache)
-	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, presignUserAvatarHandler, deleteUserHandler)
+	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, presignUserAvatarHandler, deleteUserHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
