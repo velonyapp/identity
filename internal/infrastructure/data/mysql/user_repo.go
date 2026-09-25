@@ -315,7 +315,7 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 					time,
 					expire_time
 				)
-				VALUES (UUID(), ?, ?, ?, ?)
+				VALUES (?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 					value = ?,
 					time = ?,
@@ -359,7 +359,7 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 					time,
 					expire_time
 				)
-				VALUES (UUID(), ?, ?, ?, ?)
+				VALUES (?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 					value = ?,
 					time = ?,
