@@ -37,18 +37,18 @@ func (repo *UserRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 		SELECT
 			users.id,
 			users.username,
-			users.email,
 			users.full_name,
+			users.email,
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.new_email,
-			email_change_requests.request_time,
+			email_change_requests.value,
+			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.new_avatar_key,
-			avatar_change_requests.request_time,
+			avatar_change_requests.value,
+			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
@@ -98,18 +98,18 @@ func (repo *UserRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*en
 		SELECT
 			users.id,
 			users.username,
-			users.email,
 			users.full_name,
+			users.email,
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.new_email,
-			email_change_requests.request_time,
+			email_change_requests.value,
+			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.new_avatar_key,
-			avatar_change_requests.request_time,
+			avatar_change_requests.value,
+			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
@@ -156,18 +156,18 @@ func (repo *UserRepo) FindByUsername(ctx context.Context, username vo.Username) 
 		SELECT
 			users.id,
 			users.username,
-			users.email,
 			users.full_name,
+			users.email,
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.new_email,
-			email_change_requests.request_time,
+			email_change_requests.value,
+			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.new_avatar_key,
-			avatar_change_requests.request_time,
+			avatar_change_requests.value,
+			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
@@ -205,18 +205,18 @@ func (repo *UserRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 		SELECT
 			users.id,
 			users.username,
-			users.email,
 			users.full_name,
+			users.email,
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.new_email,
-			email_change_requests.request_time,
+			email_change_requests.value,
+			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.new_avatar_key,
-			avatar_change_requests.request_time,
+			avatar_change_requests.value,
+			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
@@ -264,8 +264,8 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			INSERT INTO users (
 				id,
 				username,
-				email,
 				full_name,
+				email,
 				avatar_key,
 				create_time,
 				update_time
@@ -273,8 +273,8 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			VALUES (?, ?, ?, ?, ?, ?, ?)
 			ON DUPLICATE KEY UPDATE
 				username = ?,
-				email = ?,
 				full_name = ?,
+				email = ?,
 				avatar_key = ?,
 				update_time = ?
 		`
@@ -292,15 +292,15 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 		if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 			user.ID().Value(),
 			user.Username().Value(),
-			email,
 			user.FullName().Value(),
+			email,
 			avatarKey,
 			user.CreateTime(),
 			user.UpdateTime(),
 
 			user.Username().Value(),
-			email,
 			user.FullName().Value(),
+			email,
 			avatarKey,
 			user.UpdateTime(),
 		); err != nil {
@@ -311,14 +311,14 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			const emailChangeRequestQuery = `
 				INSERT INTO email_change_requests (
 					user_id,
-					new_email,
-					request_time,
+					value,
+					time,
 					expire_time
 				)
-				VALUES (?, ?, ?, ?)
+				VALUES (UUID(), ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
-					new_email = ?,
-					request_time = ?,
+					value = ?,
+					time = ?,
 					expire_time = ?
 			`
 
@@ -355,14 +355,14 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			const avatarChangeRequestQuery = `
 				INSERT INTO avatar_change_requests (
 					user_id,
-					new_avatar_key,
-					request_time,
+					value,
+					time,
 					expire_time
 				)
-				VALUES (?, ?, ?, ?)
+				VALUES (UUID(), ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
-					new_avatar_key = ?,
-					request_time = ?,
+					value = ?,
+					time = ?,
 					expire_time = ?
 			`
 
@@ -477,8 +477,8 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 	var (
 		id         string
 		username   string
-		email      sql.NullString
 		fullName   string
+		email      sql.NullString
 		avatarKey  sql.NullString
 		createTime time.Time
 		updateTime time.Time
@@ -499,8 +499,8 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 	if err := scanner.Scan(
 		&id,
 		&username,
-		&email,
 		&fullName,
+		&email,
 		&avatarKey,
 		&createTime,
 		&updateTime,
@@ -521,14 +521,13 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 	}
 
 	usernameVO, _ := vo.NewUsername(username)
+	fullNameVO, _ := vo.NewFullName(fullName)
 
 	var emailVO *vo.Email
 	if email.Valid {
 		value, _ := vo.NewEmail(email.String)
 		emailVO = &value
 	}
-
-	fullNameVO, _ := vo.NewFullName(fullName)
 
 	var avatarKeyVO *vo.AvatarKey
 	if avatarKey.Valid {

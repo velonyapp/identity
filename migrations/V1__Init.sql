@@ -1,17 +1,16 @@
 CREATE TABLE users (
     id          CHAR(36) PRIMARY KEY,
     username    VARCHAR(255) NOT NULL UNIQUE,
-    email       VARCHAR(255) UNIQUE,
     full_name   TEXT NOT NULL,
+    email       VARCHAR(255) UNIQUE,
     avatar_key  VARCHAR(128),
     create_time TIMESTAMP(6) NOT NULL,
     update_time TIMESTAMP(6) NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE email_change_requests (
-    id          CHAR(36) PRIMARY KEY,
-    user_id     CHAR(36) NOT NULL UNIQUE,
-    new_value   VARCHAR(255) NOT NULL,
+    user_id     CHAR(36) PRIMARY KEY,
+    value       VARCHAR(255) NOT NULL,
     time        TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 
@@ -22,9 +21,8 @@ CREATE TABLE email_change_requests (
 ) ENGINE = InnoDB;
 
 CREATE TABLE avatar_change_requests (
-    id          CHAR(36) PRIMARY KEY,
-    user_id     CHAR(36) NOT NULL UNIQUE,
-    new_value   VARCHAR(128) NOT NULL,
+    user_id     CHAR(36) PRIMARY KEY,
+    value       VARCHAR(128) NOT NULL,
     time        TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 
