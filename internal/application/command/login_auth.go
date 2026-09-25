@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -25,21 +26,21 @@ type LoginAuthResult struct {
 }
 
 type LoginAuthHandler struct {
-	c              *conf.Auth
+	c              *conf.Security
 	userRepo       repo.User
 	sessionRepo    repo.Session
 	unitOfWork     port.UnitOfWork
-	tokenProvider  port.TokenProvider
+	tokenProvider  port.AuthTokenProvider
 	passwordHasher port.PasswordHasher
 	cache          port.Cache
 }
 
 func NewLoginAuthHandler(
-	c *conf.Auth,
+	c *conf.Security,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.TokenProvider,
+	tokenProvider port.AuthTokenProvider,
 	passwordHasher port.PasswordHasher,
 	cache port.Cache,
 ) *LoginAuthHandler {
@@ -58,6 +59,8 @@ func (h *LoginAuthHandler) Execute(
 	ctx context.Context,
 	cmd *LoginAuth,
 ) (*LoginAuthResult, error) {
+	now := time.Now()
+
 	username, _ := vo.NewUsername(cmd.Identity)
 	email, _ := vo.NewEmail(cmd.Identity)
 	password, _ := vo.NewPassword(cmd.Password)
@@ -82,14 +85,14 @@ func (h *LoginAuthHandler) Execute(
 		if user == nil {
 			return ErrInvalidCredentials
 		}
-		if user.LocalAuthStrategy == nil {
+		if !user.HasLocalAuthStrategy() {
 			return ErrInvalidCredentials
 		}
-		if err := h.passwordHasher.Verify(password, user.LocalAuthStrategy.PasswordHash); err != nil {
+		if err := h.passwordHasher.Verify(password, user.LocalAuthStrategy().PasswordHash()); err != nil {
 			return ErrInvalidCredentials
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID.Value())
+		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID().Value())
 		if err != nil {
 			return err
 		}
@@ -103,7 +106,12 @@ func (h *LoginAuthHandler) Execute(
 			return err
 		}
 
-		session := entity.NewSession(user.ID, sessionToken, int(h.c.RefreshToken.Ttl.Seconds))
+		session := entity.NewSession(
+			user.ID(),
+			sessionToken,
+			time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second,
+			now,
+		)
 
 		if err := h.sessionRepo.Save(ctx, session); err != nil {
 			return err
@@ -115,7 +123,7 @@ func (h *LoginAuthHandler) Execute(
 	}
 
 	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID),
+		common.UserResultCacheKey(user.ID()),
 		common.NewUserResult(user),
 		common.UserResultCacheTTL,
 	)

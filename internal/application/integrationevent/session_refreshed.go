@@ -2,27 +2,25 @@ package integrationevent
 
 import "time"
 
+var _ IntegrationEvent = (*SessionRefreshed)(nil)
+
 type SessionRefreshed struct {
 	BaseIntegrationEvent
-
-	RefreshTime time.Time
 }
 
 func NewSessionRefreshed(
 	sessionID string,
-	refreshTime time.Time,
-) SessionRefreshed {
-	return SessionRefreshed{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(sessionID),
-
-		RefreshTime: refreshTime,
+	occurTime time.Time,
+) *SessionRefreshed {
+	return &SessionRefreshed{
+		BaseIntegrationEvent: NewBaseIntegrationEvent(sessionID, occurTime),
 	}
 }
 
-func (e SessionRefreshed) Type() string {
+func (e *SessionRefreshed) Type() string {
 	return "session.refreshed"
 }
 
-func (e SessionRefreshed) AggregateType() string {
+func (e *SessionRefreshed) AggregateType() string {
 	return "session"
 }

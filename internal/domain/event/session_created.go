@@ -1,23 +1,31 @@
 package event
 
-import "github.com/velonyapp/identity/internal/domain/vo"
+import (
+	"time"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
+
+var _ DomainEvent = (*SessionCreated)(nil)
 
 type SessionCreated struct {
 	BaseDomainEvent
 
-	UserID     vo.UserID
-	CreateTime vo.Time
+	userID vo.UserID
 }
 
 func NewSessionCreated(
 	sessionID vo.SessionID,
 	userID vo.UserID,
-	createTime vo.Time,
-) SessionCreated {
-	return SessionCreated{
-		BaseDomainEvent: NewBaseDomainEvent(sessionID.String()),
+	occurTime time.Time,
+) *SessionCreated {
+	return &SessionCreated{
+		BaseDomainEvent: NewBaseDomainEvent(sessionID.Value(), occurTime),
 
-		UserID:     userID,
-		CreateTime: createTime,
+		userID: userID,
 	}
+}
+
+func (e *SessionCreated) UserID() vo.UserID {
+	return e.userID
 }

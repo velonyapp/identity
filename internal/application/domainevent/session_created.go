@@ -20,11 +20,11 @@ func NewSessionCreatedHandler(
 	}
 }
 
-func (h *SessionCreatedHandler) Execute(ctx context.Context, domainEvent event.SessionCreated) error {
+func (h *SessionCreatedHandler) Execute(ctx context.Context, domainEvent *event.SessionCreated) error {
 	integrationEvent := integrationevent.NewSessionCreated(
 		domainEvent.AggregateID(),
-		domainEvent.UserID.Value(),
-		domainEvent.CreateTime.Value(),
+		domainEvent.UserID().Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

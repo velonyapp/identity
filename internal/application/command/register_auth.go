@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -24,22 +25,22 @@ type RegisterAuthResult struct {
 }
 
 type RegisterAuthHandler struct {
-	c                    *conf.Auth
+	c                    *conf.Security
 	userRepo             repo.User
 	sessionRepo          repo.Session
 	unitOfWork           port.UnitOfWork
-	tokenProvider        port.TokenProvider
+	tokenProvider        port.AuthTokenProvider
 	passwordHasher       port.PasswordHasher
 	cache                port.Cache
 	usernameAvailability *service.UsernameAvailability
 }
 
 func NewRegisterAuthHandler(
-	c *conf.Auth,
+	c *conf.Security,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.TokenProvider,
+	tokenProvider port.AuthTokenProvider,
 	passwordHasher port.PasswordHasher,
 	cache port.Cache,
 	usernameAvailability *service.UsernameAvailability,
@@ -60,6 +61,8 @@ func (h *RegisterAuthHandler) Execute(
 	ctx context.Context,
 	cmd *RegisterAuth,
 ) (*RegisterAuthResult, error) {
+	now := time.Now()
+
 	fullName, err := vo.NewFullName(cmd.FullName)
 	if err != nil {
 		return nil, err
@@ -78,7 +81,8 @@ func (h *RegisterAuthHandler) Execute(
 		return nil, err
 	}
 
-	var user *entity.User
+	user := entity.NewUser(username, fullName, now)
+
 	var accessToken, refreshToken string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
@@ -86,11 +90,9 @@ func (h *RegisterAuthHandler) Execute(
 			return err
 		}
 
-		user = entity.NewUser(username, nil, fullName, nil)
+		localAuthStrategy := vo.NewLocalAuthStrategy(passwordHash)
 
-		localAuthStrategy := entity.NewLocalAuthStrategy(user.ID, passwordHash)
-
-		if err := user.ReplaceLocalAuthStrategy(localAuthStrategy); err != nil {
+		if err := user.ChangeLocalAuthStrategy(localAuthStrategy); err != nil {
 			return err
 		}
 
@@ -98,7 +100,7 @@ func (h *RegisterAuthHandler) Execute(
 			return err
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID.Value())
+		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID().Value())
 		if err != nil {
 			return err
 		}
@@ -112,7 +114,12 @@ func (h *RegisterAuthHandler) Execute(
 			return err
 		}
 
-		session := entity.NewSession(user.ID, sessionToken, int(h.c.RefreshToken.Ttl.Seconds))
+		session := entity.NewSession(
+			user.ID(),
+			sessionToken,
+			time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second,
+			now,
+		)
 
 		if err := h.sessionRepo.Save(ctx, session); err != nil {
 			return err
@@ -124,7 +131,7 @@ func (h *RegisterAuthHandler) Execute(
 	}
 
 	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID),
+		common.UserResultCacheKey(user.ID()),
 		common.NewUserResult(user),
 		common.UserResultCacheTTL,
 	)

@@ -13,7 +13,7 @@ message Bootstrap {
   Data          data          = 2 [
     (buf.validate.field).required = true
   ];
-  Auth          auth          = 3 [
+  Security      security      = 3 [
     (buf.validate.field).required = true
   ];
   Observability observability = 4;
@@ -85,7 +85,7 @@ message Data {
   Redis redis = 2;
 }
 
-message Auth {
+message Security {
   message AccessToken {
     string secret = 1 [
       (buf.validate.field).string.min_bytes = 32
@@ -104,10 +104,38 @@ message Auth {
     ];
   }
 
+  message EmailChangeRequestToken {
+    string secret = 1 [
+      (buf.validate.field).string.min_bytes = 32
+    ];
+
+    google.protobuf.Duration ttl = 2 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
+  }
+
+  message AvatarChangeRequestToken {
+    string secret = 1 [
+      (buf.validate.field).string.min_bytes = 32
+    ];
+
+    google.protobuf.Duration ttl = 2 [
+      (buf.validate.field).required = true,
+      (buf.validate.field).duration.gt = {}
+    ];
+  }
+
   AccessToken  access_token  = 1 [
     (buf.validate.field).required = true
   ];
   RefreshToken refresh_token = 2 [
+    (buf.validate.field).required = true
+  ];
+  EmailChangeRequestToken email_change_request_token = 3 [
+    (buf.validate.field).required = true
+  ];
+  AvatarChangeRequestToken avatar_change_request_token = 4 [
     (buf.validate.field).required = true
   ];
 }

@@ -1,4 +1,4 @@
-package auth
+package security
 
 import (
 	"errors"
@@ -8,6 +8,8 @@ import (
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
+
+var _ port.PasswordHasher = (*PasswordHasher)(nil)
 
 type PasswordHasher struct {
 	cost int

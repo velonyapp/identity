@@ -8,38 +8,35 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
-type UserAvatarKeyChangedHandler struct {
+type UserAvatarChangedHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewUserAvatarKeyChangedHandler(
+func NewUserAvatarChangedHandler(
 	eventPublisher port.EventPublisher,
-) *UserAvatarKeyChangedHandler {
-	return &UserAvatarKeyChangedHandler{
+) *UserAvatarChangedHandler {
+	return &UserAvatarChangedHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *UserAvatarKeyChangedHandler) Execute(
-	ctx context.Context,
-	domainEvent event.UserAvatarKeyChanged,
-) error {
+func (h *UserAvatarChangedHandler) Execute(ctx context.Context, domainEvent *event.UserAvatarChanged) error {
 	var oldAvatarKey, newAvatarKey *string
 
-	if domainEvent.OldAvatarKey != nil {
-		value := domainEvent.OldAvatarKey.String()
+	if domainEvent.OldAvatarKey() != nil {
+		value := domainEvent.OldAvatarKey().String()
 		oldAvatarKey = &value
 	}
-	if domainEvent.NewAvatarKey != nil {
-		value := domainEvent.NewAvatarKey.String()
+	if domainEvent.NewAvatarKey() != nil {
+		value := domainEvent.NewAvatarKey().String()
 		newAvatarKey = &value
 	}
 
-	integrationEvent := integrationevent.NewUserAvatarKeyChanged(
+	integrationEvent := integrationevent.NewUserAvatarChanged(
 		domainEvent.AggregateID(),
 		oldAvatarKey,
 		newAvatarKey,
-		domainEvent.UpdateTime.Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

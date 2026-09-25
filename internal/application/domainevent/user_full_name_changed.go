@@ -20,12 +20,12 @@ func NewUserFullNameChangedHandler(
 	}
 }
 
-func (h *UserFullNameChangedHandler) Execute(ctx context.Context, domainEvent event.UserFullNameChanged) error {
+func (h *UserFullNameChangedHandler) Execute(ctx context.Context, domainEvent *event.UserFullNameChanged) error {
 	integrationEvent := integrationevent.NewUserFullNameChanged(
 		domainEvent.AggregateID(),
-		domainEvent.OldFullName.Value(),
-		domainEvent.NewFullName.Value(),
-		domainEvent.UpdateTime.Value(),
+		domainEvent.OldFullName().Value(),
+		domainEvent.NewFullName().Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

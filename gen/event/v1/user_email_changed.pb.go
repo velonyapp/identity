@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -26,7 +26,6 @@ type UserEmailChangedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OldEmail      *string                `protobuf:"bytes,1,opt,name=old_email,json=oldEmail,proto3,oneof" json:"old_email,omitempty"`
 	NewEmail      *string                `protobuf:"bytes,2,opt,name=new_email,json=newEmail,proto3,oneof" json:"new_email,omitempty"`
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,23 +74,14 @@ func (x *UserEmailChangedPayload) GetNewEmail() string {
 	return ""
 }
 
-func (x *UserEmailChangedPayload) GetUpdateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdateTime
-	}
-	return nil
-}
-
 var File_velony_identity_event_v1_user_email_changed_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_user_email_changed_proto_rawDesc = "" +
 	"\n" +
-	"1velony/identity/event/v1/user_email_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb6\x01\n" +
+	"1velony/identity/event/v1/user_email_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"y\n" +
 	"\x17UserEmailChangedPayload\x12 \n" +
 	"\told_email\x18\x01 \x01(\tH\x00R\boldEmail\x88\x01\x01\x12 \n" +
-	"\tnew_email\x18\x02 \x01(\tH\x01R\bnewEmail\x88\x01\x01\x12;\n" +
-	"\vupdate_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTimeB\f\n" +
+	"\tnew_email\x18\x02 \x01(\tH\x01R\bnewEmail\x88\x01\x01B\f\n" +
 	"\n" +
 	"_old_emailB\f\n" +
 	"\n" +
@@ -112,15 +102,13 @@ func file_velony_identity_event_v1_user_email_changed_proto_rawDescGZIP() []byte
 var file_velony_identity_event_v1_user_email_changed_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_user_email_changed_proto_goTypes = []any{
 	(*UserEmailChangedPayload)(nil), // 0: velony.identity.event.v1.UserEmailChangedPayload
-	(*timestamppb.Timestamp)(nil),   // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_user_email_changed_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.UserEmailChangedPayload.update_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_user_email_changed_proto_init() }

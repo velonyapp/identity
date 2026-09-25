@@ -44,8 +44,6 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*eventv1.Even
 
 func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Message, error) {
 	switch event := event.(type) {
-	case integrationevent.UserCreated:
-		return userCreatedPayload(event), nil
 
 	case *integrationevent.UserCreated:
 		if event == nil {
@@ -54,18 +52,12 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userCreatedPayload(*event), nil
 
-	case integrationevent.UserUsernameChanged:
-		return userUsernameChangedPayload(event), nil
-
 	case *integrationevent.UserUsernameChanged:
 		if event == nil {
 			return nil, fmt.Errorf("UserUsernameChanged event is nil")
 		}
 
 		return userUsernameChangedPayload(*event), nil
-
-	case integrationevent.UserEmailChanged:
-		return userEmailChangedPayload(event), nil
 
 	case *integrationevent.UserEmailChanged:
 		if event == nil {
@@ -74,9 +66,6 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userEmailChangedPayload(*event), nil
 
-	case integrationevent.UserFullNameChanged:
-		return userFullNameChangedPayload(event), nil
-
 	case *integrationevent.UserFullNameChanged:
 		if event == nil {
 			return nil, fmt.Errorf("UserFullNameChanged event is nil")
@@ -84,18 +73,12 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userFullNameChangedPayload(*event), nil
 
-	case integrationevent.UserAvatarKeyChanged:
-		return userAvatarKeyChangedPayload(event), nil
-
-	case *integrationevent.UserAvatarKeyChanged:
+	case *integrationevent.UserAvatarChanged:
 		if event == nil {
 			return nil, fmt.Errorf("UserAvatarKeyChanged event is nil")
 		}
 
 		return userAvatarKeyChangedPayload(*event), nil
-
-	case integrationevent.UserDeleted:
-		return userDeletedPayload(event), nil
 
 	case *integrationevent.UserDeleted:
 		if event == nil {
@@ -104,9 +87,6 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userDeletedPayload(*event), nil
 
-	case integrationevent.SessionCreated:
-		return sessionCreatedPayload(event), nil
-
 	case *integrationevent.SessionCreated:
 		if event == nil {
 			return nil, fmt.Errorf("SessionCreated event is nil")
@@ -114,18 +94,12 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return sessionCreatedPayload(*event), nil
 
-	case integrationevent.SessionRefreshed:
-		return sessionRefreshedPayload(event), nil
-
 	case *integrationevent.SessionRefreshed:
 		if event == nil {
 			return nil, fmt.Errorf("SessionRefreshed event is nil")
 		}
 
 		return sessionRefreshedPayload(*event), nil
-
-	case integrationevent.SessionRevoked:
-		return sessionRevokedPayload(event), nil
 
 	case *integrationevent.SessionRevoked:
 		if event == nil {

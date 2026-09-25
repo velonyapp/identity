@@ -26,7 +26,7 @@ func wireApp(
 	*info.Service,
 	*conf.Data,
 	*conf.Transport,
-	*conf.Auth,
+	*conf.Security,
 	*conf.Observability,
 	*conf.Gateway,
 	*slog.Logger,

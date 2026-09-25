@@ -105,7 +105,7 @@ func main() {
 		bi.Service,
 		bc.Data,
 		bc.Transport,
-		bc.Auth,
+		bc.Security,
 		bc.Observability,
 		bc.Gateway,
 		logger,

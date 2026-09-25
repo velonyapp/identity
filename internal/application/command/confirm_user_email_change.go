@@ -2,7 +2,7 @@ package command
 
 import (
 	"context"
-	"errors"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -12,35 +12,34 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-var ErrEmailChangeRequestNotFound = errors.New("email change request not found")
-
 type ConfirmUserEmailChange struct {
-	Token string
+	UserID string
+	Token  string
 }
 
 type ConfirmUserEmailChangeResult struct{}
 
 type ConfirmUserEmailChangeHandler struct {
-	requestRepo       repo.EmailChangeRequest
-	userRepo          repo.User
-	unitOfWork        port.UnitOfWork
-	cache             port.Cache
-	emailAvailability *service.EmailAvailability
+	userRepo     repo.User
+	unitOfWork   port.UnitOfWork
+	cache        port.Cache
+	verifier     port.RequestVerifier
+	availability *service.EmailAvailability
 }
 
 func NewConfirmUserEmailChangeHandler(
-	requestRepo repo.EmailChangeRequest,
 	userRepo repo.User,
 	unitOfWork port.UnitOfWork,
 	cache port.Cache,
-	emailAvailability *service.EmailAvailability,
+	verifier port.RequestVerifier,
+	availability *service.EmailAvailability,
 ) *ConfirmUserEmailChangeHandler {
 	return &ConfirmUserEmailChangeHandler{
-		requestRepo:       requestRepo,
-		userRepo:          userRepo,
-		unitOfWork:        unitOfWork,
-		cache:             cache,
-		emailAvailability: emailAvailability,
+		userRepo:     userRepo,
+		unitOfWork:   unitOfWork,
+		cache:        cache,
+		verifier:     verifier,
+		availability: availability,
 	}
 }
 
@@ -48,51 +47,41 @@ func (h *ConfirmUserEmailChangeHandler) Execute(
 	ctx context.Context,
 	cmd *ConfirmUserEmailChange,
 ) (*ConfirmUserEmailChangeResult, error) {
-	token, err := vo.NewRequestToken(cmd.Token)
-	if err != nil {
-		return nil, err
-	}
+	now := time.Now()
+
+	userID := vo.NewUserID(cmd.UserID)
 
 	var user *entity.User
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		request, err := h.requestRepo.FindByToken(ctx, token)
+		var err error
+
+		user, err = h.userRepo.FindByID(ctx, userID)
 		if err != nil {
 			return err
 		}
 
-		if request == nil {
-			return ErrEmailChangeRequestNotFound
+		if user.HasEmailChangeRequest() {
+			if err := h.verifier.VerifyEmailChange(*user.EmailChangeRequest(), cmd.Token); err != nil {
+				return err
+			}
 		}
 
-		if err := request.Confirm(); err != nil {
+		if err := user.ConfirmEmailChange(now); err != nil {
 			return err
 		}
 
-		if err := h.emailAvailability.EnsureAvailable(ctx, request.NewEmail); err != nil {
+		if err := h.availability.EnsureAvailable(ctx, *user.Email()); err != nil {
 			return err
 		}
 
-		user, err = h.userRepo.FindByID(ctx, request.UserID)
-		if err != nil {
-			return err
-		}
-
-		if err := user.ChangeEmail(&request.NewEmail); err != nil {
-			return err
-		}
-
-		if err := h.userRepo.Save(ctx, user); err != nil {
-			return err
-		}
-
-		return h.requestRepo.Save(ctx, request)
+		return h.userRepo.Save(ctx, user)
 	}); err != nil {
 		return nil, err
 	}
 
 	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID),
+		common.UserResultCacheKey(user.ID()),
 		common.NewUserResult(user),
 		common.UserResultCacheTTL,
 	)

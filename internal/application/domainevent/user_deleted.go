@@ -20,10 +20,10 @@ func NewUserDeletedHandler(
 	}
 }
 
-func (h *UserDeletedHandler) Execute(ctx context.Context, domainEvent event.UserDeleted) error {
+func (h *UserDeletedHandler) Execute(ctx context.Context, domainEvent *event.UserDeleted) error {
 	integrationEvent := integrationevent.NewUserDeleted(
 		domainEvent.AggregateID(),
-		domainEvent.DeleteTime.Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

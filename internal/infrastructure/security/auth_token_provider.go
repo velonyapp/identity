@@ -1,4 +1,4 @@
-package auth
+package security
 
 import (
 	"crypto/rand"
@@ -8,18 +8,19 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/conf"
-	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-type TokenProvider struct {
-	c *conf.Auth
+var _ port.AuthTokenProvider = (*AuthTokenProvider)(nil)
+
+type AuthTokenProvider struct {
+	c *conf.Security
 }
 
-func NewTokenProvider(c *conf.Auth) port.TokenProvider {
-	return &TokenProvider{c: c}
+func NewAuthTokenProvider(c *conf.Security) port.AuthTokenProvider {
+	return &AuthTokenProvider{c: c}
 }
 
-func (p *TokenProvider) GenerateAccessToken(subject string) (string, error) {
+func (p *AuthTokenProvider) GenerateAccessToken(subject string) (string, error) {
 	now := time.Now()
 
 	claims := jwt.RegisteredClaims{
@@ -39,7 +40,7 @@ func (p *TokenProvider) GenerateAccessToken(subject string) (string, error) {
 	return signedToken, nil
 }
 
-func (p *TokenProvider) GenerateRefreshToken() (string, error) {
+func (p *AuthTokenProvider) GenerateRefreshToken() (string, error) {
 	b := make([]byte, 32)
 
 	if _, err := rand.Read(b); err != nil {
@@ -47,19 +48,4 @@ func (p *TokenProvider) GenerateRefreshToken() (string, error) {
 	}
 
 	return base64.RawURLEncoding.EncodeToString(b), nil
-}
-
-func (p *TokenProvider) GenerateRequestToken() (vo.RequestToken, error) {
-	b := make([]byte, 32)
-
-	if _, err := rand.Read(b); err != nil {
-		return vo.RequestToken{}, port.ErrGenerateRequestToken
-	}
-
-	token, err := vo.NewRequestToken(base64.RawURLEncoding.EncodeToString(b))
-	if err != nil {
-		return vo.RequestToken{}, err
-	}
-
-	return token, nil
 }

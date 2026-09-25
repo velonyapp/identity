@@ -2,32 +2,26 @@ package integrationevent
 
 import "time"
 
+var _ IntegrationEvent = (*UserCreated)(nil)
+
 type UserCreated struct {
 	BaseIntegrationEvent
 
-	Username   string
-	Email      *string
-	FullName   string
-	AvatarKey  *string
-	CreateTime time.Time
+	Username string
+	FullName string
 }
 
 func NewUserCreated(
 	userID string,
 	username string,
-	email *string,
 	fullName string,
-	avatarKey *string,
-	createTime time.Time,
-) UserCreated {
-	return UserCreated{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(userID),
+	occurTime time.Time,
+) *UserCreated {
+	return &UserCreated{
+		BaseIntegrationEvent: NewBaseIntegrationEvent(userID, occurTime),
 
-		Username:   username,
-		Email:      email,
-		FullName:   fullName,
-		AvatarKey:  avatarKey,
-		CreateTime: createTime,
+		Username: username,
+		FullName: fullName,
 	}
 }
 

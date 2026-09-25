@@ -11,6 +11,4 @@ message UserCreatedPayload {
   optional string email      = 2;
   string          full_name  = 3;
   optional string avatar_key = 4;
-
-  google.protobuf.Timestamp create_time = 5;
 }

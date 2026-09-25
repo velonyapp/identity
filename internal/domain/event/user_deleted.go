@@ -1,20 +1,22 @@
 package event
 
-import "github.com/velonyapp/identity/internal/domain/vo"
+import (
+	"time"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
+
+var _ DomainEvent = (*UserDeleted)(nil)
 
 type UserDeleted struct {
 	BaseDomainEvent
-
-	DeleteTime vo.Time
 }
 
 func NewUserDeleted(
 	userID vo.UserID,
-	deleteTime vo.Time,
-) UserDeleted {
-	return UserDeleted{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
-
-		DeleteTime: deleteTime,
+	occurTime time.Time,
+) *UserDeleted {
+	return &UserDeleted{
+		BaseDomainEvent: NewBaseDomainEvent(userID.Value(), occurTime),
 	}
 }

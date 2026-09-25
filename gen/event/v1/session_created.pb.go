@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -25,7 +25,6 @@ const (
 type SessionCreatedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,22 +66,13 @@ func (x *SessionCreatedPayload) GetUserId() string {
 	return ""
 }
 
-func (x *SessionCreatedPayload) GetCreateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreateTime
-	}
-	return nil
-}
-
 var File_velony_identity_event_v1_session_created_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_session_created_proto_rawDesc = "" +
 	"\n" +
-	".velony/identity/event/v1/session_created.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"m\n" +
+	".velony/identity/event/v1/session_created.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"0\n" +
 	"\x15SessionCreatedPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12;\n" +
-	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"\auser_id\x18\x01 \x01(\tR\x06userIdB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_session_created_proto_rawDescOnce sync.Once
@@ -99,15 +89,13 @@ func file_velony_identity_event_v1_session_created_proto_rawDescGZIP() []byte {
 var file_velony_identity_event_v1_session_created_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_session_created_proto_goTypes = []any{
 	(*SessionCreatedPayload)(nil), // 0: velony.identity.event.v1.SessionCreatedPayload
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_session_created_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.SessionCreatedPayload.create_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_session_created_proto_init() }

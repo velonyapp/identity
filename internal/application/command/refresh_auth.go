@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -26,20 +27,20 @@ type RefreshAuthResult struct {
 }
 
 type RefreshAuthHandler struct {
-	c             *conf.Auth
+	c             *conf.Security
 	userRepo      repo.User
 	sessionRepo   repo.Session
 	unitOfWork    port.UnitOfWork
-	tokenProvider port.TokenProvider
+	tokenProvider port.AuthTokenProvider
 	cache         port.Cache
 }
 
 func NewRefreshAuthHandler(
-	c *conf.Auth,
+	c *conf.Security,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.TokenProvider,
+	tokenProvider port.AuthTokenProvider,
 	cache port.Cache,
 ) *RefreshAuthHandler {
 	return &RefreshAuthHandler{
@@ -56,6 +57,8 @@ func (h *RefreshAuthHandler) Execute(
 	ctx context.Context,
 	cmd *RefreshAuth,
 ) (*RefreshAuthResult, error) {
+	now := time.Now()
+
 	sessionToken, err := vo.NewSessionToken(cmd.RefreshToken)
 	if err != nil {
 		return nil, err
@@ -83,7 +86,7 @@ func (h *RefreshAuthHandler) Execute(
 			return ErrInvalidRefreshToken
 		}
 
-		user, err = h.userRepo.FindByID(ctx, session.UserID)
+		user, err = h.userRepo.FindByID(ctx, session.UserID())
 		if err != nil {
 			return err
 		}
@@ -91,12 +94,12 @@ func (h *RefreshAuthHandler) Execute(
 			return ErrInvalidRefreshToken
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(session.UserID.Value())
+		accessToken, err = h.tokenProvider.GenerateAccessToken(session.UserID().Value())
 		if err != nil {
 			return err
 		}
 
-		if err := session.Refresh(newSessionToken, int(h.c.RefreshToken.Ttl.Seconds)); err != nil {
+		if err := session.Refresh(newSessionToken, time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second, now); err != nil {
 			return err
 		}
 
@@ -110,7 +113,7 @@ func (h *RefreshAuthHandler) Execute(
 	}
 
 	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID),
+		common.UserResultCacheKey(user.ID()),
 		common.NewUserResult(user),
 		common.UserResultCacheTTL,
 	)

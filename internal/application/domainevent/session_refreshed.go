@@ -20,10 +20,10 @@ func NewSessionRefreshedHandler(
 	}
 }
 
-func (h *SessionRefreshedHandler) Execute(ctx context.Context, domainEvent event.SessionRefreshed) error {
+func (h *SessionRefreshedHandler) Execute(ctx context.Context, domainEvent *event.SessionRefreshed) error {
 	integrationEvent := integrationevent.NewSessionRefreshed(
 		domainEvent.AggregateID(),
-		domainEvent.RefreshTime.Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

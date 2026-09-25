@@ -3,9 +3,35 @@ CREATE TABLE users (
     username    VARCHAR(255) NOT NULL UNIQUE,
     email       VARCHAR(255) UNIQUE,
     full_name   TEXT NOT NULL,
-    avatar_key  TEXT,
+    avatar_key  VARCHAR(128),
     create_time TIMESTAMP(6) NOT NULL,
     update_time TIMESTAMP(6) NOT NULL
+) ENGINE = InnoDB;
+
+CREATE TABLE email_change_requests (
+    id          CHAR(36) PRIMARY KEY,
+    user_id     CHAR(36) NOT NULL UNIQUE,
+    new_value   VARCHAR(255) NOT NULL,
+    time        TIMESTAMP(6) NOT NULL,
+    expire_time TIMESTAMP(6) NOT NULL,
+
+    CONSTRAINT fk_change_email_request_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE avatar_change_requests (
+    id          CHAR(36) PRIMARY KEY,
+    user_id     CHAR(36) NOT NULL UNIQUE,
+    new_value   VARCHAR(128) NOT NULL,
+    time        TIMESTAMP(6) NOT NULL,
+    expire_time TIMESTAMP(6) NOT NULL,
+
+    CONSTRAINT fk_change_avatar_request_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE local_auth_strategies (
@@ -47,23 +73,6 @@ CREATE TABLE sessions (
     INDEX idx_sessions_user_id (user_id),
 
     CONSTRAINT fk_session_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-        ON DELETE CASCADE
-) ENGINE = InnoDB;
-
-CREATE TABLE email_change_requests (
-    id          CHAR(36) PRIMARY KEY,
-    token_hash  BINARY(32) NOT NULL UNIQUE,
-    user_id     CHAR(36) NOT NULL,
-    new_email   VARCHAR(255) NOT NULL,
-    create_time TIMESTAMP(6) NOT NULL,
-    expire_time TIMESTAMP(6) NOT NULL,
-    confirm_time TIMESTAMP(6),
-
-    INDEX idx_change_email_requests_user_id (user_id),
-
-    CONSTRAINT fk_change_email_request_user
         FOREIGN KEY (user_id)
         REFERENCES users (id)
         ON DELETE CASCADE

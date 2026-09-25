@@ -20,7 +20,7 @@ func NewDispatcher(
 	userUsernameChangedHandler *UserUsernameChangedHandler,
 	userEmailChangedHandler *UserEmailChangedHandler,
 	userFullNameChangedHandler *UserFullNameChangedHandler,
-	userAvatarKeyChangedHandler *UserAvatarKeyChangedHandler,
+	userAvatarChangedHandler *UserAvatarChangedHandler,
 	userDeletedHandler *UserDeletedHandler,
 	sessionCreatedHandler *SessionCreatedHandler,
 	sessionRefreshedHandler *SessionRefreshedHandler,
@@ -39,7 +39,7 @@ func NewDispatcher(
 	registerHandler(dispatcher, userUsernameChangedHandler)
 	registerHandler(dispatcher, userEmailChangedHandler)
 	registerHandler(dispatcher, userFullNameChangedHandler)
-	registerHandler(dispatcher, userAvatarKeyChangedHandler)
+	registerHandler(dispatcher, userAvatarChangedHandler)
 	registerHandler(dispatcher, userDeletedHandler)
 	registerHandler(dispatcher, sessionCreatedHandler)
 	registerHandler(dispatcher, sessionRefreshedHandler)

@@ -1,26 +1,38 @@
 package event
 
-import "github.com/velonyapp/identity/internal/domain/vo"
+import (
+	"time"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
+
+var _ DomainEvent = (*UserFullNameChanged)(nil)
 
 type UserFullNameChanged struct {
 	BaseDomainEvent
 
-	OldFullName vo.FullName
-	NewFullName vo.FullName
-	UpdateTime  vo.Time
+	oldFullName vo.FullName
+	newFullName vo.FullName
 }
 
 func NewUserFullNameChanged(
 	userID vo.UserID,
 	oldFullName vo.FullName,
 	newFullName vo.FullName,
-	updateTime vo.Time,
-) UserFullNameChanged {
-	return UserFullNameChanged{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
+	occurTime time.Time,
+) *UserFullNameChanged {
+	return &UserFullNameChanged{
+		BaseDomainEvent: NewBaseDomainEvent(userID.Value(), occurTime),
 
-		OldFullName: oldFullName,
-		NewFullName: newFullName,
-		UpdateTime:  updateTime,
+		oldFullName: oldFullName,
+		newFullName: newFullName,
 	}
+}
+
+func (e *UserFullNameChanged) OldFullName() vo.FullName {
+	return e.oldFullName
+}
+
+func (e *UserFullNameChanged) NewFullName() vo.FullName {
+	return e.newFullName
 }

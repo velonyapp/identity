@@ -2,27 +2,25 @@ package integrationevent
 
 import "time"
 
+var _ IntegrationEvent = (*UserDeleted)(nil)
+
 type UserDeleted struct {
 	BaseIntegrationEvent
-
-	DeleteTime time.Time
 }
 
 func NewUserDeleted(
 	userID string,
-	deleteTime time.Time,
-) UserDeleted {
-	return UserDeleted{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(userID),
-
-		DeleteTime: deleteTime,
+	occurTime time.Time,
+) *UserDeleted {
+	return &UserDeleted{
+		BaseIntegrationEvent: NewBaseIntegrationEvent(userID, occurTime),
 	}
 }
 
-func (e UserDeleted) Type() string {
+func (e *UserDeleted) Type() string {
 	return "user.deleted"
 }
 
-func (e UserDeleted) AggregateType() string {
+func (e *UserDeleted) AggregateType() string {
 	return "user"
 }

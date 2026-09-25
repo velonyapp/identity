@@ -15,12 +15,12 @@ import (
 	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/service"
 	"github.com/velonyapp/identity/internal/info"
-	"github.com/velonyapp/identity/internal/infrastructure/auth"
 	"github.com/velonyapp/identity/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
 	"github.com/velonyapp/identity/internal/infrastructure/event"
 	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
+	"github.com/velonyapp/identity/internal/infrastructure/security"
 	"github.com/velonyapp/identity/internal/infrastructure/transport"
 	"github.com/velonyapp/identity/internal/presentation/api"
 	"log/slog"
@@ -33,7 +33,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, infoService *info.Service, data *conf.Data, confTransport *conf.Transport, confAuth *conf.Auth, confObservability *conf.Observability, confGateway *conf.Gateway, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, infoService *info.Service, data *conf.Data, confTransport *conf.Transport, confSecurity *conf.Security, confObservability *conf.Observability, confGateway *conf.Gateway, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -44,12 +44,12 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	userUsernameChangedHandler := domainevent.NewUserUsernameChangedHandler(eventPublisher)
 	userEmailChangedHandler := domainevent.NewUserEmailChangedHandler(eventPublisher)
 	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(eventPublisher)
-	userAvatarKeyChangedHandler := domainevent.NewUserAvatarKeyChangedHandler(eventPublisher)
+	userAvatarChangedHandler := domainevent.NewUserAvatarChangedHandler(eventPublisher)
 	userDeletedHandler := domainevent.NewUserDeletedHandler(eventPublisher)
 	sessionCreatedHandler := domainevent.NewSessionCreatedHandler(eventPublisher)
 	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(eventPublisher)
 	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarKeyChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
+	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
 	user := mysql.NewUserRepo(db, dispatcher)
 	client, err := redis.NewConnection(data)
 	if err != nil {
@@ -60,17 +60,17 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	batchGetUsersHandler := query.NewBatchGetUsersHandler(user, cache)
 	session := mysql.NewSessionRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	tokenProvider := auth.NewTokenProvider(confAuth)
-	passwordHasher := auth.NewPasswordHasher()
+	authTokenProvider := security.NewAuthTokenProvider(confSecurity)
+	passwordHasher := security.NewPasswordHasher()
 	usernameAvailability := service.NewUsernameAvailability(user)
-	registerAuthHandler := command.NewRegisterAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, passwordHasher, cache, usernameAvailability)
-	loginAuthHandler := command.NewLoginAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, passwordHasher, cache)
-	refreshAuthHandler := command.NewRefreshAuthHandler(confAuth, user, session, unitOfWork, tokenProvider, cache)
+	registerAuthHandler := command.NewRegisterAuthHandler(confSecurity, user, session, unitOfWork, authTokenProvider, passwordHasher, cache, usernameAvailability)
+	loginAuthHandler := command.NewLoginAuthHandler(confSecurity, user, session, unitOfWork, authTokenProvider, passwordHasher, cache)
+	refreshAuthHandler := command.NewRefreshAuthHandler(confSecurity, user, session, unitOfWork, authTokenProvider, cache)
 	updateUserHandler := command.NewUpdateUserHandler(user, unitOfWork, cache, usernameAvailability)
-	emailChangeRequest := mysql.NewEmailChangeRequestRepo(db)
 	emailAvailability := service.NewEmailAvailability(user)
-	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(emailChangeRequest, unitOfWork, tokenProvider, emailAvailability)
-	confirmUserEmailChangeHandler := command.NewConfirmUserEmailChangeHandler(emailChangeRequest, user, unitOfWork, cache, emailAvailability)
+	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(confSecurity, user, unitOfWork, authTokenProvider, emailAvailability)
+	requestVerifier := security.NewRequestVerifier(confSecurity)
+	confirmUserEmailChangeHandler := command.NewConfirmUserEmailChangeHandler(user, unitOfWork, cache, requestVerifier, emailAvailability)
 	assetServiceClient, cleanup, err := gateway.NewAssetClient(confGateway)
 	if err != nil {
 		return nil, nil, err
@@ -86,7 +86,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 		return nil, nil, err
 	}
 	metricsMiddleware := transport.NewMetricsMiddleware(serverMetrics)
-	authMiddleware := transport.NewAuthMiddleware(confAuth)
+	authMiddleware := transport.NewAuthMiddleware(confSecurity)
 	validationMiddleware := transport.NewValidationMiddleware()
 	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)

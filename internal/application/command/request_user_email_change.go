@@ -2,9 +2,10 @@ package command
 
 import (
 	"context"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/port"
-	"github.com/velonyapp/identity/internal/domain/entity"
+	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/service"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -18,23 +19,26 @@ type RequestUserEmailChange struct {
 type RequestUserEmailChangeResult struct{}
 
 type RequestUserEmailChangeHandler struct {
-	requestRepo       repo.EmailChangeRequest
-	unitOfWork        port.UnitOfWork
-	tokenProvider     port.TokenProvider
-	emailAvailability *service.EmailAvailability
+	c             *conf.Security
+	userRepo      repo.User
+	unitOfWork    port.UnitOfWork
+	tokenProvider port.AuthTokenProvider
+	availability  *service.EmailAvailability
 }
 
 func NewRequestUserEmailChangeHandler(
-	requestRepo repo.EmailChangeRequest,
+	c *conf.Security,
+	userRepo repo.User,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.TokenProvider,
-	emailAvailability *service.EmailAvailability,
+	tokenProvider port.AuthTokenProvider,
+	availability *service.EmailAvailability,
 ) *RequestUserEmailChangeHandler {
 	return &RequestUserEmailChangeHandler{
-		requestRepo:       requestRepo,
-		unitOfWork:        unitOfWork,
-		tokenProvider:     tokenProvider,
-		emailAvailability: emailAvailability,
+		c:             c,
+		userRepo:      userRepo,
+		unitOfWork:    unitOfWork,
+		tokenProvider: tokenProvider,
+		availability:  availability,
 	}
 }
 
@@ -42,30 +46,29 @@ func (h *RequestUserEmailChangeHandler) Execute(
 	ctx context.Context,
 	cmd *RequestUserEmailChange,
 ) (*RequestUserEmailChangeResult, error) {
+	now := time.Now()
+
 	userID := vo.NewUserID(cmd.UserID)
 	newEmail, err := vo.NewEmail(cmd.NewEmail)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := h.tokenProvider.GenerateRequestToken()
-	if err != nil {
-		return nil, err
-	}
-
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		if err := h.emailAvailability.EnsureAvailable(ctx, newEmail); err != nil {
+		if err := h.availability.EnsureAvailable(ctx, newEmail); err != nil {
 			return err
 		}
 
-		request := entity.NewEmailChangeRequest(
-			token,
-			userID,
-			newEmail,
-			3600, // TODO: Move this to configuration.
-		)
+		user, err := h.userRepo.FindByID(ctx, userID)
+		if err != nil {
+			return err
+		}
 
-		return h.requestRepo.Save(ctx, request)
+		if err := user.RequestEmailChange(newEmail, h.c.EmailChangeRequestToken.Ttl.AsDuration(), now); err != nil {
+			return err
+		}
+
+		return h.userRepo.Save(ctx, user)
 	}); err != nil {
 		return nil, err
 	}

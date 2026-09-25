@@ -42,10 +42,27 @@ func (repo *UserRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
-			local_auth_strategies.password_hash
+
+			email_change_requests.new_email,
+			email_change_requests.request_time,
+			email_change_requests.expire_time,
+
+			avatar_change_requests.new_avatar_key,
+			avatar_change_requests.request_time,
+			avatar_change_requests.expire_time,
+
+			local_auth_strategies.password_hash,
+
+			google_auth_strategies.sub
 		FROM users
+		LEFT JOIN email_change_requests
+			ON email_change_requests.user_id = users.id
+		LEFT JOIN avatar_change_requests
+			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
+		LEFT JOIN google_auth_strategies
+			ON google_auth_strategies.user_id = users.id
 		WHERE users.id = ?
 		LIMIT 1
 	`
@@ -86,10 +103,27 @@ func (repo *UserRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*en
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
-			local_auth_strategies.password_hash
+
+			email_change_requests.new_email,
+			email_change_requests.request_time,
+			email_change_requests.expire_time,
+
+			avatar_change_requests.new_avatar_key,
+			avatar_change_requests.request_time,
+			avatar_change_requests.expire_time,
+
+			local_auth_strategies.password_hash,
+
+			google_auth_strategies.sub
 		FROM users
+		LEFT JOIN email_change_requests
+			ON email_change_requests.user_id = users.id
+		LEFT JOIN avatar_change_requests
+			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
+		LEFT JOIN google_auth_strategies
+			ON google_auth_strategies.user_id = users.id
 		WHERE users.id IN (` + strings.Join(placeholders, ", ") + `)
 	`
 
@@ -127,10 +161,27 @@ func (repo *UserRepo) FindByUsername(ctx context.Context, username vo.Username) 
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
-			local_auth_strategies.password_hash
+
+			email_change_requests.new_email,
+			email_change_requests.request_time,
+			email_change_requests.expire_time,
+
+			avatar_change_requests.new_avatar_key,
+			avatar_change_requests.request_time,
+			avatar_change_requests.expire_time,
+
+			local_auth_strategies.password_hash,
+
+			google_auth_strategies.sub
 		FROM users
+		LEFT JOIN email_change_requests
+			ON email_change_requests.user_id = users.id
+		LEFT JOIN avatar_change_requests
+			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
+		LEFT JOIN google_auth_strategies
+			ON google_auth_strategies.user_id = users.id
 		WHERE users.username = ?
 		LIMIT 1
 	`
@@ -159,10 +210,27 @@ func (repo *UserRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 			users.avatar_key,
 			users.create_time,
 			users.update_time,
-			local_auth_strategies.password_hash
+
+			email_change_requests.new_email,
+			email_change_requests.request_time,
+			email_change_requests.expire_time,
+
+			avatar_change_requests.new_avatar_key,
+			avatar_change_requests.request_time,
+			avatar_change_requests.expire_time,
+
+			local_auth_strategies.password_hash,
+
+			google_auth_strategies.sub
 		FROM users
+		LEFT JOIN email_change_requests
+			ON email_change_requests.user_id = users.id
+		LEFT JOIN avatar_change_requests
+			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
+		LEFT JOIN google_auth_strategies
+			ON google_auth_strategies.user_id = users.id
 		WHERE users.email = ?
 		LIMIT 1
 	`
@@ -182,13 +250,13 @@ func (repo *UserRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 }
 
 func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
-	if user.DeleteTime != nil {
+	if user.DeleteTime() != nil {
 		const query = `
 			DELETE FROM users
 			WHERE id = ?
 		`
 
-		if _, err := executor(ctx, repo.db).ExecContext(ctx, query, user.ID.Value()); err != nil {
+		if _, err := executor(ctx, repo.db).ExecContext(ctx, query, user.ID().Value()); err != nil {
 			return err
 		}
 	} else {
@@ -212,34 +280,122 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 		`
 
 		var email any
-		if user.Email != nil {
-			email = user.Email.Value()
+		if user.Email() != nil {
+			email = user.Email().Value()
 		}
 
 		var avatarKey any
-		if user.AvatarKey != nil {
-			avatarKey = user.AvatarKey.String()
+		if user.AvatarKey() != nil {
+			avatarKey = user.AvatarKey().String()
 		}
 
 		if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
-			user.ID.Value(),
-			user.Username.Value(),
+			user.ID().Value(),
+			user.Username().Value(),
 			email,
-			user.FullName.Value(),
+			user.FullName().Value(),
 			avatarKey,
-			user.CreateTime.Value(),
-			user.UpdateTime.Value(),
+			user.CreateTime(),
+			user.UpdateTime(),
 
-			user.Username.Value(),
+			user.Username().Value(),
 			email,
-			user.FullName.Value(),
+			user.FullName().Value(),
 			avatarKey,
-			user.UpdateTime.Value(),
+			user.UpdateTime(),
 		); err != nil {
 			return err
 		}
 
-		if user.LocalAuthStrategy != nil {
+		if user.EmailChangeRequest() != nil {
+			const emailChangeRequestQuery = `
+				INSERT INTO email_change_requests (
+					user_id,
+					new_email,
+					request_time,
+					expire_time
+				)
+				VALUES (?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					new_email = ?,
+					request_time = ?,
+					expire_time = ?
+			`
+
+			emailChangeRequest := user.EmailChangeRequest()
+
+			if _, err := executor(ctx, repo.db).ExecContext(ctx, emailChangeRequestQuery,
+				user.ID().Value(),
+				emailChangeRequest.Value().Value(),
+				emailChangeRequest.Time(),
+				emailChangeRequest.ExpireTime(),
+
+				emailChangeRequest.Value().Value(),
+				emailChangeRequest.Time(),
+				emailChangeRequest.ExpireTime(),
+			); err != nil {
+				return err
+			}
+		} else {
+			const emailChangeRequestQuery = `
+				DELETE FROM email_change_requests
+				WHERE user_id = ?
+			`
+
+			if _, err := executor(ctx, repo.db).ExecContext(
+				ctx,
+				emailChangeRequestQuery,
+				user.ID().Value(),
+			); err != nil {
+				return err
+			}
+		}
+
+		if user.AvatarChangeRequest() != nil {
+			const avatarChangeRequestQuery = `
+				INSERT INTO avatar_change_requests (
+					user_id,
+					new_avatar_key,
+					request_time,
+					expire_time
+				)
+				VALUES (?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					new_avatar_key = ?,
+					request_time = ?,
+					expire_time = ?
+			`
+
+			avatarChangeRequest := user.AvatarChangeRequest()
+
+			if _, err := executor(ctx, repo.db).ExecContext(ctx, avatarChangeRequestQuery,
+				user.ID().Value(),
+				avatarChangeRequest.Value().String(),
+				avatarChangeRequest.Time(),
+				avatarChangeRequest.ExpireTime(),
+
+				avatarChangeRequest.Value().String(),
+				avatarChangeRequest.Time(),
+				avatarChangeRequest.ExpireTime(),
+			); err != nil {
+				return err
+			}
+		} else {
+			const avatarChangeRequestQuery = `
+				DELETE FROM avatar_change_requests
+				WHERE user_id = ?
+			`
+
+			if _, err := executor(ctx, repo.db).ExecContext(
+				ctx,
+				avatarChangeRequestQuery,
+				user.ID().Value(),
+			); err != nil {
+				return err
+			}
+		}
+
+		if user.LocalAuthStrategy() != nil {
 			const localAuthStrategyQuery = `
 				INSERT INTO local_auth_strategies (
 					user_id,
@@ -251,10 +407,10 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			`
 
 			if _, err := executor(ctx, repo.db).ExecContext(ctx, localAuthStrategyQuery,
-				user.LocalAuthStrategy.UserID.Value(),
-				user.LocalAuthStrategy.PasswordHash.Value(),
+				user.ID().Value(),
+				user.LocalAuthStrategy().PasswordHash().Value(),
 
-				user.LocalAuthStrategy.PasswordHash.Value(),
+				user.LocalAuthStrategy().PasswordHash().Value(),
 			); err != nil {
 				return err
 			}
@@ -267,7 +423,41 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 			if _, err := executor(ctx, repo.db).ExecContext(
 				ctx,
 				localAuthStrategyQuery,
-				user.ID.Value(),
+				user.ID().Value(),
+			); err != nil {
+				return err
+			}
+		}
+
+		if user.GoogleAuthStrategy() != nil {
+			const googleAuthStrategyQuery = `
+				INSERT INTO google_auth_strategies (
+					user_id,
+					sub
+				)
+				VALUES (?, ?)
+				ON DUPLICATE KEY UPDATE
+					sub = ?
+			`
+
+			if _, err := executor(ctx, repo.db).ExecContext(ctx, googleAuthStrategyQuery,
+				user.ID().Value(),
+				user.GoogleAuthStrategy().Sub.Value(),
+
+				user.GoogleAuthStrategy().Sub.Value(),
+			); err != nil {
+				return err
+			}
+		} else {
+			const googleAuthStrategyQuery = `
+				DELETE FROM google_auth_strategies
+				WHERE user_id = ?
+			`
+
+			if _, err := executor(ctx, repo.db).ExecContext(
+				ctx,
+				googleAuthStrategyQuery,
+				user.ID().Value(),
 			); err != nil {
 				return err
 			}
@@ -285,14 +475,25 @@ func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
 
 func scanUser(scanner userScanner) (*entity.User, error) {
 	var (
-		id           string
-		username     string
-		email        sql.NullString
-		fullName     string
-		avatarKey    sql.NullString
-		createTime   time.Time
-		updateTime   time.Time
+		id         string
+		username   string
+		email      sql.NullString
+		fullName   string
+		avatarKey  sql.NullString
+		createTime time.Time
+		updateTime time.Time
+
+		emailChangeRequestValue      sql.NullString
+		emailChangeRequestTime       sql.NullTime
+		emailChangeRequestExpireTime sql.NullTime
+
+		avatarChangeRequestValue      sql.NullString
+		avatarChangeRequestTime       sql.NullTime
+		avatarChangeRequestExpireTime sql.NullTime
+
 		passwordHash sql.NullString
+
+		googleSub sql.NullString
 	)
 
 	if err := scanner.Scan(
@@ -303,7 +504,18 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		&avatarKey,
 		&createTime,
 		&updateTime,
+
+		&emailChangeRequestValue,
+		&emailChangeRequestTime,
+		&emailChangeRequestExpireTime,
+
+		&avatarChangeRequestValue,
+		&avatarChangeRequestTime,
+		&avatarChangeRequestExpireTime,
+
 		&passwordHash,
+
+		&googleSub,
 	); err != nil {
 		return nil, err
 	}
@@ -324,24 +536,58 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		avatarKeyVO = &value
 	}
 
-	var localAuthStrategy *entity.LocalAuthStrategy
+	var emailChangeRequest *vo.EmailChangeRequest
+	if emailChangeRequestValue.Valid {
+		newEmail, _ := vo.NewEmail(emailChangeRequestValue.String)
+
+		value := vo.NewEmailChangeRequest(
+			newEmail,
+			emailChangeRequestTime.Time,
+			emailChangeRequestExpireTime.Time,
+		)
+		emailChangeRequest = &value
+	}
+
+	var avatarChangeRequest *vo.AvatarChangeRequest
+	if avatarChangeRequestValue.Valid {
+		newAvatarKey, _ := vo.NewAvatarKey(avatarChangeRequestValue.String)
+
+		value := vo.NewAvatarChangeRequest(
+			newAvatarKey,
+			avatarChangeRequestTime.Time,
+			avatarChangeRequestExpireTime.Time,
+		)
+		avatarChangeRequest = &value
+	}
+
+	var localAuthStrategy *vo.LocalAuthStrategy
 	if passwordHash.Valid {
 		passwordHashVO, _ := vo.NewPasswordHash(passwordHash.String)
 
-		localAuthStrategy = &entity.LocalAuthStrategy{
-			UserID:       vo.NewUserID(id),
-			PasswordHash: passwordHashVO,
-		}
+		value := vo.NewLocalAuthStrategy(passwordHashVO)
+		localAuthStrategy = &value
 	}
 
-	return &entity.User{
-		ID:                vo.NewUserID(id),
-		Username:          usernameVO,
-		Email:             emailVO,
-		FullName:          fullNameVO,
-		AvatarKey:         avatarKeyVO,
-		CreateTime:        vo.NewTime(createTime),
-		UpdateTime:        vo.NewTime(updateTime),
-		LocalAuthStrategy: localAuthStrategy,
-	}, nil
+	var googleAuthStrategy *vo.GoogleAuthStrategy
+	if googleSub.Valid {
+		googleSubVO, _ := vo.NewGoogleSub(googleSub.String)
+
+		value := vo.NewGoogleAuthStrategy(googleSubVO)
+		googleAuthStrategy = &value
+	}
+
+	return entity.ReconstituteUser(
+		vo.NewUserID(id),
+		usernameVO,
+		fullNameVO,
+		emailVO,
+		avatarKeyVO,
+		createTime,
+		updateTime,
+		nil,
+		emailChangeRequest,
+		avatarChangeRequest,
+		localAuthStrategy,
+		googleAuthStrategy,
+	), nil
 }

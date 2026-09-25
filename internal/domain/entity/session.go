@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"time"
 
 	"github.com/velonyapp/identity/internal/domain/event"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -13,11 +14,11 @@ var (
 )
 
 type Session struct {
-	ID         vo.SessionID
-	UserID     vo.UserID
-	Token      vo.SessionToken
-	ExpireTime vo.Time
-	RevokeTime *vo.Time
+	id         vo.SessionID
+	userID     vo.UserID
+	token      vo.SessionToken
+	expireTime time.Time
+	revokeTime *time.Time
 
 	domainEvents []event.DomainEvent
 }
@@ -25,16 +26,16 @@ type Session struct {
 func NewSession(
 	userID vo.UserID,
 	token vo.SessionToken,
-	ttlSeconds int,
+	ttl time.Duration,
+	now time.Time,
 ) *Session {
-	now := vo.NewTimeNow()
 	sessionID := vo.NewSessionIDRandom()
 
 	session := &Session{
-		ID:         sessionID,
-		UserID:     userID,
-		Token:      token,
-		ExpireTime: vo.NewTimeNow().AddSeconds(ttlSeconds),
+		id:         sessionID,
+		userID:     userID,
+		token:      token,
+		expireTime: now.Add(ttl),
 	}
 
 	session.recordEvent(
@@ -48,23 +49,79 @@ func NewSession(
 	return session
 }
 
-func (s *Session) Refresh(token vo.SessionToken, ttlSeconds int) error {
-	if s.RevokeTime != nil {
-		return ErrSessionRevoked
+func ReconstituteSession(
+	id vo.SessionID,
+	userID vo.UserID,
+	token vo.SessionToken,
+	expireTime time.Time,
+	revokeTime *time.Time,
+) *Session {
+	session := &Session{
+		id:         id,
+		userID:     userID,
+		token:      token,
+		expireTime: expireTime,
 	}
 
-	now := vo.NewTimeNow()
+	if revokeTime != nil {
+		value := *revokeTime
+		session.revokeTime = &value
+	}
 
-	if s.ExpireTime.Before(now) {
+	return session
+}
+
+func (s *Session) ID() vo.SessionID {
+	return s.id
+}
+
+func (s *Session) UserID() vo.UserID {
+	return s.userID
+}
+
+func (s *Session) Token() vo.SessionToken {
+	return s.token
+}
+
+func (s *Session) ExpireTime() time.Time {
+	return s.expireTime
+}
+
+func (s *Session) RevokeTime() *time.Time {
+	if s.revokeTime == nil {
+		return nil
+	}
+
+	value := *s.revokeTime
+	return &value
+}
+
+func (s *Session) IsRevoked() bool {
+	return s.revokeTime != nil
+}
+
+func (s *Session) IsExpired(now time.Time) bool {
+	return !now.Before(s.expireTime)
+}
+
+func (s *Session) Refresh(
+	token vo.SessionToken,
+	ttl time.Duration,
+	now time.Time,
+) error {
+	if s.IsRevoked() {
+		return ErrSessionRevoked
+	}
+	if s.IsExpired(now) {
 		return ErrSessionExpired
 	}
 
-	s.Token = token
-	s.ExpireTime = now.AddSeconds(ttlSeconds)
+	s.token = token
+	s.expireTime = now.Add(ttl)
 
 	s.recordEvent(
 		event.NewSessionRefreshed(
-			s.ID,
+			s.id,
 			now,
 		),
 	)
@@ -72,17 +129,16 @@ func (s *Session) Refresh(token vo.SessionToken, ttlSeconds int) error {
 	return nil
 }
 
-func (s *Session) Revoke() error {
-	if s.RevokeTime != nil {
+func (s *Session) Revoke(now time.Time) error {
+	if s.IsRevoked() {
 		return ErrSessionRevoked
 	}
 
-	now := vo.NewTimeNow()
-	s.RevokeTime = &now
+	s.revokeTime = &now
 
 	s.recordEvent(
 		event.NewSessionRevoked(
-			s.ID,
+			s.id,
 			now,
 		),
 	)

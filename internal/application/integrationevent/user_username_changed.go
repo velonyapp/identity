@@ -2,33 +2,41 @@ package integrationevent
 
 import "time"
 
+var _ IntegrationEvent = (*UserUsernameChanged)(nil)
+
 type UserUsernameChanged struct {
 	BaseIntegrationEvent
 
-	OldUsername string
-	NewUsername string
-	UpdateTime  time.Time
+	oldUsername string
+	newUsername string
 }
 
 func NewUserUsernameChanged(
 	userID string,
 	oldUsername string,
 	newUsername string,
-	updateTime time.Time,
-) UserUsernameChanged {
-	return UserUsernameChanged{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(userID),
+	occurTime time.Time,
+) *UserUsernameChanged {
+	return &UserUsernameChanged{
+		BaseIntegrationEvent: NewBaseIntegrationEvent(userID, occurTime),
 
-		OldUsername: oldUsername,
-		NewUsername: newUsername,
-		UpdateTime:  updateTime,
+		oldUsername: oldUsername,
+		newUsername: newUsername,
 	}
 }
 
-func (e UserUsernameChanged) Type() string {
+func (e *UserUsernameChanged) Type() string {
 	return "user.username.changed"
 }
 
-func (e UserUsernameChanged) AggregateType() string {
+func (e *UserUsernameChanged) AggregateType() string {
 	return "user"
+}
+
+func (e *UserUsernameChanged) OldUsername() string {
+	return e.oldUsername
+}
+
+func (e *UserUsernameChanged) NewUsername() string {
+	return e.newUsername
 }

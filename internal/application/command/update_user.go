@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -12,10 +13,9 @@ import (
 )
 
 type UpdateUser struct {
-	UserID    string
-	Username  *string
-	FullName  *string
-	AvatarKey **string
+	UserID   string
+	Username *string
+	FullName *string
 }
 
 type UpdateUserResult struct {
@@ -46,6 +46,8 @@ func (h *UpdateUserHandler) Execute(
 	ctx context.Context,
 	cmd *UpdateUser,
 ) (*UpdateUserResult, error) {
+	now := time.Now()
+
 	userID := vo.NewUserID(cmd.UserID)
 
 	var user *entity.User
@@ -69,12 +71,12 @@ func (h *UpdateUserHandler) Execute(
 				return err
 			}
 
-			if username != user.Username {
+			if username != user.Username() {
 				if err := h.usernameAvailability.EnsureAvailable(ctx, username); err != nil {
 					return err
 				}
 
-				if err := user.ChangeUsername(username); err != nil {
+				if err := user.ChangeUsername(username, now); err != nil {
 					return err
 				}
 
@@ -87,28 +89,8 @@ func (h *UpdateUserHandler) Execute(
 				return err
 			}
 
-			if fullName != user.FullName {
-				if err := user.ChangeFullName(fullName); err != nil {
-					return err
-				}
-
-				changed = true
-			}
-		}
-		if cmd.AvatarKey != nil {
-			var avatarKey *vo.AvatarKey
-
-			if *cmd.AvatarKey != nil {
-				value, err := vo.NewAvatarKey(**cmd.AvatarKey)
-				if err != nil {
-					return err
-				}
-
-				avatarKey = &value
-			}
-
-			if avatarKey != user.AvatarKey {
-				if err := user.ChangeAvatarKey(avatarKey); err != nil {
+			if fullName != user.FullName() {
+				if err := user.ChangeFullName(fullName, now); err != nil {
 					return err
 				}
 
@@ -130,7 +112,7 @@ func (h *UpdateUserHandler) Execute(
 	userResult := common.NewUserResult(user)
 
 	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID),
+		common.UserResultCacheKey(user.ID()),
 		userResult,
 		common.UserResultCacheTTL,
 	)

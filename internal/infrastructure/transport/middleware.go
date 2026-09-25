@@ -20,7 +20,7 @@ import (
 
 type AuthMiddleware middleware.Middleware
 
-func NewAuthMiddleware(c *conf.Auth) AuthMiddleware {
+func NewAuthMiddleware(c *conf.Security) AuthMiddleware {
 	auth := kratosjwt.Server(
 		func(token *jwt.Token) (any, error) {
 			return []byte(c.AccessToken.Secret), nil

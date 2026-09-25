@@ -20,25 +20,12 @@ func NewUserCreatedHandler(
 	}
 }
 
-func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent event.UserCreated) error {
-	var email, avatarKey *string
-
-	if domainEvent.Email != nil {
-		value := domainEvent.Email.Value()
-		email = &value
-	}
-	if domainEvent.AvatarKey != nil {
-		value := domainEvent.AvatarKey.String()
-		avatarKey = &value
-	}
-
+func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent *event.UserCreated) error {
 	integrationEvent := integrationevent.NewUserCreated(
 		domainEvent.AggregateID(),
-		domainEvent.Username.Value(),
-		email,
-		domainEvent.FullName.Value(),
-		avatarKey,
-		domainEvent.CreateTime.Value(),
+		domainEvent.Username().Value(),
+		domainEvent.FullName().Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

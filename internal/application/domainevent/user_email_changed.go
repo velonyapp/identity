@@ -20,18 +20,15 @@ func NewUserEmailChangedHandler(
 	}
 }
 
-func (h *UserEmailChangedHandler) Execute(
-	ctx context.Context,
-	domainEvent event.UserEmailChanged,
-) error {
+func (h *UserEmailChangedHandler) Execute(ctx context.Context, domainEvent *event.UserEmailChanged) error {
 	var oldEmail, newEmail *string
 
-	if domainEvent.OldEmail != nil {
-		value := domainEvent.OldEmail.String()
+	if domainEvent.OldEmail() != nil {
+		value := domainEvent.OldEmail().Value()
 		oldEmail = &value
 	}
-	if domainEvent.NewEmail != nil {
-		value := domainEvent.NewEmail.String()
+	if domainEvent.NewEmail() != nil {
+		value := domainEvent.NewEmail().Value()
 		newEmail = &value
 	}
 
@@ -39,7 +36,7 @@ func (h *UserEmailChangedHandler) Execute(
 		domainEvent.AggregateID(),
 		oldEmail,
 		newEmail,
-		domainEvent.UpdateTime.Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"time"
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -39,6 +40,8 @@ func (h *DeleteUserHandler) Execute(
 	ctx context.Context,
 	cmd *DeleteUser,
 ) (*DeleteUserResult, error) {
+	now := time.Now()
+
 	userID := vo.NewUserID(cmd.UserID)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
@@ -50,7 +53,7 @@ func (h *DeleteUserHandler) Execute(
 			return common.ErrUserNotFound
 		}
 
-		if err := user.Delete(); err != nil {
+		if err := user.Delete(now); err != nil {
 			return err
 		}
 

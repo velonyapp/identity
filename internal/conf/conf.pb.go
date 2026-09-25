@@ -76,7 +76,7 @@ type Bootstrap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Transport     *Transport             `protobuf:"bytes,1,opt,name=transport,proto3" json:"transport,omitempty"`
 	Data          *Data                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
+	Security      *Security              `protobuf:"bytes,3,opt,name=security,proto3" json:"security,omitempty"`
 	Observability *Observability         `protobuf:"bytes,4,opt,name=observability,proto3" json:"observability,omitempty"`
 	Gateway       *Gateway               `protobuf:"bytes,5,opt,name=gateway,proto3" json:"gateway,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -127,9 +127,9 @@ func (x *Bootstrap) GetData() *Data {
 	return nil
 }
 
-func (x *Bootstrap) GetAuth() *Auth {
+func (x *Bootstrap) GetSecurity() *Security {
 	if x != nil {
-		return x.Auth
+		return x.Security
 	}
 	return nil
 }
@@ -252,28 +252,30 @@ func (x *Data) GetRedis() *Data_Redis {
 	return nil
 }
 
-type Auth struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   *Auth_AccessToken      `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  *Auth_RefreshToken     `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+type Security struct {
+	state                    protoimpl.MessageState             `protogen:"open.v1"`
+	AccessToken              *Security_AccessToken              `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken             *Security_RefreshToken             `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	EmailChangeRequestToken  *Security_EmailChangeRequestToken  `protobuf:"bytes,3,opt,name=email_change_request_token,json=emailChangeRequestToken,proto3" json:"email_change_request_token,omitempty"`
+	AvatarChangeRequestToken *Security_AvatarChangeRequestToken `protobuf:"bytes,4,opt,name=avatar_change_request_token,json=avatarChangeRequestToken,proto3" json:"avatar_change_request_token,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
-func (x *Auth) Reset() {
-	*x = Auth{}
+func (x *Security) Reset() {
+	*x = Security{}
 	mi := &file_conf_conf_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Auth) String() string {
+func (x *Security) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Auth) ProtoMessage() {}
+func (*Security) ProtoMessage() {}
 
-func (x *Auth) ProtoReflect() protoreflect.Message {
+func (x *Security) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -285,21 +287,35 @@ func (x *Auth) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
-func (*Auth) Descriptor() ([]byte, []int) {
+// Deprecated: Use Security.ProtoReflect.Descriptor instead.
+func (*Security) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Auth) GetAccessToken() *Auth_AccessToken {
+func (x *Security) GetAccessToken() *Security_AccessToken {
 	if x != nil {
 		return x.AccessToken
 	}
 	return nil
 }
 
-func (x *Auth) GetRefreshToken() *Auth_RefreshToken {
+func (x *Security) GetRefreshToken() *Security_RefreshToken {
 	if x != nil {
 		return x.RefreshToken
+	}
+	return nil
+}
+
+func (x *Security) GetEmailChangeRequestToken() *Security_EmailChangeRequestToken {
+	if x != nil {
+		return x.EmailChangeRequestToken
+	}
+	return nil
+}
+
+func (x *Security) GetAvatarChangeRequestToken() *Security_AvatarChangeRequestToken {
+	if x != nil {
+		return x.AvatarChangeRequestToken
 	}
 	return nil
 }
@@ -624,7 +640,7 @@ func (x *Data_Redis) GetMaxActiveConnections() uint32 {
 	return 0
 }
 
-type Auth_AccessToken struct {
+type Security_AccessToken struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
 	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
@@ -632,20 +648,20 @@ type Auth_AccessToken struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Auth_AccessToken) Reset() {
-	*x = Auth_AccessToken{}
+func (x *Security_AccessToken) Reset() {
+	*x = Security_AccessToken{}
 	mi := &file_conf_conf_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Auth_AccessToken) String() string {
+func (x *Security_AccessToken) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Auth_AccessToken) ProtoMessage() {}
+func (*Security_AccessToken) ProtoMessage() {}
 
-func (x *Auth_AccessToken) ProtoReflect() protoreflect.Message {
+func (x *Security_AccessToken) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -657,46 +673,46 @@ func (x *Auth_AccessToken) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Auth_AccessToken.ProtoReflect.Descriptor instead.
-func (*Auth_AccessToken) Descriptor() ([]byte, []int) {
+// Deprecated: Use Security_AccessToken.ProtoReflect.Descriptor instead.
+func (*Security_AccessToken) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
 }
 
-func (x *Auth_AccessToken) GetSecret() string {
+func (x *Security_AccessToken) GetSecret() string {
 	if x != nil {
 		return x.Secret
 	}
 	return ""
 }
 
-func (x *Auth_AccessToken) GetTtl() *durationpb.Duration {
+func (x *Security_AccessToken) GetTtl() *durationpb.Duration {
 	if x != nil {
 		return x.Ttl
 	}
 	return nil
 }
 
-type Auth_RefreshToken struct {
+type Security_RefreshToken struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ttl           *durationpb.Duration   `protobuf:"bytes,1,opt,name=ttl,proto3" json:"ttl,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Auth_RefreshToken) Reset() {
-	*x = Auth_RefreshToken{}
+func (x *Security_RefreshToken) Reset() {
+	*x = Security_RefreshToken{}
 	mi := &file_conf_conf_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Auth_RefreshToken) String() string {
+func (x *Security_RefreshToken) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Auth_RefreshToken) ProtoMessage() {}
+func (*Security_RefreshToken) ProtoMessage() {}
 
-func (x *Auth_RefreshToken) ProtoReflect() protoreflect.Message {
+func (x *Security_RefreshToken) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -708,12 +724,116 @@ func (x *Auth_RefreshToken) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Auth_RefreshToken.ProtoReflect.Descriptor instead.
-func (*Auth_RefreshToken) Descriptor() ([]byte, []int) {
+// Deprecated: Use Security_RefreshToken.ProtoReflect.Descriptor instead.
+func (*Security_RefreshToken) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 1}
 }
 
-func (x *Auth_RefreshToken) GetTtl() *durationpb.Duration {
+func (x *Security_RefreshToken) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
+type Security_EmailChangeRequestToken struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Security_EmailChangeRequestToken) Reset() {
+	*x = Security_EmailChangeRequestToken{}
+	mi := &file_conf_conf_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Security_EmailChangeRequestToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Security_EmailChangeRequestToken) ProtoMessage() {}
+
+func (x *Security_EmailChangeRequestToken) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Security_EmailChangeRequestToken.ProtoReflect.Descriptor instead.
+func (*Security_EmailChangeRequestToken) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 2}
+}
+
+func (x *Security_EmailChangeRequestToken) GetSecret() string {
+	if x != nil {
+		return x.Secret
+	}
+	return ""
+}
+
+func (x *Security_EmailChangeRequestToken) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
+type Security_AvatarChangeRequestToken struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Security_AvatarChangeRequestToken) Reset() {
+	*x = Security_AvatarChangeRequestToken{}
+	mi := &file_conf_conf_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Security_AvatarChangeRequestToken) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Security_AvatarChangeRequestToken) ProtoMessage() {}
+
+func (x *Security_AvatarChangeRequestToken) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Security_AvatarChangeRequestToken.ProtoReflect.Descriptor instead.
+func (*Security_AvatarChangeRequestToken) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 3}
+}
+
+func (x *Security_AvatarChangeRequestToken) GetSecret() string {
+	if x != nil {
+		return x.Secret
+	}
+	return ""
+}
+
+func (x *Security_AvatarChangeRequestToken) GetTtl() *durationpb.Duration {
 	if x != nil {
 		return x.Ttl
 	}
@@ -732,7 +852,7 @@ type Observability_Tracing struct {
 
 func (x *Observability_Tracing) Reset() {
 	*x = Observability_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[12]
+	mi := &file_conf_conf_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -744,7 +864,7 @@ func (x *Observability_Tracing) String() string {
 func (*Observability_Tracing) ProtoMessage() {}
 
 func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[12]
+	mi := &file_conf_conf_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -800,7 +920,7 @@ type Observability_Metrics struct {
 
 func (x *Observability_Metrics) Reset() {
 	*x = Observability_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[13]
+	mi := &file_conf_conf_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -812,7 +932,7 @@ func (x *Observability_Metrics) String() string {
 func (*Observability_Metrics) ProtoMessage() {}
 
 func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[13]
+	mi := &file_conf_conf_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -866,7 +986,7 @@ type Gateway_Asset struct {
 
 func (x *Gateway_Asset) Reset() {
 	*x = Gateway_Asset{}
-	mi := &file_conf_conf_proto_msgTypes[14]
+	mi := &file_conf_conf_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -878,7 +998,7 @@ func (x *Gateway_Asset) String() string {
 func (*Gateway_Asset) ProtoMessage() {}
 
 func (x *Gateway_Asset) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[14]
+	mi := &file_conf_conf_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -913,11 +1033,11 @@ var File_conf_conf_proto protoreflect.FileDescriptor
 const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"\x0fconf/conf.proto\x12\n" +
-	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\x9c\x02\n" +
+	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xa8\x02\n" +
 	"\tBootstrap\x12;\n" +
 	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12,\n" +
-	"\x04auth\x18\x03 \x01(\v2\x10.kratos.api.AuthB\x06\xbaH\x03\xc8\x01\x01R\x04auth\x12?\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x128\n" +
+	"\bsecurity\x18\x03 \x01(\v2\x14.kratos.api.SecurityB\x06\xbaH\x03\xc8\x01\x01R\bsecurity\x12?\n" +
 	"\robservability\x18\x04 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\x125\n" +
 	"\agateway\x18\x05 \x01(\v2\x13.kratos.api.GatewayB\x06\xbaH\x03\xc8\x01\x01R\agateway\"\xd1\x02\n" +
 	"\tTransport\x126\n" +
@@ -943,15 +1063,23 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x05Redis\x12\x19\n" +
 	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x129\n" +
 	"\x16max_active_connections\x18\x02 \x01(\rH\x00R\x14maxActiveConnections\x88\x01\x01B\x19\n" +
-	"\x17_max_active_connections\"\xcf\x02\n" +
-	"\x04Auth\x12G\n" +
-	"\faccess_token\x18\x01 \x01(\v2\x1c.kratos.api.Auth.AccessTokenB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\x12J\n" +
-	"\rrefresh_token\x18\x02 \x01(\v2\x1d.kratos.api.Auth.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x1ah\n" +
+	"\x17_max_active_connections\"\xb1\x06\n" +
+	"\bSecurity\x12K\n" +
+	"\faccess_token\x18\x01 \x01(\v2 .kratos.api.Security.AccessTokenB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\x12N\n" +
+	"\rrefresh_token\x18\x02 \x01(\v2!.kratos.api.Security.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x12q\n" +
+	"\x1aemail_change_request_token\x18\x03 \x01(\v2,.kratos.api.Security.EmailChangeRequestTokenB\x06\xbaH\x03\xc8\x01\x01R\x17emailChangeRequestToken\x12t\n" +
+	"\x1bavatar_change_request_token\x18\x04 \x01(\v2-.kratos.api.Security.AvatarChangeRequestTokenB\x06\xbaH\x03\xc8\x01\x01R\x18avatarChangeRequestToken\x1ah\n" +
 	"\vAccessToken\x12\x1f\n" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
 	"\fRefreshToken\x128\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x87\x06\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1at\n" +
+	"\x17EmailChangeRequestToken\x12\x1f\n" +
+	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1au\n" +
+	"\x18AvatarChangeRequestToken\x12\x1f\n" +
+	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x87\x06\n" +
 	"\rObservability\x12;\n" +
 	"\atracing\x18\x01 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
 	"\ametrics\x18\x02 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x92\x02\n" +
@@ -993,55 +1121,61 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_conf_conf_proto_goTypes = []any{
-	(Observability_Protocol)(0),   // 0: kratos.api.Observability.Protocol
-	(*Bootstrap)(nil),             // 1: kratos.api.Bootstrap
-	(*Transport)(nil),             // 2: kratos.api.Transport
-	(*Data)(nil),                  // 3: kratos.api.Data
-	(*Auth)(nil),                  // 4: kratos.api.Auth
-	(*Observability)(nil),         // 5: kratos.api.Observability
-	(*Gateway)(nil),               // 6: kratos.api.Gateway
-	(*Transport_HTTP)(nil),        // 7: kratos.api.Transport.HTTP
-	(*Transport_GRPC)(nil),        // 8: kratos.api.Transport.GRPC
-	(*Data_MySQL)(nil),            // 9: kratos.api.Data.MySQL
-	(*Data_Redis)(nil),            // 10: kratos.api.Data.Redis
-	(*Auth_AccessToken)(nil),      // 11: kratos.api.Auth.AccessToken
-	(*Auth_RefreshToken)(nil),     // 12: kratos.api.Auth.RefreshToken
-	(*Observability_Tracing)(nil), // 13: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil), // 14: kratos.api.Observability.Metrics
-	(*Gateway_Asset)(nil),         // 15: kratos.api.Gateway.Asset
-	(*durationpb.Duration)(nil),   // 16: google.protobuf.Duration
+	(Observability_Protocol)(0),               // 0: kratos.api.Observability.Protocol
+	(*Bootstrap)(nil),                         // 1: kratos.api.Bootstrap
+	(*Transport)(nil),                         // 2: kratos.api.Transport
+	(*Data)(nil),                              // 3: kratos.api.Data
+	(*Security)(nil),                          // 4: kratos.api.Security
+	(*Observability)(nil),                     // 5: kratos.api.Observability
+	(*Gateway)(nil),                           // 6: kratos.api.Gateway
+	(*Transport_HTTP)(nil),                    // 7: kratos.api.Transport.HTTP
+	(*Transport_GRPC)(nil),                    // 8: kratos.api.Transport.GRPC
+	(*Data_MySQL)(nil),                        // 9: kratos.api.Data.MySQL
+	(*Data_Redis)(nil),                        // 10: kratos.api.Data.Redis
+	(*Security_AccessToken)(nil),              // 11: kratos.api.Security.AccessToken
+	(*Security_RefreshToken)(nil),             // 12: kratos.api.Security.RefreshToken
+	(*Security_EmailChangeRequestToken)(nil),  // 13: kratos.api.Security.EmailChangeRequestToken
+	(*Security_AvatarChangeRequestToken)(nil), // 14: kratos.api.Security.AvatarChangeRequestToken
+	(*Observability_Tracing)(nil),             // 15: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil),             // 16: kratos.api.Observability.Metrics
+	(*Gateway_Asset)(nil),                     // 17: kratos.api.Gateway.Asset
+	(*durationpb.Duration)(nil),               // 18: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
 	3,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
-	4,  // 2: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
+	4,  // 2: kratos.api.Bootstrap.security:type_name -> kratos.api.Security
 	5,  // 3: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
 	6,  // 4: kratos.api.Bootstrap.gateway:type_name -> kratos.api.Gateway
 	7,  // 5: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	8,  // 6: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
 	9,  // 7: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
 	10, // 8: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	11, // 9: kratos.api.Auth.access_token:type_name -> kratos.api.Auth.AccessToken
-	12, // 10: kratos.api.Auth.refresh_token:type_name -> kratos.api.Auth.RefreshToken
-	13, // 11: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	14, // 12: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	15, // 13: kratos.api.Gateway.asset:type_name -> kratos.api.Gateway.Asset
-	16, // 14: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	16, // 15: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	16, // 16: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	16, // 17: kratos.api.Auth.AccessToken.ttl:type_name -> google.protobuf.Duration
-	16, // 18: kratos.api.Auth.RefreshToken.ttl:type_name -> google.protobuf.Duration
-	0,  // 19: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
-	0,  // 20: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
-	16, // 21: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	16, // 22: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
-	23, // [23:23] is the sub-list for method output_type
-	23, // [23:23] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	11, // 9: kratos.api.Security.access_token:type_name -> kratos.api.Security.AccessToken
+	12, // 10: kratos.api.Security.refresh_token:type_name -> kratos.api.Security.RefreshToken
+	13, // 11: kratos.api.Security.email_change_request_token:type_name -> kratos.api.Security.EmailChangeRequestToken
+	14, // 12: kratos.api.Security.avatar_change_request_token:type_name -> kratos.api.Security.AvatarChangeRequestToken
+	15, // 13: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	16, // 14: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	17, // 15: kratos.api.Gateway.asset:type_name -> kratos.api.Gateway.Asset
+	18, // 16: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	18, // 17: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	18, // 18: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
+	18, // 19: kratos.api.Security.AccessToken.ttl:type_name -> google.protobuf.Duration
+	18, // 20: kratos.api.Security.RefreshToken.ttl:type_name -> google.protobuf.Duration
+	18, // 21: kratos.api.Security.EmailChangeRequestToken.ttl:type_name -> google.protobuf.Duration
+	18, // 22: kratos.api.Security.AvatarChangeRequestToken.ttl:type_name -> google.protobuf.Duration
+	0,  // 23: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
+	0,  // 24: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
+	18, // 25: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	18, // 26: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
+	27, // [27:27] is the sub-list for method output_type
+	27, // [27:27] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -1051,15 +1185,15 @@ func file_conf_conf_proto_init() {
 	}
 	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[9].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[12].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[13].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[14].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   15,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

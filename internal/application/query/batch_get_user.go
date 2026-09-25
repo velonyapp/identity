@@ -81,7 +81,7 @@ func (h *BatchGetUsersHandler) Execute(
 
 	usersByID := make(map[vo.UserID]*entity.User, len(users))
 	for _, user := range users {
-		usersByID[user.ID] = user
+		usersByID[user.ID()] = user
 	}
 
 	cacheItems := make(map[string]any, len(users))

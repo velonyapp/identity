@@ -20,10 +20,10 @@ func NewSessionRevokedHandler(
 	}
 }
 
-func (h *SessionRevokedHandler) Execute(ctx context.Context, domainEvent event.SessionRevoked) error {
+func (h *SessionRevokedHandler) Execute(ctx context.Context, domainEvent *event.SessionRevoked) error {
 	integrationEvent := integrationevent.NewSessionRevoked(
 		domainEvent.AggregateID(),
-		domainEvent.RevokeTime.Value(),
+		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

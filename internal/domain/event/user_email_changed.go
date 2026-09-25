@@ -1,26 +1,46 @@
 package event
 
-import "github.com/velonyapp/identity/internal/domain/vo"
+import (
+	"time"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
+
+var _ DomainEvent = (*UserEmailChanged)(nil)
 
 type UserEmailChanged struct {
 	BaseDomainEvent
 
-	OldEmail   *vo.Email
-	NewEmail   *vo.Email
-	UpdateTime vo.Time
+	oldEmail *vo.Email
+	newEmail *vo.Email
 }
 
 func NewUserEmailChanged(
 	userID vo.UserID,
 	oldEmail *vo.Email,
 	newEmail *vo.Email,
-	updateTime vo.Time,
-) UserEmailChanged {
-	return UserEmailChanged{
-		BaseDomainEvent: NewBaseDomainEvent(userID.String()),
+	occurTime time.Time,
+) *UserEmailChanged {
+	return &UserEmailChanged{
+		BaseDomainEvent: NewBaseDomainEvent(userID.Value(), occurTime),
 
-		OldEmail:   oldEmail,
-		NewEmail:   newEmail,
-		UpdateTime: updateTime,
+		oldEmail: oldEmail,
+		newEmail: newEmail,
 	}
+}
+
+func (e *UserEmailChanged) OldEmail() *vo.Email {
+	if e.oldEmail == nil {
+		return nil
+	}
+	value := *e.oldEmail
+	return &value
+}
+
+func (e *UserEmailChanged) NewEmail() *vo.Email {
+	if e.newEmail == nil {
+		return nil
+	}
+	value := *e.newEmail
+	return &value
 }

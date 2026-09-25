@@ -157,7 +157,6 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 	}
 
 	var username, fullName *string
-	var avatarKey **string
 
 	paths := req.GetUpdateMask().GetPaths()
 
@@ -170,10 +169,6 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 			value := user.GetFullName()
 			fullName = &value
 		}
-		if user.GetAvatarKey() != "" {
-			value := user.AvatarKey
-			avatarKey = &value
-		}
 	} else {
 		for _, path := range paths {
 			switch path {
@@ -184,9 +179,6 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 				value = user.GetFullName()
 				fullName = &value
 
-				value2 := user.AvatarKey
-				avatarKey = &value2
-
 			case "username":
 				value := user.GetUsername()
 				username = &value
@@ -194,10 +186,6 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 			case "full_name":
 				value := user.GetFullName()
 				fullName = &value
-
-			case "avatar_key":
-				value := user.AvatarKey
-				avatarKey = &value
 
 			default:
 				return nil, status.Errorf(
@@ -213,7 +201,6 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 		UserID:    userID,
 		Username:  username,
 		FullName:  fullName,
-		AvatarKey: avatarKey,
 	})
 	if err != nil {
 		return nil, mapError(err)

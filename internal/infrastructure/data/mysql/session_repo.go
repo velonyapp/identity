@@ -78,22 +78,22 @@ func (repo *SessionRepo) Save(ctx context.Context, session *entity.Session) erro
 	`
 
 	var revokeTime any
-	if session.RevokeTime != nil {
-		revokeTime = session.RevokeTime.Value()
+	if session.RevokeTime() != nil {
+		revokeTime = *session.RevokeTime()
 	}
 
-	tokenHash := sha256.Sum256([]byte(session.Token.Value()))
+	tokenHash := sha256.Sum256([]byte(session.Token().Value()))
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
-		session.ID.Value(),
-		session.UserID.Value(),
+		session.ID().Value(),
+		session.UserID().Value(),
 		tokenHash[:],
-		session.ExpireTime.Value(),
+		session.ExpireTime(),
 		revokeTime,
 
-		session.UserID.Value(),
+		session.UserID().Value(),
 		tokenHash[:],
-		session.ExpireTime.Value(),
+		session.ExpireTime(),
 		revokeTime,
 	); err != nil {
 		return err
@@ -125,17 +125,17 @@ func scanSession(scanner sessionScanner, token vo.SessionToken) (*entity.Session
 		return nil, err
 	}
 
-	var revokeTimeVO *vo.Time
+	var revokeTimeVO *time.Time
 	if revokeTime.Valid {
-		value := vo.NewTime(revokeTime.Time)
+		value := revokeTime.Time
 		revokeTimeVO = &value
 	}
 
-	return &entity.Session{
-		ID:         vo.NewSessionID(id),
-		UserID:     vo.NewUserID(userID),
-		Token:      token,
-		ExpireTime: vo.NewTime(expireTime),
-		RevokeTime: revokeTimeVO,
-	}, nil
+	return entity.ReconstituteSession(
+		vo.NewSessionID(id),
+		vo.NewUserID(userID),
+		token,
+		expireTime,
+		revokeTimeVO,
+	), nil
 }

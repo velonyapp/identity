@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,7 +24,6 @@ const (
 
 type SessionRevokedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RevokeTime    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=revoke_time,json=revokeTime,proto3" json:"revoke_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -59,21 +58,12 @@ func (*SessionRevokedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_session_revoke_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SessionRevokedPayload) GetRevokeTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.RevokeTime
-	}
-	return nil
-}
-
 var File_velony_identity_event_v1_session_revoke_proto protoreflect.FileDescriptor
 
 const file_velony_identity_event_v1_session_revoke_proto_rawDesc = "" +
 	"\n" +
-	"-velony/identity/event/v1/session_revoke.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"T\n" +
-	"\x15SessionRevokedPayload\x12;\n" +
-	"\vrevoke_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"revokeTimeB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"-velony/identity/event/v1/session_revoke.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x17\n" +
+	"\x15SessionRevokedPayloadB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_session_revoke_proto_rawDescOnce sync.Once
@@ -90,15 +80,13 @@ func file_velony_identity_event_v1_session_revoke_proto_rawDescGZIP() []byte {
 var file_velony_identity_event_v1_session_revoke_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_identity_event_v1_session_revoke_proto_goTypes = []any{
 	(*SessionRevokedPayload)(nil), // 0: velony.identity.event.v1.SessionRevokedPayload
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 }
 var file_velony_identity_event_v1_session_revoke_proto_depIdxs = []int32{
-	1, // 0: velony.identity.event.v1.SessionRevokedPayload.revoke_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_identity_event_v1_session_revoke_proto_init() }
