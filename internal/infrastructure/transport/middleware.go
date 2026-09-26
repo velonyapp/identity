@@ -40,7 +40,8 @@ func NewAuthMiddleware(c *conf.Security) AuthMiddleware {
 			selector.Server(auth).
 				Path(
 					"/velony.identity.api.v1.IdentityService/UpdateUser",
-					"/velony.identity.api.v1.IdentityService/PresignUserAvatar",
+					"/velony.identity.api.v1.IdentityService/RequestUserEmailChange",
+					"/velony.identity.api.v1.IdentityService/RequestUserAvatarChange",
 					"/velony.identity.api.v1.IdentityService/DeleteUser",
 				).
 				Build(),
