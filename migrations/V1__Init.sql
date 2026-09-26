@@ -10,7 +10,7 @@ CREATE TABLE users (
 
 CREATE TABLE email_change_requests (
     user_id     CHAR(36) PRIMARY KEY,
-    value       VARCHAR(255) NOT NULL,
+    email       VARCHAR(255) NOT NULL,
     time        TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 
@@ -22,7 +22,7 @@ CREATE TABLE email_change_requests (
 
 CREATE TABLE avatar_change_requests (
     user_id     CHAR(36) PRIMARY KEY,
-    value       VARCHAR(128) NOT NULL,
+    avatar_key  VARCHAR(128) NOT NULL,
     time        TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 

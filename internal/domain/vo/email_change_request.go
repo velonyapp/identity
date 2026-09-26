@@ -3,25 +3,25 @@ package vo
 import "time"
 
 type EmailChangeRequest struct {
-	value      Email
+	email      Email
 	time       time.Time
 	expireTime time.Time
 }
 
 func NewEmailChangeRequest(
-	value Email,
+	email Email,
 	time time.Time,
 	expireTime time.Time,
 ) EmailChangeRequest {
 	return EmailChangeRequest{
-		value:      value,
+		email:      email,
 		time:       time,
 		expireTime: expireTime,
 	}
 }
 
-func (r EmailChangeRequest) Value() Email {
-	return r.value
+func (r EmailChangeRequest) Email() Email {
+	return r.email
 }
 
 func (r EmailChangeRequest) Time() time.Time {

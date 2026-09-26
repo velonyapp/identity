@@ -27,7 +27,7 @@ func (v *requestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token
 		[]byte(v.c.GetEmailChangeRequestToken().GetSecret()),
 	)
 
-	_, _ = mac.Write([]byte(request.Value().Value()))
+	_, _ = mac.Write([]byte(request.Email().Value()))
 	_, _ = mac.Write([]byte(strconv.FormatInt(request.Time().UnixNano(), 10)))
 	_, _ = mac.Write([]byte(strconv.FormatInt(request.ExpireTime().UnixNano(), 10)))
 
@@ -46,7 +46,7 @@ func (v *requestVerifier) VerifyAvatarChange(request vo.AvatarChangeRequest, tok
 		[]byte(v.c.GetAvatarChangeRequestToken().GetSecret()),
 	)
 
-	_, _ = mac.Write([]byte(request.Value().String()))
+	_, _ = mac.Write([]byte(request.AvatarKey().String()))
 	_, _ = mac.Write([]byte(strconv.FormatInt(request.Time().UnixNano(), 10)))
 	_, _ = mac.Write([]byte(strconv.FormatInt(request.ExpireTime().UnixNano(), 10)))
 

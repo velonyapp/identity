@@ -198,9 +198,9 @@ func (s *Service) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v
 	}
 
 	result, err := s.updateUserHandler.Execute(ctx, &command.UpdateUser{
-		UserID:    userID,
-		Username:  username,
-		FullName:  fullName,
+		UserID:   userID,
+		Username: username,
+		FullName: fullName,
 	})
 	if err != nil {
 		return nil, mapError(err)
@@ -236,8 +236,8 @@ func (s *Service) RequestUserEmailChange(ctx context.Context, req *v1.RequestUse
 	}
 
 	if _, err := s.requestUserEmailChangeHandler.Execute(ctx, &command.RequestUserEmailChange{
-		UserID:   userID,
-		NewEmail: req.Email,
+		UserID: userID,
+		Email:  req.Email,
 	}); err != nil {
 		return nil, mapError(err)
 	}

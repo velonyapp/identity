@@ -12,8 +12,8 @@ import (
 )
 
 type RequestUserEmailChange struct {
-	UserID   string
-	NewEmail string
+	UserID string
+	Email  string
 }
 
 type RequestUserEmailChangeResult struct{}
@@ -49,7 +49,7 @@ func (h *RequestUserEmailChangeHandler) Execute(
 	now := time.Now()
 
 	userID := vo.NewUserID(cmd.UserID)
-	newEmail, err := vo.NewEmail(cmd.NewEmail)
+	newEmail, err := vo.NewEmail(cmd.Email)
 	if err != nil {
 		return nil, err
 	}

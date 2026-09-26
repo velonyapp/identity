@@ -45,11 +45,11 @@ func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.value,
+			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.value,
+			avatar_change_requests.avatar_key,
 			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
@@ -106,11 +106,11 @@ func (repo *userRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*en
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.value,
+			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.value,
+			avatar_change_requests.avatar_key,
 			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
@@ -164,11 +164,11 @@ func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) 
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.value,
+			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.value,
+			avatar_change_requests.avatar_key,
 			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
@@ -213,11 +213,11 @@ func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 			users.create_time,
 			users.update_time,
 
-			email_change_requests.value,
+			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.value,
+			avatar_change_requests.avatar_key,
 			avatar_change_requests.time,
 			avatar_change_requests.expire_time,
 
@@ -313,13 +313,13 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 			const emailChangeRequestQuery = `
 				INSERT INTO email_change_requests (
 					user_id,
-					value,
+					email,
 					time,
 					expire_time
 				)
 				VALUES (?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
-					value = ?,
+					email = ?,
 					time = ?,
 					expire_time = ?
 			`
@@ -328,11 +328,11 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 
 			if _, err := executor(ctx, repo.db).ExecContext(ctx, emailChangeRequestQuery,
 				user.ID().Value(),
-				emailChangeRequest.Value().Value(),
+				emailChangeRequest.Email().Value(),
 				emailChangeRequest.Time(),
 				emailChangeRequest.ExpireTime(),
 
-				emailChangeRequest.Value().Value(),
+				emailChangeRequest.Email().Value(),
 				emailChangeRequest.Time(),
 				emailChangeRequest.ExpireTime(),
 			); err != nil {
@@ -357,13 +357,13 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 			const avatarChangeRequestQuery = `
 				INSERT INTO avatar_change_requests (
 					user_id,
-					value,
+					avatar_key,
 					time,
 					expire_time
 				)
 				VALUES (?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
-					value = ?,
+					avatar_key = ?,
 					time = ?,
 					expire_time = ?
 			`
@@ -372,11 +372,11 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 
 			if _, err := executor(ctx, repo.db).ExecContext(ctx, avatarChangeRequestQuery,
 				user.ID().Value(),
-				avatarChangeRequest.Value().String(),
+				avatarChangeRequest.AvatarKey().String(),
 				avatarChangeRequest.Time(),
 				avatarChangeRequest.ExpireTime(),
 
-				avatarChangeRequest.Value().String(),
+				avatarChangeRequest.AvatarKey().String(),
 				avatarChangeRequest.Time(),
 				avatarChangeRequest.ExpireTime(),
 			); err != nil {
@@ -485,11 +485,11 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		createTime time.Time
 		updateTime time.Time
 
-		emailChangeRequestValue      sql.NullString
+		emailChangeRequestEmail      sql.NullString
 		emailChangeRequestTime       sql.NullTime
 		emailChangeRequestExpireTime sql.NullTime
 
-		avatarChangeRequestValue      sql.NullString
+		avatarChangeRequestAvatarKey  sql.NullString
 		avatarChangeRequestTime       sql.NullTime
 		avatarChangeRequestExpireTime sql.NullTime
 
@@ -507,11 +507,11 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		&createTime,
 		&updateTime,
 
-		&emailChangeRequestValue,
+		&emailChangeRequestEmail,
 		&emailChangeRequestTime,
 		&emailChangeRequestExpireTime,
 
-		&avatarChangeRequestValue,
+		&avatarChangeRequestAvatarKey,
 		&avatarChangeRequestTime,
 		&avatarChangeRequestExpireTime,
 
@@ -538,8 +538,8 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 	}
 
 	var emailChangeRequest *vo.EmailChangeRequest
-	if emailChangeRequestValue.Valid {
-		newEmail, _ := vo.NewEmail(emailChangeRequestValue.String)
+	if emailChangeRequestEmail.Valid {
+		newEmail, _ := vo.NewEmail(emailChangeRequestEmail.String)
 
 		value := vo.NewEmailChangeRequest(
 			newEmail,
@@ -550,8 +550,8 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 	}
 
 	var avatarChangeRequest *vo.AvatarChangeRequest
-	if avatarChangeRequestValue.Valid {
-		newAvatarKey, _ := vo.NewAvatarKey(avatarChangeRequestValue.String)
+	if avatarChangeRequestAvatarKey.Valid {
+		newAvatarKey, _ := vo.NewAvatarKey(avatarChangeRequestAvatarKey.String)
 
 		value := vo.NewAvatarChangeRequest(
 			newAvatarKey,

@@ -314,7 +314,7 @@ func (u *User) ConfirmEmailChange(now time.Time) error {
 		oldEmail = u.email
 	}
 
-	value := u.emailChangeRequest.Value()
+	value := u.emailChangeRequest.Email()
 	newEmail := &value
 	u.email = newEmail
 	u.emailChangeRequest = nil
@@ -393,7 +393,7 @@ func (u *User) ConfirmAvatarChange(now time.Time) error {
 		oldAvatarKey = &value
 	}
 
-	value := u.avatarChangeRequest.Value()
+	value := u.avatarChangeRequest.AvatarKey()
 	newAvatarKey := &value
 
 	u.avatarKey = newAvatarKey
