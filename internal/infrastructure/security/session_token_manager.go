@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/base64"
-	"encoding/hex"
 
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -30,17 +29,15 @@ func (m *sessionTokenManager) Generate() (vo.SessionToken, error) {
 }
 
 func (m *sessionTokenManager) Hash(token vo.SessionToken) (vo.SessionTokenHash, error) {
-	hashBytes := sha256.Sum256([]byte(token.Value()))
-	hash := hex.EncodeToString(hashBytes[:])
+	hash := sha256.Sum256([]byte(token.Value()))
 
-	return vo.NewSessionTokenHash(hash)
+	return vo.NewSessionTokenHash(hash[:])
 }
 
 func (m *sessionTokenManager) Verify(token vo.SessionToken, hash vo.SessionTokenHash) error {
 	computedHash := sha256.Sum256([]byte(token.Value()))
-	computedHashString := hex.EncodeToString(computedHash[:])
 
-	if subtle.ConstantTimeCompare([]byte(computedHashString), []byte(hash.Value())) != 1 {
+	if subtle.ConstantTimeCompare(computedHash[:], hash.Value()) != 1 {
 		return port.ErrSessionTokenInvalid
 	}
 

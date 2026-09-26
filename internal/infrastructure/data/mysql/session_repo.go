@@ -108,7 +108,7 @@ func scanSession(scanner sessionScanner) (*entity.Session, error) {
 	var (
 		id         string
 		userID     string
-		tokenHash  string
+		tokenHash  []byte
 		expireTime time.Time
 		revokeTime sql.NullTime
 	)

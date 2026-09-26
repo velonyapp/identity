@@ -9,19 +9,25 @@ var (
 )
 
 type SessionTokenHash struct {
-	value string
+	value []byte
 }
 
-func NewSessionTokenHash(value string) (SessionTokenHash, error) {
-	if value == "" {
+func NewSessionTokenHash(value []byte) (SessionTokenHash, error) {
+	if len(value) == 0 {
 		return SessionTokenHash{}, ErrSessionTokenHashEmpty
 	}
 
+	copied := make([]byte, len(value))
+	copy(copied, value)
+
 	return SessionTokenHash{
-		value: value,
+		value: copied,
 	}, nil
 }
 
-func (h SessionTokenHash) Value() string {
-	return h.value
+func (h SessionTokenHash) Value() []byte {
+	copied := make([]byte, len(h.value))
+	copy(copied, h.value)
+
+	return copied
 }
