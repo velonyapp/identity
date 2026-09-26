@@ -87,8 +87,6 @@ message RequestUserAvatarChangeRequest {
     type: "identity.velony.app/User"
     }
   ];
-
-  string avatar_key = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
 message RequestUserAvatarChangeResponse {

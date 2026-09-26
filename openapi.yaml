@@ -296,12 +296,9 @@ components:
         velony.identity.api.v1.RequestUserAvatarChangeRequest:
             required:
                 - name
-                - avatarKey
             type: object
             properties:
                 name:
-                    type: string
-                avatarKey:
                     type: string
         velony.identity.api.v1.RequestUserAvatarChangeResponse:
             type: object

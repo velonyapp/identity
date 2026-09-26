@@ -464,7 +464,6 @@ func (*ConfirmUserEmailChangeResponse) Descriptor() ([]byte, []int) {
 type RequestUserAvatarChangeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	AvatarKey     string                 `protobuf:"bytes,2,opt,name=avatar_key,json=avatarKey,proto3" json:"avatar_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,13 +501,6 @@ func (*RequestUserAvatarChangeRequest) Descriptor() ([]byte, []int) {
 func (x *RequestUserAvatarChangeRequest) GetName() string {
 	if x != nil {
 		return x.Name
-	}
-	return ""
-}
-
-func (x *RequestUserAvatarChangeRequest) GetAvatarKey() string {
-	if x != nil {
-		return x.AvatarKey
 	}
 	return ""
 }
@@ -637,12 +629,10 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
 	"\x18identity.velony.app/UserR\x04name\x12\x19\n" +
 	"\x05token\x18\x02 \x01(\tB\x03\xe0A\x02R\x05token\" \n" +
-	"\x1eConfirmUserEmailChangeResponse\"z\n" +
+	"\x1eConfirmUserEmailChangeResponse\"V\n" +
 	"\x1eRequestUserAvatarChangeRequest\x124\n" +
 	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
-	"\x18identity.velony.app/UserR\x04name\x12\"\n" +
-	"\n" +
-	"avatar_key\x18\x02 \x01(\tB\x03\xe0A\x02R\tavatarKey\"@\n" +
+	"\x18identity.velony.app/UserR\x04name\"@\n" +
 	"\x1fRequestUserAvatarChangeResponse\x12\x1d\n" +
 	"\n" +
 	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"E\n" +
