@@ -8,6 +8,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
+var _ Handler[*event.UserDeleted] = (*UserDeletedHandler)(nil)
+
 type UserDeletedHandler struct {
 	eventPublisher port.EventPublisher
 }

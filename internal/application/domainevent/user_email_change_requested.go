@@ -8,6 +8,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
+var _ Handler[*event.UserEmailChangeRequested] = (*UserEmailChangeRequestedHandler)(nil)
+
 type UserEmailChangeRequestedHandler struct {
 	eventPublisher port.EventPublisher
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
+var _ Handler[*event.SessionRefreshed] = (*SessionRefreshedHandler)(nil)
+
 type SessionRefreshedHandler struct {
 	eventPublisher port.EventPublisher
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/event"
 )
 
+var _ Handler[*event.SessionRevoked] = (*SessionRevokedHandler)(nil)
+
 type SessionRevokedHandler struct {
 	eventPublisher port.EventPublisher
 }
