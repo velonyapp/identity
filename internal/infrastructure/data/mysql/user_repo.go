@@ -13,6 +13,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
+var _ repo.User = (*UserRepo)(nil)
+
 type UserRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher

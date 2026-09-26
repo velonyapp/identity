@@ -12,6 +12,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+var _ port.EventPublisher = (*eventPublisher)(nil)
+
 type eventPublisher struct {
 	db      *sql.DB
 	encoder *event.Encoder

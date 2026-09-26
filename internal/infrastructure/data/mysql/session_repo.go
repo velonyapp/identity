@@ -13,6 +13,8 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
+var _ repo.Session = (*SessionRepo)(nil)
+
 type SessionRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher

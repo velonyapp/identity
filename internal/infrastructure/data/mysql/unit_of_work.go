@@ -7,6 +7,8 @@ import (
 	"github.com/velonyapp/identity/internal/application/port"
 )
 
+var _ port.UnitOfWork = (*unitOfWork)(nil)
+
 type unitOfWork struct {
 	db *sql.DB
 }
