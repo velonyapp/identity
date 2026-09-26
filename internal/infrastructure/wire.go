@@ -31,7 +31,7 @@ var ProviderSet = wire.NewSet(
 	observability.NewOpenTelemetry,
 	security.NewAccessTokenManager,
 	security.NewSessionTokenManager,
-	security.NewPasswordHasher,
+	security.NewPasswordManager,
 	security.NewRequestVerifier,
 	gateway.NewAssetClient,
 	gateway.NewAssetService,

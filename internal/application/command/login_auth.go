@@ -32,7 +32,7 @@ type LoginAuthHandler struct {
 	unitOfWork          port.UnitOfWork
 	accessTokenManager  port.AccessTokenManager
 	sessionTokenManager port.SessionTokenManager
-	passwordHasher      port.PasswordHasher
+	passwordManager     port.PasswordManager
 	cache               port.Cache
 }
 
@@ -43,7 +43,7 @@ func NewLoginAuthHandler(
 	unitOfWork port.UnitOfWork,
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
-	passwordHasher port.PasswordHasher,
+	passwordManager port.PasswordManager,
 	cache port.Cache,
 ) *LoginAuthHandler {
 	return &LoginAuthHandler{
@@ -53,7 +53,7 @@ func NewLoginAuthHandler(
 		unitOfWork:          unitOfWork,
 		accessTokenManager:  accessTokenManager,
 		sessionTokenManager: sessionTokenManager,
-		passwordHasher:      passwordHasher,
+		passwordManager:     passwordManager,
 		cache:               cache,
 	}
 }
@@ -91,7 +91,7 @@ func (h *LoginAuthHandler) Execute(
 		if !user.HasLocalAuthStrategy() {
 			return ErrInvalidCredentials
 		}
-		if err := h.passwordHasher.Verify(password, user.LocalAuthStrategy().PasswordHash()); err != nil {
+		if err := h.passwordManager.Verify(password, user.LocalAuthStrategy().PasswordHash()); err != nil {
 			return ErrInvalidCredentials
 		}
 

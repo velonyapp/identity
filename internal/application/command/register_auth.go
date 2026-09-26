@@ -31,7 +31,7 @@ type RegisterAuthHandler struct {
 	unitOfWork           port.UnitOfWork
 	accessTokenManager   port.AccessTokenManager
 	sessionTokenManager  port.SessionTokenManager
-	passwordHasher       port.PasswordHasher
+	passwordManager      port.PasswordManager
 	cache                port.Cache
 	usernameAvailability *service.UsernameAvailability
 }
@@ -43,7 +43,7 @@ func NewRegisterAuthHandler(
 	unitOfWork port.UnitOfWork,
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
-	passwordHasher port.PasswordHasher,
+	passwordManager port.PasswordManager,
 	cache port.Cache,
 	usernameAvailability *service.UsernameAvailability,
 ) *RegisterAuthHandler {
@@ -54,7 +54,7 @@ func NewRegisterAuthHandler(
 		unitOfWork:           unitOfWork,
 		accessTokenManager:   accessTokenManager,
 		sessionTokenManager:  sessionTokenManager,
-		passwordHasher:       passwordHasher,
+		passwordManager:      passwordManager,
 		cache:                cache,
 		usernameAvailability: usernameAvailability,
 	}
@@ -79,7 +79,7 @@ func (h *RegisterAuthHandler) Execute(
 		return nil, err
 	}
 
-	passwordHash, err := h.passwordHasher.Hash(password)
+	passwordHash, err := h.passwordManager.Hash(password)
 	if err != nil {
 		return nil, err
 	}

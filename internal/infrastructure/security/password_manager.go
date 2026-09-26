@@ -9,17 +9,17 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-var _ port.PasswordHasher = (*passwordHasher)(nil)
+var _ port.PasswordManager = (*passwordManager)(nil)
 
-type passwordHasher struct {
+type passwordManager struct {
 	cost int
 }
 
-func NewPasswordHasher() port.PasswordHasher {
-	return &passwordHasher{cost: bcrypt.DefaultCost}
+func NewPasswordManager() port.PasswordManager {
+	return &passwordManager{cost: bcrypt.DefaultCost}
 }
 
-func (h *passwordHasher) Hash(password vo.Password) (vo.PasswordHash, error) {
+func (h *passwordManager) Hash(password vo.Password) (vo.PasswordHash, error) {
 	rawPasswordHash, err := bcrypt.GenerateFromPassword([]byte(password.Value()), h.cost)
 	if err != nil {
 		return vo.PasswordHash{}, err
@@ -33,7 +33,7 @@ func (h *passwordHasher) Hash(password vo.Password) (vo.PasswordHash, error) {
 	return vo.PasswordHash(passwordHash), nil
 }
 
-func (h *passwordHasher) Verify(password vo.Password, passwordHash vo.PasswordHash) error {
+func (h *passwordManager) Verify(password vo.Password, passwordHash vo.PasswordHash) error {
 	err := bcrypt.CompareHashAndPassword([]byte(passwordHash.Value()), []byte(password.Value()))
 	if err == nil {
 		return nil

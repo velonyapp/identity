@@ -8,7 +8,7 @@ import (
 
 var ErrPasswordMismatch = errors.New("password does not match")
 
-type PasswordHasher interface {
+type PasswordManager interface {
 	Hash(password vo.Password) (vo.PasswordHash, error)
 	Verify(password vo.Password, hash vo.PasswordHash) error
 }
