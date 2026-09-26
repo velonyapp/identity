@@ -20,18 +20,6 @@ CREATE TABLE email_change_requests (
         ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE avatar_change_requests (
-    user_id     CHAR(36) PRIMARY KEY,
-    avatar_key  VARCHAR(128) NOT NULL,
-    time        TIMESTAMP(6) NOT NULL,
-    expire_time TIMESTAMP(6) NOT NULL,
-
-    CONSTRAINT fk_change_avatar_request_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-        ON DELETE CASCADE
-) ENGINE = InnoDB;
-
 CREATE TABLE local_auth_strategies (
     user_id       CHAR(36) PRIMARY KEY,
     password_hash TEXT NOT NULL,

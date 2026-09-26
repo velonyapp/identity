@@ -49,18 +49,12 @@ func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.avatar_key,
-			avatar_change_requests.time,
-			avatar_change_requests.expire_time,
-
 			local_auth_strategies.password_hash,
 
 			google_auth_strategies.sub
 		FROM users
 		LEFT JOIN email_change_requests
 			ON email_change_requests.user_id = users.id
-		LEFT JOIN avatar_change_requests
-			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
 		LEFT JOIN google_auth_strategies
@@ -110,18 +104,12 @@ func (repo *userRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*en
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.avatar_key,
-			avatar_change_requests.time,
-			avatar_change_requests.expire_time,
-
 			local_auth_strategies.password_hash,
 
 			google_auth_strategies.sub
 		FROM users
 		LEFT JOIN email_change_requests
 			ON email_change_requests.user_id = users.id
-		LEFT JOIN avatar_change_requests
-			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
 		LEFT JOIN google_auth_strategies
@@ -168,18 +156,12 @@ func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) 
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.avatar_key,
-			avatar_change_requests.time,
-			avatar_change_requests.expire_time,
-
 			local_auth_strategies.password_hash,
 
 			google_auth_strategies.sub
 		FROM users
 		LEFT JOIN email_change_requests
 			ON email_change_requests.user_id = users.id
-		LEFT JOIN avatar_change_requests
-			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
 		LEFT JOIN google_auth_strategies
@@ -217,18 +199,12 @@ func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 			email_change_requests.time,
 			email_change_requests.expire_time,
 
-			avatar_change_requests.avatar_key,
-			avatar_change_requests.time,
-			avatar_change_requests.expire_time,
-
 			local_auth_strategies.password_hash,
 
 			google_auth_strategies.sub
 		FROM users
 		LEFT JOIN email_change_requests
 			ON email_change_requests.user_id = users.id
-		LEFT JOIN avatar_change_requests
-			ON avatar_change_requests.user_id = users.id
 		LEFT JOIN local_auth_strategies
 			ON local_auth_strategies.user_id = users.id
 		LEFT JOIN google_auth_strategies
@@ -353,50 +329,6 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 			}
 		}
 
-		if user.AvatarChangeRequest() != nil {
-			const avatarChangeRequestQuery = `
-				INSERT INTO avatar_change_requests (
-					user_id,
-					avatar_key,
-					time,
-					expire_time
-				)
-				VALUES (?, ?, ?, ?)
-				ON DUPLICATE KEY UPDATE
-					avatar_key = ?,
-					time = ?,
-					expire_time = ?
-			`
-
-			avatarChangeRequest := user.AvatarChangeRequest()
-
-			if _, err := executor(ctx, repo.db).ExecContext(ctx, avatarChangeRequestQuery,
-				user.ID().Value(),
-				avatarChangeRequest.AvatarKey().String(),
-				avatarChangeRequest.Time(),
-				avatarChangeRequest.ExpireTime(),
-
-				avatarChangeRequest.AvatarKey().String(),
-				avatarChangeRequest.Time(),
-				avatarChangeRequest.ExpireTime(),
-			); err != nil {
-				return err
-			}
-		} else {
-			const avatarChangeRequestQuery = `
-				DELETE FROM avatar_change_requests
-				WHERE user_id = ?
-			`
-
-			if _, err := executor(ctx, repo.db).ExecContext(
-				ctx,
-				avatarChangeRequestQuery,
-				user.ID().Value(),
-			); err != nil {
-				return err
-			}
-		}
-
 		if user.LocalAuthStrategy() != nil {
 			const localAuthStrategyQuery = `
 				INSERT INTO local_auth_strategies (
@@ -489,10 +421,6 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		emailChangeRequestTime       sql.NullTime
 		emailChangeRequestExpireTime sql.NullTime
 
-		avatarChangeRequestAvatarKey  sql.NullString
-		avatarChangeRequestTime       sql.NullTime
-		avatarChangeRequestExpireTime sql.NullTime
-
 		passwordHash sql.NullString
 
 		googleSub sql.NullString
@@ -510,10 +438,6 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		&emailChangeRequestEmail,
 		&emailChangeRequestTime,
 		&emailChangeRequestExpireTime,
-
-		&avatarChangeRequestAvatarKey,
-		&avatarChangeRequestTime,
-		&avatarChangeRequestExpireTime,
 
 		&passwordHash,
 
@@ -549,18 +473,6 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		emailChangeRequest = &value
 	}
 
-	var avatarChangeRequest *vo.AvatarChangeRequest
-	if avatarChangeRequestAvatarKey.Valid {
-		newAvatarKey, _ := vo.NewAvatarKey(avatarChangeRequestAvatarKey.String)
-
-		value := vo.NewAvatarChangeRequest(
-			newAvatarKey,
-			avatarChangeRequestTime.Time,
-			avatarChangeRequestExpireTime.Time,
-		)
-		avatarChangeRequest = &value
-	}
-
 	var localAuthStrategy *vo.LocalAuthStrategy
 	if passwordHash.Valid {
 		passwordHashVO, _ := vo.NewPasswordHash(passwordHash.String)
@@ -587,7 +499,6 @@ func scanUser(scanner userScanner) (*entity.User, error) {
 		updateTime,
 		nil,
 		emailChangeRequest,
-		avatarChangeRequest,
 		localAuthStrategy,
 		googleAuthStrategy,
 	), nil

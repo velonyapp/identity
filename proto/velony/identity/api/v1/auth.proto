@@ -23,7 +23,7 @@ message LoginAuthResponse {
 message RegisterAuthRequest {
   string full_name = 1 [(google.api.field_behavior) = REQUIRED];
   string username  = 2 [(google.api.field_behavior) = REQUIRED];
-  string password  = 3[(google.api.field_behavior) = REQUIRED];
+  string password  = 3 [(google.api.field_behavior) = REQUIRED];
 }
 
 message RegisterAuthResponse {

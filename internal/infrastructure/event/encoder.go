@@ -59,6 +59,13 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return userUsernameChangedPayload(*event), nil
 
+	case *integrationevent.UserEmailChangeRequested:
+		if event == nil {
+			return nil, fmt.Errorf("UserEmailChangeRequested event is nil")
+		}
+
+		return userEmailChangeRequestedPayload(*event), nil
+
 	case *integrationevent.UserEmailChanged:
 		if event == nil {
 			return nil, fmt.Errorf("UserEmailChanged event is nil")

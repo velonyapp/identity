@@ -9,7 +9,6 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
 
-// A user.
 message User {
   option (google.api.resource) = {
     type    : "identity.velony.app/User"
@@ -18,25 +17,15 @@ message User {
     plural  : "users"
   };
 
-  // The resource name of the user.
   string name = 1 [(google.api.field_behavior) = IDENTIFIER];
 
-  // The username of the user.
-  string username = 2 [(google.api.field_behavior) = REQUIRED];
-
-  // The email of the user.
-  optional string email = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
-
-  // The full name of the user.
-  string full_name = 4 [(google.api.field_behavior) = REQUIRED];
-
-  // The avatar key of the user.
+  string          username   = 2 [(google.api.field_behavior) = REQUIRED];
+  optional string email      = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string          full_name  = 4 [(google.api.field_behavior) = REQUIRED];
   optional string avatar_key = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
-// The request message for retrieving a user.
 message GetUserRequest {
-  // The storage key of the user to retrieve.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -45,11 +34,8 @@ message GetUserRequest {
   ];
 }
 
-// The request message for retrieving multiple users.
 message BatchGetUsersRequest {
-  // The storage keys of the users to retrieve.
-  //
-  // A maximum of 100 users can be retrieved in a batch.
+  // max batch = 100
   repeated string names = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -58,24 +44,17 @@ message BatchGetUsersRequest {
   ];
 }
 
-// The response message for retrieving multiple users.
 message BatchGetUsersResponse {
-  // The requested users, in the same order as the requested names.
   repeated User users = 1;
 }
 
-// The request message for updating a user.
 message UpdateUserRequest {
-  // The user to update.
   User user = 1 [(google.api.field_behavior) = REQUIRED];
 
-  // The fields to update.
   google.protobuf.FieldMask update_mask = 2[(google.api.field_behavior) = OPTIONAL];
 }
 
-// The request message for changing a user's email.
 message RequestUserEmailChangeRequest {
-  // The resource name of the user.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -83,42 +62,40 @@ message RequestUserEmailChangeRequest {
     }
   ];
 
-  // The new email address.
   string email = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
-// The response message for changing a user's email.
 message RequestUserEmailChangeResponse {}
 
-// The request message for verifying a user's email.
 message ConfirmUserEmailChangeRequest {
-  // The verification token from the email link.
-  string token = 1 [(google.api.field_behavior) = REQUIRED];
-}
-
-// The response message for verifying a user's email.
-message ConfirmUserEmailChangeResponse {}
-
-// The request message for presigning a user avatar upload.
-message PresignUserAvatarRequest {
-  // The resource name of the user.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
     type: "identity.velony.app/User"
     }
   ];
+
+  string token = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
-// The response message for presigning a user avatar upload.
-message PresignUserAvatarResponse {
-  // The presigned upload URL.
+message ConfirmUserEmailChangeResponse {}
+
+message RequestUserAvatarChangeRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "identity.velony.app/User"
+    }
+  ];
+
+  string avatar_key = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RequestUserAvatarChangeResponse {
   string upload_url = 1;
 }
 
-// The request message for deleting a user.
 message DeleteUserRequest {
-  // The resource name of the user to delete.
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

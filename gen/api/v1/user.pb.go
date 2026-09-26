@@ -24,19 +24,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// A user.
 type User struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The resource name of the user.
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The username of the user.
-	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	// The email of the user.
-	Email *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	// The full name of the user.
-	FullName string `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	// The avatar key of the user.
-	AvatarKey     *string `protobuf:"bytes,5,opt,name=avatar_key,json=avatarKey,proto3,oneof" json:"avatar_key,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	AvatarKey     *string                `protobuf:"bytes,5,opt,name=avatar_key,json=avatarKey,proto3,oneof" json:"avatar_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,11 +100,9 @@ func (x *User) GetAvatarKey() string {
 	return ""
 }
 
-// The request message for retrieving a user.
 type GetUserRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The storage key of the user to retrieve.
-	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -152,12 +144,9 @@ func (x *GetUserRequest) GetName() string {
 	return ""
 }
 
-// The request message for retrieving multiple users.
 type BatchGetUsersRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The storage keys of the users to retrieve.
-	//
-	// A maximum of 100 users can be retrieved in a batch.
+	// max batch = 100
 	Names         []string `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -200,11 +189,9 @@ func (x *BatchGetUsersRequest) GetNames() []string {
 	return nil
 }
 
-// The response message for retrieving multiple users.
 type BatchGetUsersResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The requested users, in the same order as the requested names.
-	Users         []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -246,12 +233,9 @@ func (x *BatchGetUsersResponse) GetUsers() []*User {
 	return nil
 }
 
-// The request message for updating a user.
 type UpdateUserRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The user to update.
-	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	// The fields to update.
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -301,13 +285,10 @@ func (x *UpdateUserRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	return nil
 }
 
-// The request message for changing a user's email.
 type RequestUserEmailChangeRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The resource name of the user.
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// The new email address.
-	Email         string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -356,7 +337,6 @@ func (x *RequestUserEmailChangeRequest) GetEmail() string {
 	return ""
 }
 
-// The response message for changing a user's email.
 type RequestUserEmailChangeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -393,11 +373,10 @@ func (*RequestUserEmailChangeResponse) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{6}
 }
 
-// The request message for verifying a user's email.
 type ConfirmUserEmailChangeRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The verification token from the email link.
-	Token         string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Token         string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -432,6 +411,13 @@ func (*ConfirmUserEmailChangeRequest) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{7}
 }
 
+func (x *ConfirmUserEmailChangeRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 func (x *ConfirmUserEmailChangeRequest) GetToken() string {
 	if x != nil {
 		return x.Token
@@ -439,7 +425,6 @@ func (x *ConfirmUserEmailChangeRequest) GetToken() string {
 	return ""
 }
 
-// The response message for verifying a user's email.
 type ConfirmUserEmailChangeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -476,29 +461,28 @@ func (*ConfirmUserEmailChangeResponse) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{8}
 }
 
-// The request message for presigning a user avatar upload.
-type PresignUserAvatarRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The resource name of the user.
-	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+type RequestUserAvatarChangeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarKey     string                 `protobuf:"bytes,2,opt,name=avatar_key,json=avatarKey,proto3" json:"avatar_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PresignUserAvatarRequest) Reset() {
-	*x = PresignUserAvatarRequest{}
+func (x *RequestUserAvatarChangeRequest) Reset() {
+	*x = RequestUserAvatarChangeRequest{}
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PresignUserAvatarRequest) String() string {
+func (x *RequestUserAvatarChangeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PresignUserAvatarRequest) ProtoMessage() {}
+func (*RequestUserAvatarChangeRequest) ProtoMessage() {}
 
-func (x *PresignUserAvatarRequest) ProtoReflect() protoreflect.Message {
+func (x *RequestUserAvatarChangeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -510,41 +494,46 @@ func (x *PresignUserAvatarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PresignUserAvatarRequest.ProtoReflect.Descriptor instead.
-func (*PresignUserAvatarRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RequestUserAvatarChangeRequest.ProtoReflect.Descriptor instead.
+func (*RequestUserAvatarChangeRequest) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *PresignUserAvatarRequest) GetName() string {
+func (x *RequestUserAvatarChangeRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-// The response message for presigning a user avatar upload.
-type PresignUserAvatarResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The presigned upload URL.
-	UploadUrl     string `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
+func (x *RequestUserAvatarChangeRequest) GetAvatarKey() string {
+	if x != nil {
+		return x.AvatarKey
+	}
+	return ""
+}
+
+type RequestUserAvatarChangeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadUrl     string                 `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PresignUserAvatarResponse) Reset() {
-	*x = PresignUserAvatarResponse{}
+func (x *RequestUserAvatarChangeResponse) Reset() {
+	*x = RequestUserAvatarChangeResponse{}
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PresignUserAvatarResponse) String() string {
+func (x *RequestUserAvatarChangeResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PresignUserAvatarResponse) ProtoMessage() {}
+func (*RequestUserAvatarChangeResponse) ProtoMessage() {}
 
-func (x *PresignUserAvatarResponse) ProtoReflect() protoreflect.Message {
+func (x *RequestUserAvatarChangeResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_identity_api_v1_user_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -556,23 +545,21 @@ func (x *PresignUserAvatarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PresignUserAvatarResponse.ProtoReflect.Descriptor instead.
-func (*PresignUserAvatarResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RequestUserAvatarChangeResponse.ProtoReflect.Descriptor instead.
+func (*RequestUserAvatarChangeResponse) Descriptor() ([]byte, []int) {
 	return file_velony_identity_api_v1_user_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *PresignUserAvatarResponse) GetUploadUrl() string {
+func (x *RequestUserAvatarChangeResponse) GetUploadUrl() string {
 	if x != nil {
 		return x.UploadUrl
 	}
 	return ""
 }
 
-// The request message for deleting a user.
 type DeleteUserRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The resource name of the user to delete.
-	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -645,14 +632,18 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
 	"\x18identity.velony.app/UserR\x04name\x12\x19\n" +
 	"\x05email\x18\x02 \x01(\tB\x03\xe0A\x02R\x05email\" \n" +
-	"\x1eRequestUserEmailChangeResponse\":\n" +
-	"\x1dConfirmUserEmailChangeRequest\x12\x19\n" +
-	"\x05token\x18\x01 \x01(\tB\x03\xe0A\x02R\x05token\" \n" +
-	"\x1eConfirmUserEmailChangeResponse\"P\n" +
-	"\x18PresignUserAvatarRequest\x124\n" +
+	"\x1eRequestUserEmailChangeResponse\"p\n" +
+	"\x1dConfirmUserEmailChangeRequest\x124\n" +
 	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
-	"\x18identity.velony.app/UserR\x04name\":\n" +
-	"\x19PresignUserAvatarResponse\x12\x1d\n" +
+	"\x18identity.velony.app/UserR\x04name\x12\x19\n" +
+	"\x05token\x18\x02 \x01(\tB\x03\xe0A\x02R\x05token\" \n" +
+	"\x1eConfirmUserEmailChangeResponse\"z\n" +
+	"\x1eRequestUserAvatarChangeRequest\x124\n" +
+	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
+	"\x18identity.velony.app/UserR\x04name\x12\"\n" +
+	"\n" +
+	"avatar_key\x18\x02 \x01(\tB\x03\xe0A\x02R\tavatarKey\"@\n" +
+	"\x1fRequestUserAvatarChangeResponse\x12\x1d\n" +
 	"\n" +
 	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"E\n" +
 	"\x11DeleteUserRequest\x120\n" +
@@ -673,19 +664,19 @@ func file_velony_identity_api_v1_user_proto_rawDescGZIP() []byte {
 
 var file_velony_identity_api_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_velony_identity_api_v1_user_proto_goTypes = []any{
-	(*User)(nil),                           // 0: velony.identity.api.v1.User
-	(*GetUserRequest)(nil),                 // 1: velony.identity.api.v1.GetUserRequest
-	(*BatchGetUsersRequest)(nil),           // 2: velony.identity.api.v1.BatchGetUsersRequest
-	(*BatchGetUsersResponse)(nil),          // 3: velony.identity.api.v1.BatchGetUsersResponse
-	(*UpdateUserRequest)(nil),              // 4: velony.identity.api.v1.UpdateUserRequest
-	(*RequestUserEmailChangeRequest)(nil),  // 5: velony.identity.api.v1.RequestUserEmailChangeRequest
-	(*RequestUserEmailChangeResponse)(nil), // 6: velony.identity.api.v1.RequestUserEmailChangeResponse
-	(*ConfirmUserEmailChangeRequest)(nil),  // 7: velony.identity.api.v1.ConfirmUserEmailChangeRequest
-	(*ConfirmUserEmailChangeResponse)(nil), // 8: velony.identity.api.v1.ConfirmUserEmailChangeResponse
-	(*PresignUserAvatarRequest)(nil),       // 9: velony.identity.api.v1.PresignUserAvatarRequest
-	(*PresignUserAvatarResponse)(nil),      // 10: velony.identity.api.v1.PresignUserAvatarResponse
-	(*DeleteUserRequest)(nil),              // 11: velony.identity.api.v1.DeleteUserRequest
-	(*fieldmaskpb.FieldMask)(nil),          // 12: google.protobuf.FieldMask
+	(*User)(nil),                            // 0: velony.identity.api.v1.User
+	(*GetUserRequest)(nil),                  // 1: velony.identity.api.v1.GetUserRequest
+	(*BatchGetUsersRequest)(nil),            // 2: velony.identity.api.v1.BatchGetUsersRequest
+	(*BatchGetUsersResponse)(nil),           // 3: velony.identity.api.v1.BatchGetUsersResponse
+	(*UpdateUserRequest)(nil),               // 4: velony.identity.api.v1.UpdateUserRequest
+	(*RequestUserEmailChangeRequest)(nil),   // 5: velony.identity.api.v1.RequestUserEmailChangeRequest
+	(*RequestUserEmailChangeResponse)(nil),  // 6: velony.identity.api.v1.RequestUserEmailChangeResponse
+	(*ConfirmUserEmailChangeRequest)(nil),   // 7: velony.identity.api.v1.ConfirmUserEmailChangeRequest
+	(*ConfirmUserEmailChangeResponse)(nil),  // 8: velony.identity.api.v1.ConfirmUserEmailChangeResponse
+	(*RequestUserAvatarChangeRequest)(nil),  // 9: velony.identity.api.v1.RequestUserAvatarChangeRequest
+	(*RequestUserAvatarChangeResponse)(nil), // 10: velony.identity.api.v1.RequestUserAvatarChangeResponse
+	(*DeleteUserRequest)(nil),               // 11: velony.identity.api.v1.DeleteUserRequest
+	(*fieldmaskpb.FieldMask)(nil),           // 12: google.protobuf.FieldMask
 }
 var file_velony_identity_api_v1_user_proto_depIdxs = []int32{
 	0,  // 0: velony.identity.api.v1.BatchGetUsersResponse.users:type_name -> velony.identity.api.v1.User

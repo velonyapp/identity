@@ -18,6 +18,7 @@ type Dispatcher struct {
 func NewDispatcher(
 	userCreatedHandler *UserCreatedHandler,
 	userUsernameChangedHandler *UserUsernameChangedHandler,
+	userEmailChangeRequestedHandler *UserEmailChangeRequestedHandler,
 	userEmailChangedHandler *UserEmailChangedHandler,
 	userFullNameChangedHandler *UserFullNameChangedHandler,
 	userAvatarChangedHandler *UserAvatarChangedHandler,
@@ -37,6 +38,7 @@ func NewDispatcher(
 
 	registerHandler(dispatcher, userCreatedHandler)
 	registerHandler(dispatcher, userUsernameChangedHandler)
+	registerHandler(dispatcher, userEmailChangeRequestedHandler)
 	registerHandler(dispatcher, userEmailChangedHandler)
 	registerHandler(dispatcher, userFullNameChangedHandler)
 	registerHandler(dispatcher, userAvatarChangedHandler)

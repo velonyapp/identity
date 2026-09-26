@@ -10,11 +10,9 @@ import "google/protobuf/empty.proto";
 
 option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
 
-// The identity service.
 service IdentityService {
   option (google.api.default_host) = "identity.velony.app";
 
-  // Retrieves a user.
   rpc GetUser(GetUserRequest) returns (User) {
     option (google.api.http) = {
       get: "/v1/{name=users/*}"
@@ -22,14 +20,12 @@ service IdentityService {
     option (google.api.method_signature) = "name";
   }
 
-  // Retrieves multiple users.
   rpc BatchGetUsers(BatchGetUsersRequest) returns (BatchGetUsersResponse) {
     option (google.api.http) = {
       get: "/v1/users:batchGet"
     };
   }
 
-  // Updates a user.
   rpc UpdateUser(UpdateUserRequest) returns (User) {
     option (google.api.http) = {
       patch: "/v1/{user.name=users/*}"
@@ -47,21 +43,18 @@ service IdentityService {
 
   rpc ConfirmUserEmailChange(ConfirmUserEmailChangeRequest) returns (ConfirmUserEmailChangeResponse) {
     option (google.api.http) = {
-      post: "/v1/users:confirmEmailChange"
+      post: "/v1/{name=users/*}:confirmEmailChange"
       body: "*"
     };
   }
 
-  // Presigns a user avatar upload.
-  rpc PresignUserAvatar(PresignUserAvatarRequest) returns (PresignUserAvatarResponse) {
+  rpc RequestUserAvatarChange(RequestUserAvatarChangeRequest) returns (RequestUserAvatarChangeResponse) {
     option (google.api.http) = {
-      post: "/v1/{name=users/*}:presignAvatar"
+      post: "/v1/{name=users/*}:requestAvatarChange"
       body: "*"
     };
-    option (google.api.method_signature) = "name";
   }
 
-  // Deletes a user.
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=users/*}"
@@ -69,7 +62,6 @@ service IdentityService {
     option (google.api.method_signature) = "name";
   }
 
-  // Login a user.
   rpc LoginAuth(LoginAuthRequest) returns (LoginAuthResponse) {
     option (google.api.http) = {
       post: "/v1/auth:login"
@@ -78,7 +70,6 @@ service IdentityService {
     option (google.api.method_signature) = "identity,password";
   }
 
-  // Register a user.
   rpc RegisterAuth(RegisterAuthRequest) returns (RegisterAuthResponse) {
     option (google.api.http) = {
       post: "/v1/auth:register"
@@ -87,7 +78,6 @@ service IdentityService {
     option (google.api.method_signature) = "full_name,username,password";
   }
 
-  // Refresh user session.
   rpc RefreshAuth(RefreshAuthRequest) returns (RefreshAuthResponse) {
     option (google.api.http) = {
       post: "/v1/auth:refresh"

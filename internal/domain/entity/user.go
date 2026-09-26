@@ -16,8 +16,6 @@ var (
 	ErrPendingEmailChangeExpired    = errors.New("email change request expired")
 	ErrAvatarKeyMismatch            = errors.New("avatar does not belong to user")
 	ErrAvatarNotSet                 = errors.New("avatar not set")
-	ErrAvatarChangeNotRequested     = errors.New("avatar change not requested")
-	ErrAvatarChangeRequestExpired   = errors.New("avatar request expired")
 	ErrLocalAuthStrategyNotSet      = errors.New("local authentication strategy not set")
 	ErrGoogleAuthStrategyNotSet     = errors.New("google authentication strategy not set")
 	ErrCannotRemoveLastAuthStrategy = errors.New("cannot remove the last authentication strategy")
@@ -33,8 +31,7 @@ type User struct {
 	updateTime time.Time
 	deleteTime *time.Time
 
-	emailChangeRequest  *vo.EmailChangeRequest
-	avatarChangeRequest *vo.AvatarChangeRequest
+	emailChangeRequest *vo.EmailChangeRequest
 
 	localAuthStrategy  *vo.LocalAuthStrategy
 	googleAuthStrategy *vo.GoogleAuthStrategy
@@ -79,18 +76,15 @@ func ReconstituteUser(
 	updateTime time.Time,
 	deleteTime *time.Time,
 	emailChangeRequest *vo.EmailChangeRequest,
-	avatarChangeRequest *vo.AvatarChangeRequest,
 	localAuthStrategy *vo.LocalAuthStrategy,
 	googleAuthStrategy *vo.GoogleAuthStrategy,
 ) *User {
 	u := &User{
-		id:                 id,
-		fullName:           fullName,
-		username:           username,
-		createTime:         createTime,
-		updateTime:         updateTime,
-		localAuthStrategy:  localAuthStrategy,
-		googleAuthStrategy: googleAuthStrategy,
+		id:         id,
+		fullName:   fullName,
+		username:   username,
+		createTime: createTime,
+		updateTime: updateTime,
 	}
 
 	if email != nil {
@@ -109,9 +103,13 @@ func ReconstituteUser(
 		value := *emailChangeRequest
 		u.emailChangeRequest = &value
 	}
-	if avatarChangeRequest != nil {
-		value := *avatarChangeRequest
-		u.avatarChangeRequest = &value
+	if localAuthStrategy != nil {
+		value := *localAuthStrategy
+		u.localAuthStrategy = &value
+	}
+	if googleAuthStrategy != nil {
+		value := *googleAuthStrategy
+		u.googleAuthStrategy = &value
 	}
 
 	return u
@@ -170,15 +168,6 @@ func (u *User) EmailChangeRequest() *vo.EmailChangeRequest {
 	return &value
 }
 
-func (u *User) AvatarChangeRequest() *vo.AvatarChangeRequest {
-	if u.avatarChangeRequest == nil {
-		return nil
-	}
-
-	value := *u.avatarChangeRequest
-	return &value
-}
-
 func (u *User) LocalAuthStrategy() *vo.LocalAuthStrategy {
 	if u.localAuthStrategy == nil {
 		return nil
@@ -205,10 +194,6 @@ func (u *User) HasEmail() bool {
 
 func (u *User) HasEmailChangeRequest() bool {
 	return u.emailChangeRequest != nil
-}
-
-func (u *User) HasAvatarChangeRequest() bool {
-	return u.avatarChangeRequest != nil
 }
 
 func (u *User) HasLocalAuthStrategy() bool {
@@ -295,6 +280,15 @@ func (u *User) RequestEmailChange(newEmail vo.Email, ttl time.Duration, now time
 	)
 	u.emailChangeRequest = &value
 
+	u.recordEvent(
+		event.NewUserEmailChangeRequested(
+			u.id,
+			newEmail,
+			value.ExpireTime(),
+			now,
+		),
+	)
+
 	return nil
 }
 
@@ -358,33 +352,9 @@ func (u *User) RemoveEmail(now time.Time) error {
 	return nil
 }
 
-func (u *User) RequestAvatarChange(newAvatarKey vo.AvatarKey, ttl time.Duration, now time.Time) error {
+func (u *User) ChangeAvatar(newAvatarKey vo.AvatarKey, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
-	}
-	if newAvatarKey.UserID() != u.id.Value() {
-		return ErrAvatarKeyMismatch
-	}
-
-	value := vo.NewAvatarChangeRequest(
-		newAvatarKey,
-		now,
-		now.Add(ttl),
-	)
-	u.avatarChangeRequest = &value
-
-	return nil
-}
-
-func (u *User) ConfirmAvatarChange(now time.Time) error {
-	if u.IsDeleted() {
-		return ErrUserDeleted
-	}
-	if !u.HasAvatarChangeRequest() {
-		return ErrAvatarChangeNotRequested
-	}
-	if !now.Before(u.avatarChangeRequest.ExpireTime()) {
-		return ErrAvatarChangeRequestExpired
 	}
 
 	var oldAvatarKey *vo.AvatarKey
@@ -393,18 +363,15 @@ func (u *User) ConfirmAvatarChange(now time.Time) error {
 		oldAvatarKey = &value
 	}
 
-	value := u.avatarChangeRequest.AvatarKey()
-	newAvatarKey := &value
-
-	u.avatarKey = newAvatarKey
-	u.avatarChangeRequest = nil
+	value := newAvatarKey
+	u.avatarKey = &value
 	u.updateTime = now
 
 	u.recordEvent(
 		event.NewUserAvatarChanged(
 			u.id,
 			oldAvatarKey,
-			newAvatarKey,
+			&value,
 			now,
 		),
 	)

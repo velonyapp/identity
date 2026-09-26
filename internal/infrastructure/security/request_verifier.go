@@ -39,22 +39,3 @@ func (v *requestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token
 
 	return nil
 }
-
-func (v *requestVerifier) VerifyAvatarChange(request vo.AvatarChangeRequest, token string) error {
-	mac := hmac.New(
-		sha256.New,
-		[]byte(v.c.GetAvatarChangeRequestToken().GetSecret()),
-	)
-
-	_, _ = mac.Write([]byte(request.AvatarKey().String()))
-	_, _ = mac.Write([]byte(strconv.FormatInt(request.Time().UnixNano(), 10)))
-	_, _ = mac.Write([]byte(strconv.FormatInt(request.ExpireTime().UnixNano(), 10)))
-
-	expectedToken := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
-
-	if !hmac.Equal([]byte(expectedToken), []byte(token)) {
-		return port.ErrRequestTokenInvalid
-	}
-
-	return nil
-}

@@ -42,6 +42,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	userCreatedHandler := domainevent.NewUserCreatedHandler(eventPublisher)
 	userUsernameChangedHandler := domainevent.NewUserUsernameChangedHandler(eventPublisher)
+	userEmailChangeRequestedHandler := domainevent.NewUserEmailChangeRequestedHandler(eventPublisher)
 	userEmailChangedHandler := domainevent.NewUserEmailChangedHandler(eventPublisher)
 	userFullNameChangedHandler := domainevent.NewUserFullNameChangedHandler(eventPublisher)
 	userAvatarChangedHandler := domainevent.NewUserAvatarChangedHandler(eventPublisher)
@@ -49,7 +50,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	sessionCreatedHandler := domainevent.NewSessionCreatedHandler(eventPublisher)
 	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(eventPublisher)
 	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
+	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangeRequestedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
 	user := mysql.NewUserRepo(db, dispatcher)
 	client, err := redis.NewConnection(data)
 	if err != nil {
@@ -77,9 +78,9 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 		return nil, nil, err
 	}
 	assetService := gateway.NewAssetService(assetServiceClient)
-	presignUserAvatarHandler := command.NewPresignUserAvatarHandler(assetService)
+	requestUserAvatarChangeHandler := command.NewRequestUserAvatarChangeHandler(assetService)
 	deleteUserHandler := command.NewDeleteUserHandler(user, unitOfWork, cache)
-	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, presignUserAvatarHandler, deleteUserHandler)
+	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, requestUserAvatarChangeHandler, deleteUserHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {

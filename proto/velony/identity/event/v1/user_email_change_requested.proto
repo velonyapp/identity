@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package velony.identity.event.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
+
+message UserEmailChangeRequestedPayload {
+  string email = 1;
+
+  google.protobuf.Timestamp expireTime = 2;
+}

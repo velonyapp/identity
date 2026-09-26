@@ -12,5 +12,4 @@ var (
 
 type RequestVerifier interface {
 	VerifyEmailChange(request vo.EmailChangeRequest, token string) error
-	VerifyAvatarChange(request vo.AvatarChangeRequest, token string) error
 }

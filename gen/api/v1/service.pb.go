@@ -26,15 +26,15 @@ var File_velony_identity_api_v1_service_proto protoreflect.FileDescriptor
 
 const file_velony_identity_api_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"$velony/identity/api/v1/service.proto\x12\x16velony.identity.api.v1\x1a!velony/identity/api/v1/user.proto\x1a!velony/identity/api/v1/auth.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1bgoogle/protobuf/empty.proto2\x9c\f\n" +
+	"$velony/identity/api/v1/service.proto\x12\x16velony.identity.api.v1\x1a!velony/identity/api/v1/user.proto\x1a!velony/identity/api/v1/auth.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1bgoogle/protobuf/empty.proto2\xb6\f\n" +
 	"\x0fIdentityService\x12r\n" +
 	"\aGetUser\x12&.velony.identity.api.v1.GetUserRequest\x1a\x1c.velony.identity.api.v1.User\"!\xdaA\x04name\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/{name=users/*}\x12\x88\x01\n" +
 	"\rBatchGetUsers\x12,.velony.identity.api.v1.BatchGetUsersRequest\x1a-.velony.identity.api.v1.BatchGetUsersResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/users:batchGet\x12\x8f\x01\n" +
 	"\n" +
 	"UpdateUser\x12).velony.identity.api.v1.UpdateUserRequest\x1a\x1c.velony.identity.api.v1.User\"8\xdaA\x10user,update_mask\x82\xd3\xe4\x93\x02\x1f:\x04user2\x17/v1/{user.name=users/*}\x12\xb9\x01\n" +
-	"\x16RequestUserEmailChange\x125.velony.identity.api.v1.RequestUserEmailChangeRequest\x1a6.velony.identity.api.v1.RequestUserEmailChangeResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/{name=users/*}:requestEmailChange\x12\xb0\x01\n" +
-	"\x16ConfirmUserEmailChange\x125.velony.identity.api.v1.ConfirmUserEmailChangeRequest\x1a6.velony.identity.api.v1.ConfirmUserEmailChangeResponse\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/v1/users:confirmEmailChange\x12\xac\x01\n" +
-	"\x11PresignUserAvatar\x120.velony.identity.api.v1.PresignUserAvatarRequest\x1a1.velony.identity.api.v1.PresignUserAvatarResponse\"2\xdaA\x04name\x82\xd3\xe4\x93\x02%:\x01*\" /v1/{name=users/*}:presignAvatar\x12r\n" +
+	"\x16RequestUserEmailChange\x125.velony.identity.api.v1.RequestUserEmailChangeRequest\x1a6.velony.identity.api.v1.RequestUserEmailChangeResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/{name=users/*}:requestEmailChange\x12\xb9\x01\n" +
+	"\x16ConfirmUserEmailChange\x125.velony.identity.api.v1.ConfirmUserEmailChangeRequest\x1a6.velony.identity.api.v1.ConfirmUserEmailChangeResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/{name=users/*}:confirmEmailChange\x12\xbd\x01\n" +
+	"\x17RequestUserAvatarChange\x126.velony.identity.api.v1.RequestUserAvatarChangeRequest\x1a7.velony.identity.api.v1.RequestUserAvatarChangeResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/{name=users/*}:requestAvatarChange\x12r\n" +
 	"\n" +
 	"DeleteUser\x12).velony.identity.api.v1.DeleteUserRequest\x1a\x16.google.protobuf.Empty\"!\xdaA\x04name\x82\xd3\xe4\x93\x02\x14*\x12/v1/{name=users/*}\x12\x8f\x01\n" +
 	"\tLoginAuth\x12(.velony.identity.api.v1.LoginAuthRequest\x1a).velony.identity.api.v1.LoginAuthResponse\"-\xdaA\x11identity,password\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth:login\x12\xa5\x01\n" +
@@ -42,25 +42,25 @@ const file_velony_identity_api_v1_service_proto_rawDesc = "" +
 	"\vRefreshAuth\x12*.velony.identity.api.v1.RefreshAuthRequest\x1a+.velony.identity.api.v1.RefreshAuthResponse\"+\xdaA\rrefresh_token\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/auth:refresh\x1a\x16\xcaA\x13identity.velony.appB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var file_velony_identity_api_v1_service_proto_goTypes = []any{
-	(*GetUserRequest)(nil),                 // 0: velony.identity.api.v1.GetUserRequest
-	(*BatchGetUsersRequest)(nil),           // 1: velony.identity.api.v1.BatchGetUsersRequest
-	(*UpdateUserRequest)(nil),              // 2: velony.identity.api.v1.UpdateUserRequest
-	(*RequestUserEmailChangeRequest)(nil),  // 3: velony.identity.api.v1.RequestUserEmailChangeRequest
-	(*ConfirmUserEmailChangeRequest)(nil),  // 4: velony.identity.api.v1.ConfirmUserEmailChangeRequest
-	(*PresignUserAvatarRequest)(nil),       // 5: velony.identity.api.v1.PresignUserAvatarRequest
-	(*DeleteUserRequest)(nil),              // 6: velony.identity.api.v1.DeleteUserRequest
-	(*LoginAuthRequest)(nil),               // 7: velony.identity.api.v1.LoginAuthRequest
-	(*RegisterAuthRequest)(nil),            // 8: velony.identity.api.v1.RegisterAuthRequest
-	(*RefreshAuthRequest)(nil),             // 9: velony.identity.api.v1.RefreshAuthRequest
-	(*User)(nil),                           // 10: velony.identity.api.v1.User
-	(*BatchGetUsersResponse)(nil),          // 11: velony.identity.api.v1.BatchGetUsersResponse
-	(*RequestUserEmailChangeResponse)(nil), // 12: velony.identity.api.v1.RequestUserEmailChangeResponse
-	(*ConfirmUserEmailChangeResponse)(nil), // 13: velony.identity.api.v1.ConfirmUserEmailChangeResponse
-	(*PresignUserAvatarResponse)(nil),      // 14: velony.identity.api.v1.PresignUserAvatarResponse
-	(*emptypb.Empty)(nil),                  // 15: google.protobuf.Empty
-	(*LoginAuthResponse)(nil),              // 16: velony.identity.api.v1.LoginAuthResponse
-	(*RegisterAuthResponse)(nil),           // 17: velony.identity.api.v1.RegisterAuthResponse
-	(*RefreshAuthResponse)(nil),            // 18: velony.identity.api.v1.RefreshAuthResponse
+	(*GetUserRequest)(nil),                  // 0: velony.identity.api.v1.GetUserRequest
+	(*BatchGetUsersRequest)(nil),            // 1: velony.identity.api.v1.BatchGetUsersRequest
+	(*UpdateUserRequest)(nil),               // 2: velony.identity.api.v1.UpdateUserRequest
+	(*RequestUserEmailChangeRequest)(nil),   // 3: velony.identity.api.v1.RequestUserEmailChangeRequest
+	(*ConfirmUserEmailChangeRequest)(nil),   // 4: velony.identity.api.v1.ConfirmUserEmailChangeRequest
+	(*RequestUserAvatarChangeRequest)(nil),  // 5: velony.identity.api.v1.RequestUserAvatarChangeRequest
+	(*DeleteUserRequest)(nil),               // 6: velony.identity.api.v1.DeleteUserRequest
+	(*LoginAuthRequest)(nil),                // 7: velony.identity.api.v1.LoginAuthRequest
+	(*RegisterAuthRequest)(nil),             // 8: velony.identity.api.v1.RegisterAuthRequest
+	(*RefreshAuthRequest)(nil),              // 9: velony.identity.api.v1.RefreshAuthRequest
+	(*User)(nil),                            // 10: velony.identity.api.v1.User
+	(*BatchGetUsersResponse)(nil),           // 11: velony.identity.api.v1.BatchGetUsersResponse
+	(*RequestUserEmailChangeResponse)(nil),  // 12: velony.identity.api.v1.RequestUserEmailChangeResponse
+	(*ConfirmUserEmailChangeResponse)(nil),  // 13: velony.identity.api.v1.ConfirmUserEmailChangeResponse
+	(*RequestUserAvatarChangeResponse)(nil), // 14: velony.identity.api.v1.RequestUserAvatarChangeResponse
+	(*emptypb.Empty)(nil),                   // 15: google.protobuf.Empty
+	(*LoginAuthResponse)(nil),               // 16: velony.identity.api.v1.LoginAuthResponse
+	(*RegisterAuthResponse)(nil),            // 17: velony.identity.api.v1.RegisterAuthResponse
+	(*RefreshAuthResponse)(nil),             // 18: velony.identity.api.v1.RefreshAuthResponse
 }
 var file_velony_identity_api_v1_service_proto_depIdxs = []int32{
 	0,  // 0: velony.identity.api.v1.IdentityService.GetUser:input_type -> velony.identity.api.v1.GetUserRequest
@@ -68,7 +68,7 @@ var file_velony_identity_api_v1_service_proto_depIdxs = []int32{
 	2,  // 2: velony.identity.api.v1.IdentityService.UpdateUser:input_type -> velony.identity.api.v1.UpdateUserRequest
 	3,  // 3: velony.identity.api.v1.IdentityService.RequestUserEmailChange:input_type -> velony.identity.api.v1.RequestUserEmailChangeRequest
 	4,  // 4: velony.identity.api.v1.IdentityService.ConfirmUserEmailChange:input_type -> velony.identity.api.v1.ConfirmUserEmailChangeRequest
-	5,  // 5: velony.identity.api.v1.IdentityService.PresignUserAvatar:input_type -> velony.identity.api.v1.PresignUserAvatarRequest
+	5,  // 5: velony.identity.api.v1.IdentityService.RequestUserAvatarChange:input_type -> velony.identity.api.v1.RequestUserAvatarChangeRequest
 	6,  // 6: velony.identity.api.v1.IdentityService.DeleteUser:input_type -> velony.identity.api.v1.DeleteUserRequest
 	7,  // 7: velony.identity.api.v1.IdentityService.LoginAuth:input_type -> velony.identity.api.v1.LoginAuthRequest
 	8,  // 8: velony.identity.api.v1.IdentityService.RegisterAuth:input_type -> velony.identity.api.v1.RegisterAuthRequest
@@ -78,7 +78,7 @@ var file_velony_identity_api_v1_service_proto_depIdxs = []int32{
 	10, // 12: velony.identity.api.v1.IdentityService.UpdateUser:output_type -> velony.identity.api.v1.User
 	12, // 13: velony.identity.api.v1.IdentityService.RequestUserEmailChange:output_type -> velony.identity.api.v1.RequestUserEmailChangeResponse
 	13, // 14: velony.identity.api.v1.IdentityService.ConfirmUserEmailChange:output_type -> velony.identity.api.v1.ConfirmUserEmailChangeResponse
-	14, // 15: velony.identity.api.v1.IdentityService.PresignUserAvatar:output_type -> velony.identity.api.v1.PresignUserAvatarResponse
+	14, // 15: velony.identity.api.v1.IdentityService.RequestUserAvatarChange:output_type -> velony.identity.api.v1.RequestUserAvatarChangeResponse
 	15, // 16: velony.identity.api.v1.IdentityService.DeleteUser:output_type -> google.protobuf.Empty
 	16, // 17: velony.identity.api.v1.IdentityService.LoginAuth:output_type -> velony.identity.api.v1.LoginAuthResponse
 	17, // 18: velony.identity.api.v1.IdentityService.RegisterAuth:output_type -> velony.identity.api.v1.RegisterAuthResponse
