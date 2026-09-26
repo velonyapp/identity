@@ -13,9 +13,9 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-var _ repo.Session = (*SessionRepo)(nil)
+var _ repo.Session = (*sessionRepo)(nil)
 
-type SessionRepo struct {
+type sessionRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
 }
@@ -24,7 +24,7 @@ func NewSessionRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
 ) repo.Session {
-	return &SessionRepo{
+	return &sessionRepo{
 		db:         db,
 		dispatcher: dispatcher,
 	}
@@ -34,7 +34,7 @@ type sessionScanner interface {
 	Scan(dest ...any) error
 }
 
-func (repo *SessionRepo) FindByToken(ctx context.Context, token vo.SessionToken) (*entity.Session, error) {
+func (repo *sessionRepo) FindByToken(ctx context.Context, token vo.SessionToken) (*entity.Session, error) {
 	const query = `
 		SELECT
 			id,
@@ -62,7 +62,7 @@ func (repo *SessionRepo) FindByToken(ctx context.Context, token vo.SessionToken)
 	return session, nil
 }
 
-func (repo *SessionRepo) Save(ctx context.Context, session *entity.Session) error {
+func (repo *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 	const query = `
 		INSERT INTO sessions (
 			id,

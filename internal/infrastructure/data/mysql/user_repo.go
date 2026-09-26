@@ -13,9 +13,9 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-var _ repo.User = (*UserRepo)(nil)
+var _ repo.User = (*userRepo)(nil)
 
-type UserRepo struct {
+type userRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
 }
@@ -24,7 +24,7 @@ func NewUserRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
 ) repo.User {
-	return &UserRepo{
+	return &userRepo{
 		db:         db,
 		dispatcher: dispatcher,
 	}
@@ -34,7 +34,7 @@ type userScanner interface {
 	Scan(dest ...any) error
 }
 
-func (repo *UserRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User, error) {
+func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User, error) {
 	const query = `
 		SELECT
 			users.id,
@@ -83,7 +83,7 @@ func (repo *UserRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 	return user, nil
 }
 
-func (repo *UserRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*entity.User, error) {
+func (repo *userRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*entity.User, error) {
 	if len(userIDs) == 0 {
 		return []*entity.User{}, nil
 	}
@@ -153,7 +153,7 @@ func (repo *UserRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*en
 	return users, nil
 }
 
-func (repo *UserRepo) FindByUsername(ctx context.Context, username vo.Username) (*entity.User, error) {
+func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) (*entity.User, error) {
 	const query = `
 		SELECT
 			users.id,
@@ -202,7 +202,7 @@ func (repo *UserRepo) FindByUsername(ctx context.Context, username vo.Username) 
 	return user, nil
 }
 
-func (repo *UserRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.User, error) {
+func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.User, error) {
 	const query = `
 		SELECT
 			users.id,
@@ -251,7 +251,7 @@ func (repo *UserRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 	return user, nil
 }
 
-func (repo *UserRepo) Save(ctx context.Context, user *entity.User) error {
+func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 	if user.DeleteTime() != nil {
 		const query = `
 			DELETE FROM users

@@ -11,17 +11,17 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-var _ port.RequestVerifier = (*RequestVerifier)(nil)
+var _ port.RequestVerifier = (*requestVerifier)(nil)
 
-type RequestVerifier struct {
+type requestVerifier struct {
 	c *conf.Security
 }
 
 func NewRequestVerifier(c *conf.Security) port.RequestVerifier {
-	return &RequestVerifier{c: c}
+	return &requestVerifier{c: c}
 }
 
-func (v *RequestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token string) error {
+func (v *requestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token string) error {
 	mac := hmac.New(
 		sha256.New,
 		[]byte(v.c.GetEmailChangeRequestToken().GetSecret()),
@@ -40,7 +40,7 @@ func (v *RequestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token
 	return nil
 }
 
-func (v *RequestVerifier) VerifyAvatarChange(request vo.AvatarChangeRequest, token string) error {
+func (v *requestVerifier) VerifyAvatarChange(request vo.AvatarChangeRequest, token string) error {
 	mac := hmac.New(
 		sha256.New,
 		[]byte(v.c.GetAvatarChangeRequestToken().GetSecret()),

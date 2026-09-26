@@ -10,17 +10,17 @@ import (
 	"github.com/velonyapp/identity/internal/conf"
 )
 
-var _ port.AuthTokenProvider = (*AuthTokenProvider)(nil)
+var _ port.AuthTokenProvider = (*authTokenProvider)(nil)
 
-type AuthTokenProvider struct {
+type authTokenProvider struct {
 	c *conf.Security
 }
 
 func NewAuthTokenProvider(c *conf.Security) port.AuthTokenProvider {
-	return &AuthTokenProvider{c: c}
+	return &authTokenProvider{c: c}
 }
 
-func (p *AuthTokenProvider) GenerateAccessToken(subject string) (string, error) {
+func (p *authTokenProvider) GenerateAccessToken(subject string) (string, error) {
 	now := time.Now()
 
 	claims := jwt.RegisteredClaims{
@@ -40,7 +40,7 @@ func (p *AuthTokenProvider) GenerateAccessToken(subject string) (string, error) 
 	return signedToken, nil
 }
 
-func (p *AuthTokenProvider) GenerateRefreshToken() (string, error) {
+func (p *authTokenProvider) GenerateRefreshToken() (string, error) {
 	b := make([]byte, 32)
 
 	if _, err := rand.Read(b); err != nil {

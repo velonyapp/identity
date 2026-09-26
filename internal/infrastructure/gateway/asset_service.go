@@ -12,15 +12,15 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type AssetService struct {
+type assetService struct {
 	client assetv1.AssetServiceClient
 }
 
 func NewAssetService(client assetv1.AssetServiceClient) port.AssetService {
-	return &AssetService{client: client}
+	return &assetService{client: client}
 }
 
-func (s *AssetService) PresignAvatar(ctx context.Context, userID string) (string, error) {
+func (s *assetService) PresignAvatar(ctx context.Context, userID string) (string, error) {
 	var tokenBytes [8]byte
 
 	if _, err := rand.Read(tokenBytes[:]); err != nil {
