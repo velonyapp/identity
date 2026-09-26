@@ -2,7 +2,9 @@ package transport
 
 import (
 	"context"
+	"errors"
 
+	v1 "github.com/velonyapp/identity/gen/api/v1"
 	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 
@@ -90,12 +92,25 @@ type ValidationMiddleware middleware.Middleware
 func NewValidationMiddleware() ValidationMiddleware {
 	return ValidationMiddleware(
 		validate.Validator(func(req any) error {
-			message, ok := req.(proto.Message)
-			if !ok {
-				return nil
-			}
+			switch req := req.(type) {
+			case *v1.UpdateUserRequest:
+				if req.GetUser() == nil {
+					return errors.New("missing required field: user")
+				}
 
-			return fieldbehavior.ValidateRequiredFields(message)
+				return fieldbehavior.ValidateRequiredFieldsWithMask(
+					req.GetUser(),
+					req.GetUpdateMask(),
+				)
+
+			default:
+				message, ok := req.(proto.Message)
+				if !ok {
+					return nil
+				}
+
+				return fieldbehavior.ValidateRequiredFields(message)
+			}
 		}),
 	)
 }
