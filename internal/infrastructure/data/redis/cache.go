@@ -10,6 +10,9 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+var _ port.Cache = (*cache)(nil)
+var _ port.Cache = (*noopCache)(nil)
+
 type cache struct {
 	client *redis.Client
 }

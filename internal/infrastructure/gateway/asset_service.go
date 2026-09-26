@@ -12,6 +12,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var _ port.AssetService = (*assetService)(nil)
+
 type assetService struct {
 	client assetv1.AssetServiceClient
 }
