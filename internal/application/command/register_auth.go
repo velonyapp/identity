@@ -29,7 +29,8 @@ type RegisterAuthHandler struct {
 	userRepo             repo.User
 	sessionRepo          repo.Session
 	unitOfWork           port.UnitOfWork
-	tokenProvider        port.AuthTokenProvider
+	accessTokenManager   port.AccessTokenManager
+	sessionTokenManager  port.SessionTokenManager
 	passwordHasher       port.PasswordHasher
 	cache                port.Cache
 	usernameAvailability *service.UsernameAvailability
@@ -40,7 +41,8 @@ func NewRegisterAuthHandler(
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.AuthTokenProvider,
+	accessTokenManager port.AccessTokenManager,
+	sessionTokenManager port.SessionTokenManager,
 	passwordHasher port.PasswordHasher,
 	cache port.Cache,
 	usernameAvailability *service.UsernameAvailability,
@@ -50,7 +52,8 @@ func NewRegisterAuthHandler(
 		userRepo:             userRepo,
 		sessionRepo:          sessionRepo,
 		unitOfWork:           unitOfWork,
-		tokenProvider:        tokenProvider,
+		accessTokenManager:   accessTokenManager,
+		sessionTokenManager:  sessionTokenManager,
 		passwordHasher:       passwordHasher,
 		cache:                cache,
 		usernameAvailability: usernameAvailability,
@@ -100,23 +103,24 @@ func (h *RegisterAuthHandler) Execute(
 			return err
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID().Value())
+		sessionToken, err := h.sessionTokenManager.Generate()
 		if err != nil {
 			return err
 		}
-		refreshToken, err = h.tokenProvider.GenerateRefreshToken()
+		sessionTokenHash, err := h.sessionTokenManager.Hash(sessionToken)
 		if err != nil {
 			return err
 		}
 
-		sessionToken, err := vo.NewSessionToken(refreshToken)
+		accessToken, err = h.accessTokenManager.Generate(user.ID())
 		if err != nil {
 			return err
 		}
+		refreshToken = sessionToken.Value()
 
 		session := entity.NewSession(
 			user.ID(),
-			sessionToken,
+			sessionTokenHash,
 			time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second,
 			now,
 		)

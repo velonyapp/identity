@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"context"
-	"crypto/sha256"
 	"database/sql"
 	"errors"
 	"time"
@@ -34,23 +33,22 @@ type sessionScanner interface {
 	Scan(dest ...any) error
 }
 
-func (repo *sessionRepo) FindByToken(ctx context.Context, token vo.SessionToken) (*entity.Session, error) {
+func (repo *sessionRepo) FindByTokenHash(ctx context.Context, tokenHash vo.SessionTokenHash) (*entity.Session, error) {
 	const query = `
 		SELECT
 			id,
 			user_id,
+			token_hash,
 			expire_time,
 			revoke_time
 		FROM sessions
-		WHERE token = ?
+		WHERE token_hash = ?
 		LIMIT 1
 	`
 
-	tokenHash := sha256.Sum256([]byte(token.Value()))
+	row := executor(ctx, repo.db).QueryRowContext(ctx, query, tokenHash.Value())
 
-	row := executor(ctx, repo.db).QueryRowContext(ctx, query, tokenHash[:])
-
-	session, err := scanSession(row, token)
+	session, err := scanSession(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -67,14 +65,13 @@ func (repo *sessionRepo) Save(ctx context.Context, session *entity.Session) erro
 		INSERT INTO sessions (
 			id,
 			user_id,
-			token,
+			token_hash,
 			expire_time,
 			revoke_time
 		)
 		VALUES (?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
-			user_id = ?,
-			token = ?,
+			token_hash = ?,
 			expire_time = ?,
 			revoke_time = ?
 	`
@@ -84,17 +81,14 @@ func (repo *sessionRepo) Save(ctx context.Context, session *entity.Session) erro
 		revokeTime = *session.RevokeTime()
 	}
 
-	tokenHash := sha256.Sum256([]byte(session.Token().Value()))
-
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		session.ID().Value(),
 		session.UserID().Value(),
-		tokenHash[:],
+		session.TokenHash().Value(),
 		session.ExpireTime(),
 		revokeTime,
 
-		session.UserID().Value(),
-		tokenHash[:],
+		session.TokenHash().Value(),
 		session.ExpireTime(),
 		revokeTime,
 	); err != nil {
@@ -110,10 +104,11 @@ func (repo *sessionRepo) Save(ctx context.Context, session *entity.Session) erro
 	return nil
 }
 
-func scanSession(scanner sessionScanner, token vo.SessionToken) (*entity.Session, error) {
+func scanSession(scanner sessionScanner) (*entity.Session, error) {
 	var (
 		id         string
 		userID     string
+		tokenHash  string
 		expireTime time.Time
 		revokeTime sql.NullTime
 	)
@@ -121,11 +116,14 @@ func scanSession(scanner sessionScanner, token vo.SessionToken) (*entity.Session
 	if err := scanner.Scan(
 		&id,
 		&userID,
+		&tokenHash,
 		&expireTime,
 		&revokeTime,
 	); err != nil {
 		return nil, err
 	}
+
+	tokenHashVO, _ := vo.NewSessionTokenHash(tokenHash)
 
 	var revokeTimeVO *time.Time
 	if revokeTime.Valid {
@@ -136,7 +134,7 @@ func scanSession(scanner sessionScanner, token vo.SessionToken) (*entity.Session
 	return entity.ReconstituteSession(
 		vo.NewSessionID(id),
 		vo.NewUserID(userID),
-		token,
+		tokenHashVO,
 		expireTime,
 		revokeTimeVO,
 	), nil

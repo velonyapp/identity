@@ -26,13 +26,14 @@ type LoginAuthResult struct {
 }
 
 type LoginAuthHandler struct {
-	c              *conf.Security
-	userRepo       repo.User
-	sessionRepo    repo.Session
-	unitOfWork     port.UnitOfWork
-	tokenProvider  port.AuthTokenProvider
-	passwordHasher port.PasswordHasher
-	cache          port.Cache
+	c                   *conf.Security
+	userRepo            repo.User
+	sessionRepo         repo.Session
+	unitOfWork          port.UnitOfWork
+	accessTokenManager  port.AccessTokenManager
+	sessionTokenManager port.SessionTokenManager
+	passwordHasher      port.PasswordHasher
+	cache               port.Cache
 }
 
 func NewLoginAuthHandler(
@@ -40,18 +41,20 @@ func NewLoginAuthHandler(
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.AuthTokenProvider,
+	accessTokenManager port.AccessTokenManager,
+	sessionTokenManager port.SessionTokenManager,
 	passwordHasher port.PasswordHasher,
 	cache port.Cache,
 ) *LoginAuthHandler {
 	return &LoginAuthHandler{
-		c:              c,
-		userRepo:       userRepo,
-		sessionRepo:    sessionRepo,
-		unitOfWork:     unitOfWork,
-		tokenProvider:  tokenProvider,
-		passwordHasher: passwordHasher,
-		cache:          cache,
+		c:                   c,
+		userRepo:            userRepo,
+		sessionRepo:         sessionRepo,
+		unitOfWork:          unitOfWork,
+		accessTokenManager:  accessTokenManager,
+		sessionTokenManager: sessionTokenManager,
+		passwordHasher:      passwordHasher,
+		cache:               cache,
 	}
 }
 
@@ -92,32 +95,29 @@ func (h *LoginAuthHandler) Execute(
 			return ErrInvalidCredentials
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(user.ID().Value())
+		sessionToken, err := h.sessionTokenManager.Generate()
 		if err != nil {
 			return err
 		}
-		refreshToken, err = h.tokenProvider.GenerateRefreshToken()
+		sessionTokenHash, err := h.sessionTokenManager.Hash(sessionToken)
 		if err != nil {
 			return err
 		}
 
-		sessionToken, err := vo.NewSessionToken(refreshToken)
+		accessToken, err = h.accessTokenManager.Generate(user.ID())
 		if err != nil {
 			return err
 		}
+		refreshToken = sessionToken.Value()
 
 		session := entity.NewSession(
 			user.ID(),
-			sessionToken,
+			sessionTokenHash,
 			time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second,
 			now,
 		)
 
-		if err := h.sessionRepo.Save(ctx, session); err != nil {
-			return err
-		}
-
-		return nil
+		return h.sessionRepo.Save(ctx, session)
 	}); err != nil {
 		return nil, err
 	}

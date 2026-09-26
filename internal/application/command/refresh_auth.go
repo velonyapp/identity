@@ -27,12 +27,13 @@ type RefreshAuthResult struct {
 }
 
 type RefreshAuthHandler struct {
-	c             *conf.Security
-	userRepo      repo.User
-	sessionRepo   repo.Session
-	unitOfWork    port.UnitOfWork
-	tokenProvider port.AuthTokenProvider
-	cache         port.Cache
+	c                   *conf.Security
+	userRepo            repo.User
+	sessionRepo         repo.Session
+	unitOfWork          port.UnitOfWork
+	accessTokenManager  port.AccessTokenManager
+	sessionTokenManager port.SessionTokenManager
+	cache               port.Cache
 }
 
 func NewRefreshAuthHandler(
@@ -40,16 +41,18 @@ func NewRefreshAuthHandler(
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.AuthTokenProvider,
+	accessTokenManager port.AccessTokenManager,
+	sessionTokenManager port.SessionTokenManager,
 	cache port.Cache,
 ) *RefreshAuthHandler {
 	return &RefreshAuthHandler{
-		c:             c,
-		userRepo:      userRepo,
-		sessionRepo:   sessionRepo,
-		unitOfWork:    unitOfWork,
-		tokenProvider: tokenProvider,
-		cache:         cache,
+		c:                   c,
+		userRepo:            userRepo,
+		sessionRepo:         sessionRepo,
+		unitOfWork:          unitOfWork,
+		accessTokenManager:  accessTokenManager,
+		sessionTokenManager: sessionTokenManager,
+		cache:               cache,
 	}
 }
 
@@ -63,22 +66,25 @@ func (h *RefreshAuthHandler) Execute(
 	if err != nil {
 		return nil, err
 	}
-
-	refreshToken, err := h.tokenProvider.GenerateRefreshToken()
+	sessionTokenHash, err := h.sessionTokenManager.Hash(sessionToken)
 	if err != nil {
 		return nil, err
 	}
 
-	newSessionToken, err := vo.NewSessionToken(refreshToken)
+	newSessionToken, err := h.sessionTokenManager.Generate()
+	if err != nil {
+		return nil, err
+	}
+	newSessionTokenHash, err := h.sessionTokenManager.Hash(newSessionToken)
 	if err != nil {
 		return nil, err
 	}
 
 	var user *entity.User
-	var accessToken string
+	var accessToken, refreshToken string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		session, err := h.sessionRepo.FindByToken(ctx, sessionToken)
+		session, err := h.sessionRepo.FindByTokenHash(ctx, sessionTokenHash)
 		if err != nil {
 			return err
 		}
@@ -94,20 +100,21 @@ func (h *RefreshAuthHandler) Execute(
 			return ErrInvalidRefreshToken
 		}
 
-		accessToken, err = h.tokenProvider.GenerateAccessToken(session.UserID().Value())
+		accessToken, err = h.accessTokenManager.Generate(session.UserID())
 		if err != nil {
 			return err
 		}
+		refreshToken = newSessionToken.Value()
 
-		if err := session.Refresh(newSessionToken, time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second, now); err != nil {
+		if err := session.Refresh(
+			newSessionTokenHash,
+			time.Duration(h.c.RefreshToken.Ttl.Seconds)*time.Second,
+			now,
+		); err != nil {
 			return err
 		}
 
-		if err := h.sessionRepo.Save(ctx, session); err != nil {
-			return err
-		}
-
-		return nil
+		return h.sessionRepo.Save(ctx, session)
 	}); err != nil {
 		return nil, err
 	}

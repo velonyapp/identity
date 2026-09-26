@@ -16,7 +16,7 @@ var (
 type Session struct {
 	id         vo.SessionID
 	userID     vo.UserID
-	token      vo.SessionToken
+	tokenHash  vo.SessionTokenHash
 	expireTime time.Time
 	revokeTime *time.Time
 
@@ -25,7 +25,7 @@ type Session struct {
 
 func NewSession(
 	userID vo.UserID,
-	token vo.SessionToken,
+	tokenHash vo.SessionTokenHash,
 	ttl time.Duration,
 	now time.Time,
 ) *Session {
@@ -34,7 +34,7 @@ func NewSession(
 	session := &Session{
 		id:         sessionID,
 		userID:     userID,
-		token:      token,
+		tokenHash:  tokenHash,
 		expireTime: now.Add(ttl),
 	}
 
@@ -52,14 +52,14 @@ func NewSession(
 func ReconstituteSession(
 	id vo.SessionID,
 	userID vo.UserID,
-	token vo.SessionToken,
+	tokenHash vo.SessionTokenHash,
 	expireTime time.Time,
 	revokeTime *time.Time,
 ) *Session {
 	session := &Session{
 		id:         id,
 		userID:     userID,
-		token:      token,
+		tokenHash:  tokenHash,
 		expireTime: expireTime,
 	}
 
@@ -79,8 +79,8 @@ func (s *Session) UserID() vo.UserID {
 	return s.userID
 }
 
-func (s *Session) Token() vo.SessionToken {
-	return s.token
+func (s *Session) TokenHash() vo.SessionTokenHash {
+	return s.tokenHash
 }
 
 func (s *Session) ExpireTime() time.Time {
@@ -105,7 +105,7 @@ func (s *Session) IsExpired(now time.Time) bool {
 }
 
 func (s *Session) Refresh(
-	token vo.SessionToken,
+	tokenHash vo.SessionTokenHash,
 	ttl time.Duration,
 	now time.Time,
 ) error {
@@ -116,7 +116,7 @@ func (s *Session) Refresh(
 		return ErrSessionExpired
 	}
 
-	s.token = token
+	s.tokenHash = tokenHash
 	s.expireTime = now.Add(ttl)
 
 	s.recordEvent(

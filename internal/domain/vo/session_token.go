@@ -25,7 +25,3 @@ func NewSessionToken(value string) (SessionToken, error) {
 func (h SessionToken) Value() string {
 	return h.value
 }
-
-func (h SessionToken) String() string {
-	return "[REDACTED]"
-}

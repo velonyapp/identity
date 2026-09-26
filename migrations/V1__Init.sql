@@ -64,7 +64,7 @@ CREATE TABLE outbox_events (
 CREATE TABLE sessions (
     id          CHAR(36) PRIMARY KEY,
     user_id     CHAR(36) NOT NULL,
-    token       BINARY(32) NOT NULL UNIQUE,
+    token_hash  BINARY(32) NOT NULL UNIQUE,
     expire_time TIMESTAMP(6) NOT NULL,
     revoke_time TIMESTAMP(6),
 

@@ -8,7 +8,7 @@ import (
 )
 
 type Session interface {
-	FindByToken(ctx context.Context, username vo.SessionToken) (*entity.Session, error)
+	FindByTokenHash(ctx context.Context, tokenHash vo.SessionTokenHash) (*entity.Session, error)
 
 	Save(ctx context.Context, user *entity.Session) error
 }

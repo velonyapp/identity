@@ -19,26 +19,23 @@ type RequestUserEmailChange struct {
 type RequestUserEmailChangeResult struct{}
 
 type RequestUserEmailChangeHandler struct {
-	c             *conf.Security
-	userRepo      repo.User
-	unitOfWork    port.UnitOfWork
-	tokenProvider port.AuthTokenProvider
-	availability  *service.EmailAvailability
+	c            *conf.Security
+	userRepo     repo.User
+	unitOfWork   port.UnitOfWork
+	availability *service.EmailAvailability
 }
 
 func NewRequestUserEmailChangeHandler(
 	c *conf.Security,
 	userRepo repo.User,
 	unitOfWork port.UnitOfWork,
-	tokenProvider port.AuthTokenProvider,
 	availability *service.EmailAvailability,
 ) *RequestUserEmailChangeHandler {
 	return &RequestUserEmailChangeHandler{
-		c:             c,
-		userRepo:      userRepo,
-		unitOfWork:    unitOfWork,
-		tokenProvider: tokenProvider,
-		availability:  availability,
+		c:            c,
+		userRepo:     userRepo,
+		unitOfWork:   unitOfWork,
+		availability: availability,
 	}
 }
 
