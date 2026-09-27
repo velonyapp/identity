@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/entity"
@@ -33,7 +32,6 @@ type LoginAuthHandler struct {
 	accessTokenManager  port.AccessTokenManager
 	sessionTokenManager port.SessionTokenManager
 	passwordManager     port.PasswordManager
-	cache               port.Cache
 }
 
 func NewLoginAuthHandler(
@@ -44,7 +42,6 @@ func NewLoginAuthHandler(
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
 	passwordManager port.PasswordManager,
-	cache port.Cache,
 ) *LoginAuthHandler {
 	return &LoginAuthHandler{
 		c:                   c,
@@ -54,7 +51,6 @@ func NewLoginAuthHandler(
 		accessTokenManager:  accessTokenManager,
 		sessionTokenManager: sessionTokenManager,
 		passwordManager:     passwordManager,
-		cache:               cache,
 	}
 }
 
@@ -68,13 +64,10 @@ func (h *LoginAuthHandler) Execute(
 	email, _ := vo.NewEmail(cmd.Identity)
 	password, _ := vo.NewPassword(cmd.Password)
 
-	var user *entity.User
 	var accessToken, refreshToken string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		var err error
-
-		user, err = h.userRepo.FindByUsername(ctx, username)
+		user, err := h.userRepo.FindByUsername(ctx, username)
 		if err != nil {
 			return err
 		}
@@ -121,12 +114,6 @@ func (h *LoginAuthHandler) Execute(
 	}); err != nil {
 		return nil, err
 	}
-
-	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID()),
-		common.NewUserResult(user),
-		common.UserResultCacheTTL,
-	)
 
 	return &LoginAuthResult{
 		AccessToken:  accessToken,

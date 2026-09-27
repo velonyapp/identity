@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/conf"
 	"github.com/velonyapp/identity/internal/domain/entity"
@@ -32,7 +31,6 @@ type RegisterAuthHandler struct {
 	accessTokenManager   port.AccessTokenManager
 	sessionTokenManager  port.SessionTokenManager
 	passwordManager      port.PasswordManager
-	cache                port.Cache
 	usernameAvailability *service.UsernameAvailability
 }
 
@@ -44,7 +42,6 @@ func NewRegisterAuthHandler(
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
 	passwordManager port.PasswordManager,
-	cache port.Cache,
 	usernameAvailability *service.UsernameAvailability,
 ) *RegisterAuthHandler {
 	return &RegisterAuthHandler{
@@ -55,7 +52,6 @@ func NewRegisterAuthHandler(
 		accessTokenManager:   accessTokenManager,
 		sessionTokenManager:  sessionTokenManager,
 		passwordManager:      passwordManager,
-		cache:                cache,
 		usernameAvailability: usernameAvailability,
 	}
 }
@@ -133,12 +129,6 @@ func (h *RegisterAuthHandler) Execute(
 	}); err != nil {
 		return nil, err
 	}
-
-	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID()),
-		common.NewUserResult(user),
-		common.UserResultCacheTTL,
-	)
 
 	return &RegisterAuthResult{
 		AccessToken:  accessToken,

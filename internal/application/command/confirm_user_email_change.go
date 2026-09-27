@@ -6,7 +6,6 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
-	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/service"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -51,12 +50,8 @@ func (h *ConfirmUserEmailChangeHandler) Execute(
 
 	userID := vo.NewUserID(cmd.UserID)
 
-	var user *entity.User
-
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		var err error
-
-		user, err = h.userRepo.FindByID(ctx, userID)
+		user, err := h.userRepo.FindByID(ctx, userID)
 		if err != nil {
 			return err
 		}
@@ -80,11 +75,7 @@ func (h *ConfirmUserEmailChangeHandler) Execute(
 		return nil, err
 	}
 
-	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID()),
-		common.NewUserResult(user),
-		common.UserResultCacheTTL,
-	)
+	h.cache.Delete(ctx, common.UserResultCacheKey(userID))
 
 	return &ConfirmUserEmailChangeResult{}, nil
 }

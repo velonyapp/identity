@@ -37,4 +37,4 @@ func UserResultCacheKey(userID vo.UserID) string {
 	return "user:" + userID.Value()
 }
 
-const UserResultCacheTTL = 15 * time.Minute
+const UserResultCacheTTL = 1 * time.Minute

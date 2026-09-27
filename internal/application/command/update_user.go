@@ -109,13 +109,7 @@ func (h *UpdateUserHandler) Execute(
 		return nil, err
 	}
 
-	userResult := common.NewUserResult(user)
+	h.cache.Delete(ctx, common.UserResultCacheKey(userID))
 
-	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID()),
-		userResult,
-		common.UserResultCacheTTL,
-	)
-
-	return &UpdateUserResult{User: userResult}, nil
+	return &UpdateUserResult{User: common.NewUserResult(user)}, nil
 }

@@ -5,10 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
 	"github.com/velonyapp/identity/internal/conf"
-	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
@@ -33,7 +31,6 @@ type RefreshAuthHandler struct {
 	unitOfWork          port.UnitOfWork
 	accessTokenManager  port.AccessTokenManager
 	sessionTokenManager port.SessionTokenManager
-	cache               port.Cache
 }
 
 func NewRefreshAuthHandler(
@@ -43,7 +40,6 @@ func NewRefreshAuthHandler(
 	unitOfWork port.UnitOfWork,
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
-	cache port.Cache,
 ) *RefreshAuthHandler {
 	return &RefreshAuthHandler{
 		c:                   c,
@@ -52,7 +48,6 @@ func NewRefreshAuthHandler(
 		unitOfWork:          unitOfWork,
 		accessTokenManager:  accessTokenManager,
 		sessionTokenManager: sessionTokenManager,
-		cache:               cache,
 	}
 }
 
@@ -80,7 +75,6 @@ func (h *RefreshAuthHandler) Execute(
 		return nil, err
 	}
 
-	var user *entity.User
 	var accessToken, refreshToken string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
@@ -92,7 +86,7 @@ func (h *RefreshAuthHandler) Execute(
 			return ErrInvalidRefreshToken
 		}
 
-		user, err = h.userRepo.FindByID(ctx, session.UserID())
+		user, err := h.userRepo.FindByID(ctx, session.UserID())
 		if err != nil {
 			return err
 		}
@@ -118,12 +112,6 @@ func (h *RefreshAuthHandler) Execute(
 	}); err != nil {
 		return nil, err
 	}
-
-	h.cache.Set(ctx,
-		common.UserResultCacheKey(user.ID()),
-		common.NewUserResult(user),
-		common.UserResultCacheTTL,
-	)
 
 	return &RefreshAuthResult{
 		AccessToken:  accessToken,
