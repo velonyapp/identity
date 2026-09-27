@@ -356,6 +356,9 @@ func (u *User) ChangeAvatar(newAvatarKey vo.AvatarKey, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
 	}
+	if newAvatarKey.UserID() != u.id.Value() {
+		return ErrAvatarKeyMismatch
+	}
 
 	var oldAvatarKey *vo.AvatarKey
 	if u.HasAvatar() {
