@@ -1,13 +1,17 @@
 package common
 
 import (
+	"errors"
 	"time"
 
 	"github.com/velonyapp/identity/internal/domain/entity"
-	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-type UserResult struct {
+var (
+	ErrUserNotFound = errors.New("user not found")
+)
+
+type User struct {
 	ID        string
 	Username  string
 	FullName  string
@@ -15,8 +19,8 @@ type UserResult struct {
 	AvatarKey *string
 }
 
-func NewUserResult(user *entity.User) *UserResult {
-	result := &UserResult{
+func NewUserFromEntity(user *entity.User) *User {
+	result := &User{
 		ID:       user.ID().Value(),
 		Username: user.Username().Value(),
 		FullName: user.FullName().Value(),
@@ -33,8 +37,8 @@ func NewUserResult(user *entity.User) *UserResult {
 	return result
 }
 
-func UserResultCacheKey(userID vo.UserID) string {
-	return "user:" + userID.Value()
+func UserCacheKey(userID string) string {
+	return "user:" + userID
 }
 
-const UserResultCacheTTL = 1 * time.Minute
+const UserCacheTTL = 1 * time.Minute

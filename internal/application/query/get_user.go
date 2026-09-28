@@ -5,8 +5,6 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
-	"github.com/velonyapp/identity/internal/domain/repo"
-	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
 type GetUser struct {
@@ -14,21 +12,21 @@ type GetUser struct {
 }
 
 type GetUserResult struct {
-	User *common.UserResult
+	User *common.User
 }
 
 type GetUserHandler struct {
-	userRepo repo.User
-	cache    port.Cache
+	userQuery User
+	cache     port.Cache
 }
 
 func NewGetUserHandler(
-	userRepo repo.User,
+	userQuery User,
 	cache port.Cache,
 ) *GetUserHandler {
 	return &GetUserHandler{
-		userRepo: userRepo,
-		cache:    cache,
+		userQuery: userQuery,
+		cache:     cache,
 	}
 }
 
@@ -36,17 +34,15 @@ func (h *GetUserHandler) Execute(
 	ctx context.Context,
 	qry *GetUser,
 ) (*GetUserResult, error) {
-	userID := vo.NewUserID(qry.UserID)
+	cacheKey := common.UserCacheKey(qry.UserID)
 
-	cacheKey := common.UserResultCacheKey(userID)
-
-	cached := &common.UserResult{}
+	cached := &common.User{}
 
 	if found, _ := h.cache.Get(ctx, cacheKey, cached); found {
 		return &GetUserResult{User: cached}, nil
 	}
 
-	user, err := h.userRepo.FindByID(ctx, userID)
+	user, err := h.userQuery.GetUser(ctx, qry.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -54,9 +50,7 @@ func (h *GetUserHandler) Execute(
 		return nil, common.ErrUserNotFound
 	}
 
-	userResult := common.NewUserResult(user)
+	h.cache.Set(ctx, cacheKey, user, common.UserCacheTTL)
 
-	h.cache.Set(ctx, cacheKey, userResult, common.UserResultCacheTTL)
-
-	return &GetUserResult{User: common.NewUserResult(user)}, nil
+	return &GetUserResult{User: user}, nil
 }

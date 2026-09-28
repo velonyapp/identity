@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/velonyapp/identity/internal/application/domainevent"
@@ -30,7 +29,7 @@ func NewUserRepo(
 	}
 }
 
-type userScanner interface {
+type repoUserScanner interface {
 	Scan(dest ...any) error
 }
 
@@ -65,7 +64,7 @@ func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 
 	row := executor(ctx, repo.db).QueryRowContext(ctx, query, userID.Value())
 
-	user, err := scanUser(row)
+	user, err := scanRepoUser(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -75,70 +74,6 @@ func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 	}
 
 	return user, nil
-}
-
-func (repo *userRepo) FindByIDs(ctx context.Context, userIDs []vo.UserID) ([]*entity.User, error) {
-	if len(userIDs) == 0 {
-		return []*entity.User{}, nil
-	}
-
-	placeholders := make([]string, len(userIDs))
-	args := make([]any, len(userIDs))
-
-	for i, userID := range userIDs {
-		placeholders[i] = "?"
-		args[i] = userID.Value()
-	}
-
-	query := `
-		SELECT
-			users.id,
-			users.username,
-			users.full_name,
-			users.email,
-			users.avatar_key,
-			users.create_time,
-			users.update_time,
-
-			email_change_requests.email,
-			email_change_requests.time,
-			email_change_requests.expire_time,
-
-			local_auth_strategies.password_hash,
-
-			google_auth_strategies.sub
-		FROM users
-		LEFT JOIN email_change_requests
-			ON email_change_requests.user_id = users.id
-		LEFT JOIN local_auth_strategies
-			ON local_auth_strategies.user_id = users.id
-		LEFT JOIN google_auth_strategies
-			ON google_auth_strategies.user_id = users.id
-		WHERE users.id IN (` + strings.Join(placeholders, ", ") + `)
-	`
-
-	rows, err := executor(ctx, repo.db).QueryContext(ctx, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	users := make([]*entity.User, 0, len(userIDs))
-
-	for rows.Next() {
-		user, err := scanUser(rows)
-		if err != nil {
-			return nil, err
-		}
-
-		users = append(users, user)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return users, nil
 }
 
 func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) (*entity.User, error) {
@@ -172,7 +107,7 @@ func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) 
 
 	row := executor(ctx, repo.db).QueryRowContext(ctx, query, username.Value())
 
-	user, err := scanUser(row)
+	user, err := scanRepoUser(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -215,7 +150,7 @@ func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 
 	row := executor(ctx, repo.db).QueryRowContext(ctx, query, email.Value())
 
-	user, err := scanUser(row)
+	user, err := scanRepoUser(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -407,7 +342,7 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 	return nil
 }
 
-func scanUser(scanner userScanner) (*entity.User, error) {
+func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 	var (
 		id         string
 		username   string

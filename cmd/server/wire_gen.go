@@ -38,6 +38,14 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	if err != nil {
 		return nil, nil, err
 	}
+	user := mysql.NewUserQuery(db)
+	client, err := redis.NewConnection(data)
+	if err != nil {
+		return nil, nil, err
+	}
+	cache := redis.NewCache(client)
+	getUserHandler := query.NewGetUserHandler(user, cache)
+	batchGetUsersHandler := query.NewBatchGetUsersHandler(user, cache)
 	encoder := event.NewEncoder()
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	userCreatedHandler := domainevent.NewUserCreatedHandler(eventPublisher)
@@ -51,35 +59,28 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	sessionRefreshedHandler := domainevent.NewSessionRefreshedHandler(eventPublisher)
 	sessionRevokedHandler := domainevent.NewSessionRevokedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(userCreatedHandler, userUsernameChangedHandler, userEmailChangeRequestedHandler, userEmailChangedHandler, userFullNameChangedHandler, userAvatarChangedHandler, userDeletedHandler, sessionCreatedHandler, sessionRefreshedHandler, sessionRevokedHandler)
-	user := mysql.NewUserRepo(db, dispatcher)
-	client, err := redis.NewConnection(data)
-	if err != nil {
-		return nil, nil, err
-	}
-	cache := redis.NewCache(client)
-	getUserHandler := query.NewGetUserHandler(user, cache)
-	batchGetUsersHandler := query.NewBatchGetUsersHandler(user, cache)
+	repoUser := mysql.NewUserRepo(db, dispatcher)
 	session := mysql.NewSessionRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	accessTokenManager := security.NewAccessTokenManager(confSecurity)
 	sessionTokenManager := security.NewSessionTokenManager()
 	passwordManager := security.NewPasswordManager()
-	usernameAvailability := service.NewUsernameAvailability(user)
-	registerAuthHandler := command.NewRegisterAuthHandler(confSecurity, user, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager, usernameAvailability)
-	loginAuthHandler := command.NewLoginAuthHandler(confSecurity, user, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager)
-	refreshAuthHandler := command.NewRefreshAuthHandler(confSecurity, user, session, unitOfWork, accessTokenManager, sessionTokenManager)
-	updateUserHandler := command.NewUpdateUserHandler(user, unitOfWork, cache, usernameAvailability)
-	emailAvailability := service.NewEmailAvailability(user)
-	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(confSecurity, user, unitOfWork, emailAvailability)
+	usernameAvailability := service.NewUsernameAvailability(repoUser)
+	registerAuthHandler := command.NewRegisterAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager, usernameAvailability)
+	loginAuthHandler := command.NewLoginAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager)
+	refreshAuthHandler := command.NewRefreshAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager)
+	updateUserHandler := command.NewUpdateUserHandler(repoUser, unitOfWork, cache, usernameAvailability)
+	emailAvailability := service.NewEmailAvailability(repoUser)
+	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(confSecurity, repoUser, unitOfWork, emailAvailability)
 	requestVerifier := security.NewRequestVerifier(confSecurity)
-	confirmUserEmailChangeHandler := command.NewConfirmUserEmailChangeHandler(user, unitOfWork, cache, requestVerifier, emailAvailability)
+	confirmUserEmailChangeHandler := command.NewConfirmUserEmailChangeHandler(repoUser, unitOfWork, cache, requestVerifier, emailAvailability)
 	assetServiceClient, cleanup, err := gateway.NewAssetClient(confGateway)
 	if err != nil {
 		return nil, nil, err
 	}
 	assetService := gateway.NewAssetService(assetServiceClient)
 	requestUserAvatarChangeHandler := command.NewRequestUserAvatarChangeHandler(assetService)
-	deleteUserHandler := command.NewDeleteUserHandler(user, unitOfWork, cache)
+	deleteUserHandler := command.NewDeleteUserHandler(repoUser, unitOfWork, cache)
 	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, requestUserAvatarChangeHandler, deleteUserHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()

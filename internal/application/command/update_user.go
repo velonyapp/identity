@@ -19,7 +19,7 @@ type UpdateUser struct {
 }
 
 type UpdateUserResult struct {
-	User *common.UserResult
+	User *common.User
 }
 
 type UpdateUserHandler struct {
@@ -109,7 +109,7 @@ func (h *UpdateUserHandler) Execute(
 		return nil, err
 	}
 
-	h.cache.Delete(ctx, common.UserResultCacheKey(userID))
+	h.cache.Delete(ctx, common.UserCacheKey(userID.Value()))
 
-	return &UpdateUserResult{User: common.NewUserResult(user)}, nil
+	return &UpdateUserResult{User: common.NewUserFromEntity(user)}, nil
 }

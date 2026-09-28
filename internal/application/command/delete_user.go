@@ -66,7 +66,7 @@ func (h *DeleteUserHandler) Execute(
 		return nil, err
 	}
 
-	h.cache.Delete(ctx, common.UserResultCacheKey(userID))
+	h.cache.Delete(ctx, common.UserCacheKey(userID.Value()))
 
 	return &DeleteUserResult{}, nil
 }
