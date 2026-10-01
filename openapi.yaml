@@ -328,10 +328,10 @@ components:
                     type: string
                 username:
                     type: string
+                fullName:
+                    type: string
                 email:
                     readOnly: true
-                    type: string
-                fullName:
                     type: string
                 avatarKey:
                     readOnly: true

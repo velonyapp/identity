@@ -63,24 +63,20 @@ func (h *UpdateUserHandler) Execute(
 			return common.ErrUserNotFound
 		}
 
-		changed := false
-
 		if cmd.Username != nil {
-			username, err := vo.NewUsername(*cmd.Username)
+			newUsername, err := vo.NewUsername(*cmd.Username)
 			if err != nil {
 				return err
 			}
 
-			if username != user.Username() {
-				if err := h.usernameAvailability.EnsureAvailable(ctx, username); err != nil {
+			if newUsername != user.Username() {
+				if err := h.usernameAvailability.EnsureAvailable(ctx, newUsername); err != nil {
 					return err
 				}
+			}
 
-				if err := user.ChangeUsername(username, now); err != nil {
-					return err
-				}
-
-				changed = true
+			if err := user.ChangeUsername(newUsername, now); err != nil {
+				return err
 			}
 		}
 		if cmd.FullName != nil {
@@ -89,19 +85,13 @@ func (h *UpdateUserHandler) Execute(
 				return err
 			}
 
-			if fullName != user.FullName() {
-				if err := user.ChangeFullName(fullName, now); err != nil {
-					return err
-				}
-
-				changed = true
+			if err := user.ChangeFullName(fullName, now); err != nil {
+				return err
 			}
 		}
 
-		if changed {
-			if err := h.userRepo.Save(ctx, user); err != nil {
-				return err
-			}
+		if err := h.userRepo.Save(ctx, user); err != nil {
+			return err
 		}
 
 		return nil

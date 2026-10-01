@@ -18,7 +18,7 @@ func NewUserDeleted(
 }
 
 func (e *UserDeleted) Type() string {
-	return "user.deleted"
+	return "identity.user.deleted"
 }
 
 func (e *UserDeleted) AggregateType() string {

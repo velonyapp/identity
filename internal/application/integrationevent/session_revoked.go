@@ -18,7 +18,7 @@ func NewSessionRevoked(
 }
 
 func (e *SessionRevoked) Type() string {
-	return "session.revoked"
+	return "identity.session.revoked"
 }
 
 func (e *SessionRevoked) AggregateType() string {

@@ -7,7 +7,6 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/gateway"
 	"github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/security"
-	"github.com/velonyapp/identity/internal/infrastructure/transport"
 
 	"github.com/google/wire"
 )
@@ -22,13 +21,6 @@ var ProviderSet = wire.NewSet(
 	mysql.NewEventPublisher,
 	redis.NewConnection,
 	redis.NewCache,
-	transport.NewGRPCServer,
-	transport.NewHTTPServer,
-	transport.NewTracesMiddleware,
-	transport.NewMetricsMiddleware,
-	transport.NewAuthMiddleware,
-	transport.NewValidationMiddleware,
-	observability.NewServerMetrics,
 	observability.NewOpenTelemetry,
 	security.NewAccessTokenManager,
 	security.NewSessionTokenManager,

@@ -20,8 +20,8 @@ message User {
   string name = 1 [(google.api.field_behavior) = IDENTIFIER];
 
   string          username   = 2 [(google.api.field_behavior) = REQUIRED];
-  optional string email      = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
-  string          full_name  = 4 [(google.api.field_behavior) = REQUIRED];
+  string          full_name  = 3 [(google.api.field_behavior) = REQUIRED];
+  optional string email      = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
   optional string avatar_key = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
@@ -97,7 +97,7 @@ message DeleteUserRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "user.velony.app/User"
+    type: "identity.velony.app/User"
     }
   ];
 }

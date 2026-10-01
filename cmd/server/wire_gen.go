@@ -19,10 +19,11 @@ import (
 	"github.com/velonyapp/identity/internal/infrastructure/data/redis"
 	"github.com/velonyapp/identity/internal/infrastructure/event"
 	"github.com/velonyapp/identity/internal/infrastructure/gateway"
-	"github.com/velonyapp/identity/internal/infrastructure/observability"
+	observability2 "github.com/velonyapp/identity/internal/infrastructure/observability"
 	"github.com/velonyapp/identity/internal/infrastructure/security"
-	"github.com/velonyapp/identity/internal/infrastructure/transport"
 	"github.com/velonyapp/identity/internal/presentation/api"
+	"github.com/velonyapp/identity/internal/presentation/observability"
+	"github.com/velonyapp/identity/internal/presentation/transport"
 	"log/slog"
 )
 
@@ -82,23 +83,20 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	requestUserAvatarChangeHandler := command.NewRequestUserAvatarChangeHandler(assetService)
 	deleteUserHandler := command.NewDeleteUserHandler(repoUser, unitOfWork, cache)
 	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, requestUserAvatarChangeHandler, deleteUserHandler)
-	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	metricsMiddleware := transport.NewMetricsMiddleware(serverMetrics)
-	authMiddleware := transport.NewAuthMiddleware(confSecurity)
-	validationMiddleware := transport.NewValidationMiddleware()
-	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, authMiddleware, validationMiddleware)
-	openTelemetry, cleanup2, err := observability.NewOpenTelemetry(contextContext, confObservability, infoService)
+	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
+	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
+	kafkaConsumer := transport.NewKafkaConsumer(confTransport, apiService)
+	openTelemetry, cleanup2, err := observability2.NewOpenTelemetry(contextContext, confObservability, infoService)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, server, httpServer, openTelemetry)
+	app := newApp(logger, server, httpServer, kafkaConsumer, openTelemetry)
 	return app, func() {
 		cleanup2()
 		cleanup()

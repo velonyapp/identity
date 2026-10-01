@@ -131,7 +131,7 @@ func (s *Session) Refresh(
 
 func (s *Session) Revoke(now time.Time) error {
 	if s.IsRevoked() {
-		return ErrSessionRevoked
+		return nil
 	}
 
 	s.revokeTime = &now

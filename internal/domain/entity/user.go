@@ -15,7 +15,6 @@ var (
 	ErrEmailChangeNotRequested      = errors.New("email change not requested")
 	ErrPendingEmailChangeExpired    = errors.New("email change request expired")
 	ErrAvatarKeyMismatch            = errors.New("avatar does not belong to user")
-	ErrAvatarNotSet                 = errors.New("avatar not set")
 	ErrLocalAuthStrategyNotSet      = errors.New("local authentication strategy not set")
 	ErrGoogleAuthStrategyNotSet     = errors.New("google authentication strategy not set")
 	ErrCannotRemoveLastAuthStrategy = errors.New("cannot remove the last authentication strategy")
@@ -226,6 +225,10 @@ func (u *User) ChangeUsername(newUsername vo.Username, now time.Time) error {
 		return ErrUserDeleted
 	}
 
+	if newUsername == u.username {
+		return nil
+	}
+
 	oldUsername := u.username
 
 	u.username = newUsername
@@ -246,6 +249,10 @@ func (u *User) ChangeUsername(newUsername vo.Username, now time.Time) error {
 func (u *User) ChangeFullName(newFullName vo.FullName, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
+	}
+
+	if newFullName == u.fullName {
+		return nil
 	}
 
 	oldFullName := u.fullName
@@ -303,6 +310,10 @@ func (u *User) ConfirmEmailChange(now time.Time) error {
 		return ErrPendingEmailChangeExpired
 	}
 
+	if u.HasEmail() && u.emailChangeRequest.Email() == *u.email {
+		return nil
+	}
+
 	var oldEmail *vo.Email
 	if u.HasEmail() {
 		oldEmail = u.email
@@ -330,8 +341,9 @@ func (u *User) RemoveEmail(now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
 	}
+
 	if !u.HasEmail() {
-		return ErrEmailNotSet
+		return nil
 	}
 
 	value := *u.email
@@ -360,6 +372,10 @@ func (u *User) ChangeAvatar(newAvatarKey vo.AvatarKey, now time.Time) error {
 		return ErrAvatarKeyMismatch
 	}
 
+	if u.HasAvatar() && newAvatarKey == *u.avatarKey {
+		return nil
+	}
+
 	var oldAvatarKey *vo.AvatarKey
 	if u.HasAvatar() {
 		value := *u.avatarKey
@@ -386,8 +402,9 @@ func (u *User) RemoveAvatar(now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
 	}
+
 	if !u.HasAvatar() {
-		return ErrAvatarNotSet
+		return nil
 	}
 
 	value := *u.avatarKey
@@ -410,7 +427,7 @@ func (u *User) RemoveAvatar(now time.Time) error {
 
 func (u *User) Delete(now time.Time) error {
 	if u.IsDeleted() {
-		return ErrUserDeleted
+		return nil
 	}
 
 	u.updateTime = now

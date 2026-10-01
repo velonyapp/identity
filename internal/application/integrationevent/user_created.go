@@ -26,7 +26,7 @@ func NewUserCreated(
 }
 
 func (e UserCreated) Type() string {
-	return "user.created"
+	return "identity.user.created"
 }
 
 func (e UserCreated) AggregateType() string {

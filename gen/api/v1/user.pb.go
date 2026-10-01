@@ -28,8 +28,8 @@ type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Email         *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	FullName      string                 `protobuf:"bytes,3,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	Email         *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	AvatarKey     *string                `protobuf:"bytes,5,opt,name=avatar_key,json=avatarKey,proto3,oneof" json:"avatar_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -79,16 +79,16 @@ func (x *User) GetUsername() string {
 	return ""
 }
 
-func (x *User) GetEmail() string {
-	if x != nil && x.Email != nil {
-		return *x.Email
+func (x *User) GetFullName() string {
+	if x != nil {
+		return x.FullName
 	}
 	return ""
 }
 
-func (x *User) GetFullName() string {
-	if x != nil {
-		return x.FullName
+func (x *User) GetEmail() string {
+	if x != nil && x.Email != nil {
+		return *x.Email
 	}
 	return ""
 }
@@ -600,9 +600,9 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"!velony/identity/api/v1/user.proto\x12\x16velony.identity.api.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfe\x01\n" +
 	"\x04User\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x1f\n" +
-	"\busername\x18\x02 \x01(\tB\x03\xe0A\x02R\busername\x12\x1e\n" +
-	"\x05email\x18\x03 \x01(\tB\x03\xe0A\x03H\x00R\x05email\x88\x01\x01\x12 \n" +
-	"\tfull_name\x18\x04 \x01(\tB\x03\xe0A\x02R\bfullName\x12'\n" +
+	"\busername\x18\x02 \x01(\tB\x03\xe0A\x02R\busername\x12 \n" +
+	"\tfull_name\x18\x03 \x01(\tB\x03\xe0A\x02R\bfullName\x12\x1e\n" +
+	"\x05email\x18\x04 \x01(\tB\x03\xe0A\x03H\x00R\x05email\x88\x01\x01\x12'\n" +
 	"\n" +
 	"avatar_key\x18\x05 \x01(\tB\x03\xe0A\x03H\x01R\tavatarKey\x88\x01\x01:8\xeaA5\n" +
 	"\x18identity.velony.app/User\x12\fusers/{user}*\x05users2\x04userB\b\n" +
@@ -635,10 +635,10 @@ const file_velony_identity_api_v1_user_proto_rawDesc = "" +
 	"\x18identity.velony.app/UserR\x04name\"@\n" +
 	"\x1fRequestUserAvatarChangeResponse\x12\x1d\n" +
 	"\n" +
-	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"E\n" +
-	"\x11DeleteUserRequest\x120\n" +
-	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14user.velony.app/UserR\x04nameB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
+	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"I\n" +
+	"\x11DeleteUserRequest\x124\n" +
+	"\x04name\x18\x01 \x01(\tB \xe0A\x02\xfaA\x1a\n" +
+	"\x18identity.velony.app/UserR\x04nameB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_identity_api_v1_user_proto_rawDescOnce sync.Once

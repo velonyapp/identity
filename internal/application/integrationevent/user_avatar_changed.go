@@ -26,7 +26,7 @@ func NewUserAvatarChanged(
 }
 
 func (e *UserAvatarChanged) Type() string {
-	return "user.avatar-key.changed"
+	return "identity.user.avatar.changed"
 }
 
 func (e *UserAvatarChanged) AggregateType() string {

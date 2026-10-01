@@ -18,7 +18,7 @@ func NewSessionRefreshed(
 }
 
 func (e *SessionRefreshed) Type() string {
-	return "session.refreshed"
+	return "identity.session.refreshed"
 }
 
 func (e *SessionRefreshed) AggregateType() string {

@@ -43,10 +43,51 @@ message Transport {
     ];
   }
 
+  message Kafka {
+    message AssetImage {
+      string topic = 1 [
+        (buf.validate.field).string.min_len = 1
+      ];
+
+      string group_id = 2 [
+        (buf.validate.field).string.min_len = 1
+      ];
+
+      string created_event = 3 [
+        (buf.validate.field).string.min_len = 1
+      ];
+      string finalized_event = 4 [
+        (buf.validate.field).string.min_len = 1
+      ];
+      string deleted_event = 5 [
+        (buf.validate.field).string.min_len = 1
+      ];
+    }
+
+    repeated string brokers = 1 [
+      (buf.validate.field).repeated = {
+      min_items: 1
+      unique: true
+      items: { string: { min_len: 1 } }
+      }
+    ];
+
+    google.protobuf.Duration timeout = 2 [
+      (buf.validate.field).duration.gt = {}
+    ];
+
+    AssetImage asset_image = 3 [
+      (buf.validate.field).required = true
+    ];
+  }
+
   HTTP http = 1 [
     (buf.validate.field).required = true
   ];
   GRPC grpc = 2 [
+    (buf.validate.field).required = true
+  ];
+  Kafka kafka = 3 [
     (buf.validate.field).required = true
   ];
 }

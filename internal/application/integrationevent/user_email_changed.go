@@ -26,7 +26,7 @@ func NewUserEmailChanged(
 }
 
 func (e *UserEmailChanged) Type() string {
-	return "user.email.changed"
+	return "identity.user.email.changed"
 }
 
 func (e *UserEmailChanged) AggregateType() string {

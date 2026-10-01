@@ -23,7 +23,7 @@ func NewSessionCreated(
 }
 
 func (e *SessionCreated) Type() string {
-	return "session.created"
+	return "identity.session.created"
 }
 
 func (e *SessionCreated) AggregateType() string {
