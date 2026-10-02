@@ -7,21 +7,21 @@ var _ IntegrationEvent = (*UserAvatarChanged)(nil)
 type UserAvatarChanged struct {
 	BaseIntegrationEvent
 
-	oldAvatarKey *string
-	newAvatarKey *string
+	oldAvatarID *string
+	newAvatarID *string
 }
 
 func NewUserAvatarChanged(
 	userID string,
-	oldAvatarKey *string,
-	newAvatarKey *string,
+	oldAvatarID *string,
+	newAvatarID *string,
 	occurTime time.Time,
 ) *UserAvatarChanged {
 	return &UserAvatarChanged{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(userID, occurTime),
 
-		oldAvatarKey: oldAvatarKey,
-		newAvatarKey: newAvatarKey,
+		oldAvatarID: oldAvatarID,
+		newAvatarID: newAvatarID,
 	}
 }
 
@@ -33,18 +33,18 @@ func (e *UserAvatarChanged) AggregateType() string {
 	return "user"
 }
 
-func (e *UserAvatarChanged) OldAvatarKey() *string {
-	if e.oldAvatarKey == nil {
+func (e *UserAvatarChanged) OldAvatarID() *string {
+	if e.oldAvatarID == nil {
 		return nil
 	}
-	value := *e.oldAvatarKey
+	value := *e.oldAvatarID
 	return &value
 }
 
-func (e *UserAvatarChanged) NewAvatarKey() *string {
-	if e.newAvatarKey == nil {
+func (e *UserAvatarChanged) NewAvatarID() *string {
+	if e.newAvatarID == nil {
 		return nil
 	}
-	value := *e.newAvatarKey
+	value := *e.newAvatarID
 	return &value
 }

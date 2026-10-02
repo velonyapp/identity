@@ -70,7 +70,8 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	registerAuthHandler := command.NewRegisterAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager, usernameAvailability)
 	loginAuthHandler := command.NewLoginAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager, passwordManager)
 	refreshAuthHandler := command.NewRefreshAuthHandler(confSecurity, repoUser, session, unitOfWork, accessTokenManager, sessionTokenManager)
-	updateUserHandler := command.NewUpdateUserHandler(repoUser, unitOfWork, cache, usernameAvailability)
+	avatar := mysql.NewAvatarRepo(db)
+	updateUserHandler := command.NewUpdateUserHandler(repoUser, avatar, unitOfWork, cache, usernameAvailability)
 	emailAvailability := service.NewEmailAvailability(repoUser)
 	requestUserEmailChangeHandler := command.NewRequestUserEmailChangeHandler(confSecurity, repoUser, unitOfWork, emailAvailability)
 	requestVerifier := security.NewRequestVerifier(confSecurity)
@@ -80,7 +81,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 		return nil, nil, err
 	}
 	assetService := gateway.NewAssetService(assetServiceClient)
-	requestUserAvatarChangeHandler := command.NewRequestUserAvatarChangeHandler(assetService)
+	requestUserAvatarChangeHandler := command.NewRequestUserAvatarChangeHandler(confSecurity, repoUser, unitOfWork, assetService)
 	deleteUserHandler := command.NewDeleteUserHandler(repoUser, unitOfWork, cache)
 	apiService := api.NewService(getUserHandler, batchGetUsersHandler, registerAuthHandler, loginAuthHandler, refreshAuthHandler, updateUserHandler, requestUserEmailChangeHandler, confirmUserEmailChangeHandler, requestUserAvatarChangeHandler, deleteUserHandler)
 	serverMetrics, err := observability.NewServerMetrics()
@@ -90,7 +91,10 @@ func wireApp(contextContext context.Context, infoService *info.Service, data *co
 	}
 	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
-	kafkaConsumer := transport.NewKafkaConsumer(confTransport, apiService)
+	reconstituteAvatarHandler := command.NewReconstituteAvatarHandler(repoUser, avatar, unitOfWork)
+	deleteAvatarHandler := command.NewDeleteAvatarHandler(avatar, unitOfWork)
+	confirmUserAvatarChangeHandler := command.NewConfirmUserAvatarChangeHandler(repoUser, avatar, unitOfWork, cache, requestVerifier)
+	kafkaConsumer := transport.NewKafkaConsumer(confTransport, reconstituteAvatarHandler, deleteAvatarHandler, confirmUserAvatarChangeHandler)
 	openTelemetry, cleanup2, err := observability2.NewOpenTelemetry(contextContext, confObservability, infoService)
 	if err != nil {
 		cleanup()

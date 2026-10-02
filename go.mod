@@ -13,7 +13,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/redis/go-redis/extra/redisotel/v9 v9.22.0
 	github.com/redis/go-redis/v9 v9.22.0
-	github.com/velonyapp/asset v0.0.0-20260928075232-e6266e38494b
+	github.com/velonyapp/asset v0.0.0-20261002094028-3f8dccd4834d
 	go.einride.tech/aip v0.86.3
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0

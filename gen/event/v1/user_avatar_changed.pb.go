@@ -24,8 +24,8 @@ const (
 
 type UserAvatarChangedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OldAvatarKey  *string                `protobuf:"bytes,1,opt,name=old_avatar_key,json=oldAvatarKey,proto3,oneof" json:"old_avatar_key,omitempty"`
-	NewAvatarKey  *string                `protobuf:"bytes,2,opt,name=new_avatar_key,json=newAvatarKey,proto3,oneof" json:"new_avatar_key,omitempty"`
+	OldAvatarId   *string                `protobuf:"bytes,1,opt,name=old_avatar_id,json=oldAvatarId,proto3,oneof" json:"old_avatar_id,omitempty"`
+	NewAvatarId   *string                `protobuf:"bytes,2,opt,name=new_avatar_id,json=newAvatarId,proto3,oneof" json:"new_avatar_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,16 +60,16 @@ func (*UserAvatarChangedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_identity_event_v1_user_avatar_changed_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserAvatarChangedPayload) GetOldAvatarKey() string {
-	if x != nil && x.OldAvatarKey != nil {
-		return *x.OldAvatarKey
+func (x *UserAvatarChangedPayload) GetOldAvatarId() string {
+	if x != nil && x.OldAvatarId != nil {
+		return *x.OldAvatarId
 	}
 	return ""
 }
 
-func (x *UserAvatarChangedPayload) GetNewAvatarKey() string {
-	if x != nil && x.NewAvatarKey != nil {
-		return *x.NewAvatarKey
+func (x *UserAvatarChangedPayload) GetNewAvatarId() string {
+	if x != nil && x.NewAvatarId != nil {
+		return *x.NewAvatarId
 	}
 	return ""
 }
@@ -78,12 +78,12 @@ var File_velony_identity_event_v1_user_avatar_changed_proto protoreflect.FileDes
 
 const file_velony_identity_event_v1_user_avatar_changed_proto_rawDesc = "" +
 	"\n" +
-	"2velony/identity/event/v1/user_avatar_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x96\x01\n" +
-	"\x18UserAvatarChangedPayload\x12)\n" +
-	"\x0eold_avatar_key\x18\x01 \x01(\tH\x00R\foldAvatarKey\x88\x01\x01\x12)\n" +
-	"\x0enew_avatar_key\x18\x02 \x01(\tH\x01R\fnewAvatarKey\x88\x01\x01B\x11\n" +
-	"\x0f_old_avatar_keyB\x11\n" +
-	"\x0f_new_avatar_keyB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
+	"2velony/identity/event/v1/user_avatar_changed.proto\x12\x18velony.identity.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\x01\n" +
+	"\x18UserAvatarChangedPayload\x12'\n" +
+	"\rold_avatar_id\x18\x01 \x01(\tH\x00R\voldAvatarId\x88\x01\x01\x12'\n" +
+	"\rnew_avatar_id\x18\x02 \x01(\tH\x01R\vnewAvatarId\x88\x01\x01B\x10\n" +
+	"\x0e_old_avatar_idB\x10\n" +
+	"\x0e_new_avatar_idB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_identity_event_v1_user_avatar_changed_proto_rawDescOnce sync.Once

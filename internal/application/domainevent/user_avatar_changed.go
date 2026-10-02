@@ -23,21 +23,21 @@ func NewUserAvatarChangedHandler(
 }
 
 func (h *UserAvatarChangedHandler) Execute(ctx context.Context, domainEvent *event.UserAvatarChanged) error {
-	var oldAvatarKey, newAvatarKey *string
+	var oldAvatarID, newAvatarID *string
 
-	if domainEvent.OldAvatarKey() != nil {
-		value := domainEvent.OldAvatarKey().String()
-		oldAvatarKey = &value
+	if domainEvent.OldAvatarID() != nil {
+		value := domainEvent.OldAvatarID().String()
+		oldAvatarID = &value
 	}
-	if domainEvent.NewAvatarKey() != nil {
-		value := domainEvent.NewAvatarKey().String()
-		newAvatarKey = &value
+	if domainEvent.NewAvatarID() != nil {
+		value := domainEvent.NewAvatarID().String()
+		newAvatarID = &value
 	}
 
 	integrationEvent := integrationevent.NewUserAvatarChanged(
 		domainEvent.AggregateID(),
-		oldAvatarKey,
-		newAvatarKey,
+		oldAvatarID,
+		newAvatarID,
 		domainEvent.OccurTime(),
 	)
 

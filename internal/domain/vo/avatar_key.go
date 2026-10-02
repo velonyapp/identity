@@ -7,23 +7,14 @@ import (
 )
 
 var (
-	ErrAvatarKeyEmpty = errors.New(
-		"avatar key must not be empty",
-	)
-	ErrAvatarKeyTooLong = errors.New(
-		"avatar key must not exceed 128 bytes",
-	)
-	ErrAvatarKeyInvalidUTF8 = errors.New(
-		"avatar key must contain valid UTF-8",
-	)
-	ErrAvatarKeyInvalidFormat = errors.New(
-		"avatar key must match users/{user_id}/avatar-{token}.webp",
-	)
+	ErrAvatarKeyEmpty         = errors.New("avatar key must not be empty")
+	ErrAvatarKeyTooLong       = errors.New("avatar key must not exceed 128 bytes")
+	ErrAvatarKeyInvalidUTF8   = errors.New("avatar key must contain valid UTF-8")
+	ErrAvatarKeyInvalidFormat = errors.New("avatar key must match users/{user_id}/avatar-{token}.webp")
 )
 
 type AvatarKey struct {
-	userID string
-	token  string
+	value string
 }
 
 func NewAvatarKey(value string) (AvatarKey, error) {
@@ -66,19 +57,14 @@ func NewAvatarKey(value string) (AvatarKey, error) {
 	}
 
 	return AvatarKey{
-		userID: userID,
-		token:  token,
+		value: value,
 	}, nil
 }
 
-func (k AvatarKey) UserID() string {
-	return k.userID
-}
-
-func (k AvatarKey) Token() string {
-	return k.token
+func (k AvatarKey) Value() string {
+	return k.value
 }
 
 func (k AvatarKey) String() string {
-	return "users/" + k.userID + "/avatar-" + k.token + ".webp"
+	return k.value
 }

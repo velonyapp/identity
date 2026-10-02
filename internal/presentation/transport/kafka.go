@@ -7,8 +7,10 @@ import (
 	"sync"
 
 	assetv1 "github.com/velonyapp/asset/gen/event/v1"
+	"github.com/velonyapp/identity/internal/application/command"
+	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/conf"
-	"github.com/velonyapp/identity/internal/presentation/api"
+	"github.com/velonyapp/identity/internal/domain/entity"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/go-kratos/kratos/v3/transport"
@@ -18,8 +20,11 @@ import (
 var _ transport.Server = (*KafkaConsumer)(nil)
 
 type KafkaConsumer struct {
-	c   *conf.Transport
-	svc *api.Service
+	c *conf.Transport
+
+	reconstituteAvatarHandler      *command.ReconstituteAvatarHandler
+	deleteAvatarHandler            *command.DeleteAvatarHandler
+	confirmUserAvatarChangeHandler *command.ConfirmUserAvatarChangeHandler
 
 	consumers map[string]*kafka.Consumer
 
@@ -28,11 +33,15 @@ type KafkaConsumer struct {
 
 func NewKafkaConsumer(
 	c *conf.Transport,
-	svc *api.Service,
+	reconstituteAvatarHandler *command.ReconstituteAvatarHandler,
+	deleteAvatarHandler *command.DeleteAvatarHandler,
+	confirmUserAvatarChangeHandler *command.ConfirmUserAvatarChangeHandler,
 ) *KafkaConsumer {
 	return &KafkaConsumer{
-		c:   c,
-		svc: svc,
+		c:                              c,
+		reconstituteAvatarHandler:      reconstituteAvatarHandler,
+		deleteAvatarHandler:            deleteAvatarHandler,
+		confirmUserAvatarChangeHandler: confirmUserAvatarChangeHandler,
 
 		consumers: make(map[string]*kafka.Consumer),
 	}
@@ -42,8 +51,8 @@ func (kc *KafkaConsumer) registerAllConsumers() error {
 	var errs []error
 
 	if err := kc.registerConsumer(
-		kc.c.Kafka.AssetImage.Topic,
-		kc.c.Kafka.AssetImage.GroupId,
+		kc.c.Kafka.Consumers.AssetImage.Topic,
+		kc.c.Kafka.Consumers.AssetImage.GroupId,
 	); err != nil {
 		errs = append(errs, err)
 	}
@@ -61,7 +70,7 @@ func (kc *KafkaConsumer) handleMessage(ctx context.Context, message *kafka.Messa
 	}
 
 	switch eventType {
-	case kc.c.Kafka.AssetImage.CreatedEvent:
+	case kc.c.Kafka.Consumers.AssetImage.Events.Created:
 		var event assetv1.Event
 		if err := proto.Unmarshal(message.Value, &event); err != nil {
 			return err
@@ -72,18 +81,40 @@ func (kc *KafkaConsumer) handleMessage(ctx context.Context, message *kafka.Messa
 			return err
 		}
 
-	case kc.c.Kafka.AssetImage.FinalizedEvent:
+		if _, err := kc.reconstituteAvatarHandler.Execute(ctx, &command.ReconstituteAvatar{
+			AvatarID: event.AggregateId,
+			Key:      payload.ObjectKey,
+		}); err != nil {
+			return err
+		}
+
+	case kc.c.Kafka.Consumers.AssetImage.Events.ObjectExistenceUpdated:
 		var event assetv1.Event
 		if err := proto.Unmarshal(message.Value, &event); err != nil {
 			return err
 		}
 
-		var payload assetv1.ImageFinalizedPayload
+		var payload assetv1.ImageObjectExistenceUpdatedPayload
 		if err := event.GetPayload().UnmarshalTo(&payload); err != nil {
 			return err
 		}
 
-	case kc.c.Kafka.AssetImage.DeletedEvent:
+		if !payload.ObjectExists {
+			break
+		}
+
+		if _, err := kc.confirmUserAvatarChangeHandler.Execute(ctx, &command.ConfirmUserAvatarChange{
+			AvatarID: event.AggregateId,
+		}); err != nil {
+			switch {
+			case errors.Is(err, common.ErrUserNotFound),
+				errors.Is(err, entity.ErrUserDeleted):
+			default:
+				return err
+			}
+		}
+
+	case kc.c.Kafka.Consumers.AssetImage.Events.Deleted:
 		var event assetv1.Event
 		if err := proto.Unmarshal(message.Value, &event); err != nil {
 			return err
@@ -93,6 +124,10 @@ func (kc *KafkaConsumer) handleMessage(ctx context.Context, message *kafka.Messa
 		if err := event.GetPayload().UnmarshalTo(&payload); err != nil {
 			return err
 		}
+
+		kc.deleteAvatarHandler.Execute(ctx, &command.DeleteAvatar{
+			AvatarID: event.AggregateId,
+		})
 	}
 
 	return nil

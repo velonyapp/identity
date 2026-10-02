@@ -1,7 +1,13 @@
 package port
 
-import "context"
+import (
+	"context"
+	"time"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
 
 type AssetService interface {
-	PresignAvatar(ctx context.Context, userID string) (string, error)
+	CreateAvatar(ctx context.Context, userID vo.UserID) (vo.AvatarID, error)
+	PresignAvatar(ctx context.Context, avatarID vo.AvatarID, ttl time.Duration) (string, error)
 }

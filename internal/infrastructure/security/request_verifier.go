@@ -24,7 +24,7 @@ func NewRequestVerifier(c *conf.Security) port.RequestVerifier {
 func (v *requestVerifier) VerifyEmailChange(request vo.EmailChangeRequest, token string) error {
 	mac := hmac.New(
 		sha256.New,
-		[]byte(v.c.GetEmailChangeRequestToken().GetSecret()),
+		[]byte(v.c.GetEmailChangeRequest().GetSecret()),
 	)
 
 	_, _ = mac.Write([]byte(request.Email().Value()))

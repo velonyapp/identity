@@ -23,13 +23,15 @@ func NewUserQuery(db *sql.DB) query.User {
 func (q *userQuery) GetUser(ctx context.Context, userID string) (*common.User, error) {
 	const query = `
 		SELECT
-			id,
-			username,
-			full_name,
-			email,
-			avatar_key
+			users.id,
+			users.username,
+			users.full_name,
+			users.email,
+			avatars.key
 		FROM users
-		WHERE id = ?
+		LEFT JOIN avatars
+			ON avatars.id = users.avatar_id
+		WHERE users.id = ?
 		LIMIT 1
 	`
 
@@ -62,13 +64,15 @@ func (q *userQuery) BatchGetUser(ctx context.Context, userIDs []string) ([]*comm
 
 	query := `
 		SELECT
-			id,
-			username,
-			full_name,
-			email,
-			avatar_key
+			users.id,
+			users.username,
+			users.full_name,
+			users.email,
+			avatars.key
 		FROM users
-		WHERE id IN (` + strings.Join(placeholders, ", ") + `)
+		LEFT JOIN avatars
+			ON avatars.id = users.avatar_id
+		WHERE users.id IN (` + strings.Join(placeholders, ", ") + `)
 	`
 
 	rows, err := executor(ctx, q.db).QueryContext(ctx, query, args...)

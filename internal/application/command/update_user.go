@@ -6,7 +6,6 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
-	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/service"
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -24,6 +23,7 @@ type UpdateUserResult struct {
 
 type UpdateUserHandler struct {
 	userRepo             repo.User
+	avatarRepo           repo.Avatar
 	unitOfWork           port.UnitOfWork
 	cache                port.Cache
 	usernameAvailability *service.UsernameAvailability
@@ -31,12 +31,14 @@ type UpdateUserHandler struct {
 
 func NewUpdateUserHandler(
 	userRepo repo.User,
+	avatarRepo repo.Avatar,
 	unitOfWork port.UnitOfWork,
 	cache port.Cache,
 	usernameAvailability *service.UsernameAvailability,
 ) *UpdateUserHandler {
 	return &UpdateUserHandler{
 		userRepo:             userRepo,
+		avatarRepo:           avatarRepo,
 		unitOfWork:           unitOfWork,
 		cache:                cache,
 		usernameAvailability: usernameAvailability,
@@ -50,12 +52,10 @@ func (h *UpdateUserHandler) Execute(
 
 	userID := vo.NewUserID(cmd.UserID)
 
-	var user *entity.User
+	var result *common.User
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		var err error
-
-		user, err = h.userRepo.FindByID(ctx, userID)
+		user, err := h.userRepo.FindByID(ctx, userID)
 		if err != nil {
 			return err
 		}
@@ -90,16 +90,31 @@ func (h *UpdateUserHandler) Execute(
 			}
 		}
 
-		if err := h.userRepo.Save(ctx, user); err != nil {
-			return err
+		result = &common.User{
+			ID:       user.ID().Value(),
+			Username: user.Username().Value(),
+			FullName: user.FullName().Value(),
+		}
+		if user.HasEmail() {
+			value := user.Email().Value()
+			result.Email = &value
+		}
+		if user.HasAvatar() {
+			avatar, err := h.avatarRepo.FindByID(ctx, *user.AvatarID())
+			if err != nil {
+				return err
+			}
+
+			value := avatar.Key().Value()
+			result.AvatarKey = &value
 		}
 
-		return nil
+		return h.userRepo.Save(ctx, user)
 	}); err != nil {
 		return nil, err
 	}
 
 	h.cache.Delete(ctx, common.UserCacheKey(userID.Value()))
 
-	return &UpdateUserResult{User: common.NewUserFromEntity(user)}, nil
+	return &UpdateUserResult{User: result}, nil
 }

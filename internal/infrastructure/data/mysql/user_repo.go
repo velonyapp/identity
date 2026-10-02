@@ -40,13 +40,16 @@ func (repo *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.U
 			users.username,
 			users.full_name,
 			users.email,
-			users.avatar_key,
+			users.avatar_id,
 			users.create_time,
 			users.update_time,
 
 			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
+
+			avatar_change_requests.avatar_id,
+			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
 
@@ -83,13 +86,16 @@ func (repo *userRepo) FindByUsername(ctx context.Context, username vo.Username) 
 			users.username,
 			users.full_name,
 			users.email,
-			users.avatar_key,
+			users.avatar_id,
 			users.create_time,
 			users.update_time,
 
 			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
+
+			avatar_change_requests.avatar_id,
+			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
 
@@ -126,13 +132,16 @@ func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 			users.username,
 			users.full_name,
 			users.email,
-			users.avatar_key,
+			users.avatar_id,
 			users.create_time,
 			users.update_time,
 
 			email_change_requests.email,
 			email_change_requests.time,
 			email_change_requests.expire_time,
+
+			avatar_change_requests.avatar_id,
+			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash,
 
@@ -149,6 +158,52 @@ func (repo *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.
 	`
 
 	row := executor(ctx, repo.db).QueryRowContext(ctx, query, email.Value())
+
+	user, err := scanRepoUser(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (repo *userRepo) FindByRequestedAvatarIDChange(ctx context.Context, avatarID vo.AvatarID) (*entity.User, error) {
+	const query = `
+		SELECT
+			users.id,
+			users.username,
+			users.full_name,
+			users.email,
+			users.avatar_id,
+			users.create_time,
+			users.update_time,
+
+			email_change_requests.email,
+			email_change_requests.time,
+			email_change_requests.expire_time,
+
+			avatar_change_requests.avatar_id,
+			avatar_change_requests.expire_time,
+
+			local_auth_strategies.password_hash,
+
+			google_auth_strategies.sub
+		FROM users
+		LEFT JOIN email_change_requests
+			ON email_change_requests.user_id = users.id
+		LEFT JOIN local_auth_strategies
+			ON local_auth_strategies.user_id = users.id
+		LEFT JOIN google_auth_strategies
+			ON google_auth_strategies.user_id = users.id
+		WHERE avatar_change_requests.avatar_id = ?
+		LIMIT 1
+	`
+
+	row := executor(ctx, repo.db).QueryRowContext(ctx, query, avatarID.Value())
 
 	user, err := scanRepoUser(row)
 	if err != nil {
@@ -179,7 +234,7 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 				username,
 				full_name,
 				email,
-				avatar_key,
+				avatar_id,
 				create_time,
 				update_time
 			)
@@ -188,7 +243,7 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 				username = ?,
 				full_name = ?,
 				email = ?,
-				avatar_key = ?,
+				avatar_id = ?,
 				update_time = ?
 		`
 
@@ -197,9 +252,9 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 			email = user.Email().Value()
 		}
 
-		var avatarKey any
-		if user.AvatarKey() != nil {
-			avatarKey = user.AvatarKey().String()
+		var avatarID any
+		if user.AvatarID() != nil {
+			avatarID = user.AvatarID().Value()
 		}
 
 		if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
@@ -207,14 +262,14 @@ func (repo *userRepo) Save(ctx context.Context, user *entity.User) error {
 			user.Username().Value(),
 			user.FullName().Value(),
 			email,
-			avatarKey,
+			avatarID,
 			user.CreateTime(),
 			user.UpdateTime(),
 
 			user.Username().Value(),
 			user.FullName().Value(),
 			email,
-			avatarKey,
+			avatarID,
 			user.UpdateTime(),
 		); err != nil {
 			return err
@@ -348,13 +403,16 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		username   string
 		fullName   string
 		email      sql.NullString
-		avatarKey  sql.NullString
+		avatarID   sql.NullString
 		createTime time.Time
 		updateTime time.Time
 
 		emailChangeRequestEmail      sql.NullString
 		emailChangeRequestTime       sql.NullTime
 		emailChangeRequestExpireTime sql.NullTime
+
+		avatarChangeRequestAvatarID   sql.NullString
+		avatarChangeRequestExpireTime sql.NullTime
 
 		passwordHash sql.NullString
 
@@ -366,13 +424,16 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		&username,
 		&fullName,
 		&email,
-		&avatarKey,
+		&avatarID,
 		&createTime,
 		&updateTime,
 
 		&emailChangeRequestEmail,
 		&emailChangeRequestTime,
 		&emailChangeRequestExpireTime,
+
+		&avatarChangeRequestAvatarID,
+		&avatarChangeRequestExpireTime,
 
 		&passwordHash,
 
@@ -390,10 +451,10 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		emailVO = &value
 	}
 
-	var avatarKeyVO *vo.AvatarKey
-	if avatarKey.Valid {
-		value, _ := vo.NewAvatarKey(avatarKey.String)
-		avatarKeyVO = &value
+	var avatarIDVO *vo.AvatarID
+	if avatarID.Valid {
+		value := vo.NewAvatarID(avatarID.String)
+		avatarIDVO = &value
 	}
 
 	var emailChangeRequest *vo.EmailChangeRequest
@@ -406,6 +467,17 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 			emailChangeRequestExpireTime.Time,
 		)
 		emailChangeRequest = &value
+	}
+
+	var avatarChangeRequest *vo.AvatarChangeRequest
+	if avatarChangeRequestAvatarID.Valid {
+		newAvatarID := vo.NewAvatarID(avatarChangeRequestAvatarID.String)
+
+		value := vo.NewAvatarChangeRequest(
+			newAvatarID,
+			avatarChangeRequestExpireTime.Time,
+		)
+		avatarChangeRequest = &value
 	}
 
 	var localAuthStrategy *vo.LocalAuthStrategy
@@ -429,11 +501,12 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		usernameVO,
 		fullNameVO,
 		emailVO,
-		avatarKeyVO,
+		avatarIDVO,
 		createTime,
 		updateTime,
 		nil,
 		emailChangeRequest,
+		avatarChangeRequest,
 		localAuthStrategy,
 		googleAuthStrategy,
 	), nil

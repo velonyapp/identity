@@ -91,8 +91,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
 github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
-github.com/velonyapp/asset v0.0.0-20260928075232-e6266e38494b h1:yeh+lkYI50cGJOgmos0Dc7wIwu1Qqj/jVY243n3wbgw=
-github.com/velonyapp/asset v0.0.0-20260928075232-e6266e38494b/go.mod h1:X//pIotNswNzVIcYurERXtus9BWcFGiK4sJ01nuE/2I=
+github.com/velonyapp/asset v0.0.0-20261002094028-3f8dccd4834d h1:bSz9aCT9n9cOu0hVkG9Q1Z8STlloIw5HGO39sJfSxQk=
+github.com/velonyapp/asset v0.0.0-20261002094028-3f8dccd4834d/go.mod h1:3g5mNdjShufJUzh7DUTlspQJLW3C8DhoBlndrrxLCbQ=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 github.com/zeebo/xxh3 v1.1.0 h1:s7DLGDK45Dyfg7++yxI0khrfwq9661w9EN78eP/UZVs=
 github.com/zeebo/xxh3 v1.1.0/go.mod h1:IisAie1LELR4xhVinxWS5+zf1lA4p0MW4T+w+W07F5s=

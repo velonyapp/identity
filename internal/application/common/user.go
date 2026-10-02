@@ -19,7 +19,7 @@ type User struct {
 	AvatarKey *string
 }
 
-func NewUserFromEntity(user *entity.User) *User {
+func NewUserFromEntity(user *entity.User, avatar *entity.Avatar) *User {
 	result := &User{
 		ID:       user.ID().Value(),
 		Username: user.Username().Value(),
@@ -29,8 +29,8 @@ func NewUserFromEntity(user *entity.User) *User {
 		value := user.Email().Value()
 		result.Email = &value
 	}
-	if user.HasAvatar() {
-		value := user.AvatarKey().String()
+	if user.HasAvatar() && avatar != nil {
+		value := avatar.Key().String()
 		result.AvatarKey = &value
 	}
 

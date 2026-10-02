@@ -261,12 +261,13 @@ func (x *Data) GetRedis() *Data_Redis {
 }
 
 type Security struct {
-	state                   protoimpl.MessageState            `protogen:"open.v1"`
-	AccessToken             *Security_AccessToken             `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken            *Security_RefreshToken            `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	EmailChangeRequestToken *Security_EmailChangeRequestToken `protobuf:"bytes,3,opt,name=email_change_request_token,json=emailChangeRequestToken,proto3" json:"email_change_request_token,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state               protoimpl.MessageState        `protogen:"open.v1"`
+	AccessToken         *Security_AccessToken         `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken        *Security_RefreshToken        `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	EmailChangeRequest  *Security_EmailChangeRequest  `protobuf:"bytes,3,opt,name=email_change_request,json=emailChangeRequest,proto3" json:"email_change_request,omitempty"`
+	AvatarChangeRequest *Security_AvatarChangeRequest `protobuf:"bytes,4,opt,name=avatar_change_request,json=avatarChangeRequest,proto3" json:"avatar_change_request,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *Security) Reset() {
@@ -313,9 +314,16 @@ func (x *Security) GetRefreshToken() *Security_RefreshToken {
 	return nil
 }
 
-func (x *Security) GetEmailChangeRequestToken() *Security_EmailChangeRequestToken {
+func (x *Security) GetEmailChangeRequest() *Security_EmailChangeRequest {
 	if x != nil {
-		return x.EmailChangeRequestToken
+		return x.EmailChangeRequest
+	}
+	return nil
+}
+
+func (x *Security) GetAvatarChangeRequest() *Security_AvatarChangeRequest {
+	if x != nil {
+		return x.AvatarChangeRequest
 	}
 	return nil
 }
@@ -521,10 +529,10 @@ func (x *Transport_GRPC) GetTimeout() *durationpb.Duration {
 }
 
 type Transport_Kafka struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	Brokers       []string                    `protobuf:"bytes,1,rep,name=brokers,proto3" json:"brokers,omitempty"`
-	Timeout       *durationpb.Duration        `protobuf:"bytes,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	AssetImage    *Transport_Kafka_AssetImage `protobuf:"bytes,3,opt,name=asset_image,json=assetImage,proto3" json:"asset_image,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Brokers       []string                   `protobuf:"bytes,1,rep,name=brokers,proto3" json:"brokers,omitempty"`
+	Timeout       *durationpb.Duration       `protobuf:"bytes,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	Consumers     *Transport_Kafka_Consumers `protobuf:"bytes,3,opt,name=consumers,proto3" json:"consumers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -573,38 +581,34 @@ func (x *Transport_Kafka) GetTimeout() *durationpb.Duration {
 	return nil
 }
 
-func (x *Transport_Kafka) GetAssetImage() *Transport_Kafka_AssetImage {
+func (x *Transport_Kafka) GetConsumers() *Transport_Kafka_Consumers {
 	if x != nil {
-		return x.AssetImage
+		return x.Consumers
 	}
 	return nil
 }
 
-type Transport_Kafka_AssetImage struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Topic          string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
-	GroupId        string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	CreatedEvent   string                 `protobuf:"bytes,3,opt,name=created_event,json=createdEvent,proto3" json:"created_event,omitempty"`
-	FinalizedEvent string                 `protobuf:"bytes,4,opt,name=finalized_event,json=finalizedEvent,proto3" json:"finalized_event,omitempty"`
-	DeletedEvent   string                 `protobuf:"bytes,5,opt,name=deleted_event,json=deletedEvent,proto3" json:"deleted_event,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+type Transport_Kafka_Consumers struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	AssetImage    *Transport_Kafka_Consumers_AssetImage `protobuf:"bytes,1,opt,name=asset_image,json=assetImage,proto3" json:"asset_image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Transport_Kafka_AssetImage) Reset() {
-	*x = Transport_Kafka_AssetImage{}
+func (x *Transport_Kafka_Consumers) Reset() {
+	*x = Transport_Kafka_Consumers{}
 	mi := &file_conf_conf_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Transport_Kafka_AssetImage) String() string {
+func (x *Transport_Kafka_Consumers) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Transport_Kafka_AssetImage) ProtoMessage() {}
+func (*Transport_Kafka_Consumers) ProtoMessage() {}
 
-func (x *Transport_Kafka_AssetImage) ProtoReflect() protoreflect.Message {
+func (x *Transport_Kafka_Consumers) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -616,42 +620,134 @@ func (x *Transport_Kafka_AssetImage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Transport_Kafka_AssetImage.ProtoReflect.Descriptor instead.
-func (*Transport_Kafka_AssetImage) Descriptor() ([]byte, []int) {
+// Deprecated: Use Transport_Kafka_Consumers.ProtoReflect.Descriptor instead.
+func (*Transport_Kafka_Consumers) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{1, 2, 0}
 }
 
-func (x *Transport_Kafka_AssetImage) GetTopic() string {
+func (x *Transport_Kafka_Consumers) GetAssetImage() *Transport_Kafka_Consumers_AssetImage {
+	if x != nil {
+		return x.AssetImage
+	}
+	return nil
+}
+
+type Transport_Kafka_Consumers_AssetImage struct {
+	state         protoimpl.MessageState                       `protogen:"open.v1"`
+	Topic         string                                       `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	GroupId       string                                       `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Events        *Transport_Kafka_Consumers_AssetImage_Events `protobuf:"bytes,3,opt,name=events,proto3" json:"events,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage) Reset() {
+	*x = Transport_Kafka_Consumers_AssetImage{}
+	mi := &file_conf_conf_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Transport_Kafka_Consumers_AssetImage) ProtoMessage() {}
+
+func (x *Transport_Kafka_Consumers_AssetImage) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Transport_Kafka_Consumers_AssetImage.ProtoReflect.Descriptor instead.
+func (*Transport_Kafka_Consumers_AssetImage) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{1, 2, 0, 0}
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage) GetTopic() string {
 	if x != nil {
 		return x.Topic
 	}
 	return ""
 }
 
-func (x *Transport_Kafka_AssetImage) GetGroupId() string {
+func (x *Transport_Kafka_Consumers_AssetImage) GetGroupId() string {
 	if x != nil {
 		return x.GroupId
 	}
 	return ""
 }
 
-func (x *Transport_Kafka_AssetImage) GetCreatedEvent() string {
+func (x *Transport_Kafka_Consumers_AssetImage) GetEvents() *Transport_Kafka_Consumers_AssetImage_Events {
 	if x != nil {
-		return x.CreatedEvent
+		return x.Events
+	}
+	return nil
+}
+
+type Transport_Kafka_Consumers_AssetImage_Events struct {
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Created                string                 `protobuf:"bytes,1,opt,name=created,proto3" json:"created,omitempty"`
+	ObjectExistenceUpdated string                 `protobuf:"bytes,2,opt,name=object_existence_updated,json=objectExistenceUpdated,proto3" json:"object_existence_updated,omitempty"`
+	Deleted                string                 `protobuf:"bytes,3,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage_Events) Reset() {
+	*x = Transport_Kafka_Consumers_AssetImage_Events{}
+	mi := &file_conf_conf_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage_Events) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Transport_Kafka_Consumers_AssetImage_Events) ProtoMessage() {}
+
+func (x *Transport_Kafka_Consumers_AssetImage_Events) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Transport_Kafka_Consumers_AssetImage_Events.ProtoReflect.Descriptor instead.
+func (*Transport_Kafka_Consumers_AssetImage_Events) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{1, 2, 0, 0, 0}
+}
+
+func (x *Transport_Kafka_Consumers_AssetImage_Events) GetCreated() string {
+	if x != nil {
+		return x.Created
 	}
 	return ""
 }
 
-func (x *Transport_Kafka_AssetImage) GetFinalizedEvent() string {
+func (x *Transport_Kafka_Consumers_AssetImage_Events) GetObjectExistenceUpdated() string {
 	if x != nil {
-		return x.FinalizedEvent
+		return x.ObjectExistenceUpdated
 	}
 	return ""
 }
 
-func (x *Transport_Kafka_AssetImage) GetDeletedEvent() string {
+func (x *Transport_Kafka_Consumers_AssetImage_Events) GetDeleted() string {
 	if x != nil {
-		return x.DeletedEvent
+		return x.Deleted
 	}
 	return ""
 }
@@ -668,7 +764,7 @@ type Data_MySQL struct {
 
 func (x *Data_MySQL) Reset() {
 	*x = Data_MySQL{}
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -680,7 +776,7 @@ func (x *Data_MySQL) String() string {
 func (*Data_MySQL) ProtoMessage() {}
 
 func (x *Data_MySQL) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -734,7 +830,7 @@ type Data_Redis struct {
 
 func (x *Data_Redis) Reset() {
 	*x = Data_Redis{}
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -746,7 +842,7 @@ func (x *Data_Redis) String() string {
 func (*Data_Redis) ProtoMessage() {}
 
 func (x *Data_Redis) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -786,7 +882,7 @@ type Security_AccessToken struct {
 
 func (x *Security_AccessToken) Reset() {
 	*x = Security_AccessToken{}
-	mi := &file_conf_conf_proto_msgTypes[12]
+	mi := &file_conf_conf_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +894,7 @@ func (x *Security_AccessToken) String() string {
 func (*Security_AccessToken) ProtoMessage() {}
 
 func (x *Security_AccessToken) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[12]
+	mi := &file_conf_conf_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -837,7 +933,7 @@ type Security_RefreshToken struct {
 
 func (x *Security_RefreshToken) Reset() {
 	*x = Security_RefreshToken{}
-	mi := &file_conf_conf_proto_msgTypes[13]
+	mi := &file_conf_conf_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -849,7 +945,7 @@ func (x *Security_RefreshToken) String() string {
 func (*Security_RefreshToken) ProtoMessage() {}
 
 func (x *Security_RefreshToken) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[13]
+	mi := &file_conf_conf_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -872,7 +968,7 @@ func (x *Security_RefreshToken) GetTtl() *durationpb.Duration {
 	return nil
 }
 
-type Security_EmailChangeRequestToken struct {
+type Security_EmailChangeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
 	Ttl           *durationpb.Duration   `protobuf:"bytes,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
@@ -880,21 +976,21 @@ type Security_EmailChangeRequestToken struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Security_EmailChangeRequestToken) Reset() {
-	*x = Security_EmailChangeRequestToken{}
-	mi := &file_conf_conf_proto_msgTypes[14]
+func (x *Security_EmailChangeRequest) Reset() {
+	*x = Security_EmailChangeRequest{}
+	mi := &file_conf_conf_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Security_EmailChangeRequestToken) String() string {
+func (x *Security_EmailChangeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Security_EmailChangeRequestToken) ProtoMessage() {}
+func (*Security_EmailChangeRequest) ProtoMessage() {}
 
-func (x *Security_EmailChangeRequestToken) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[14]
+func (x *Security_EmailChangeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -905,19 +1001,63 @@ func (x *Security_EmailChangeRequestToken) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Security_EmailChangeRequestToken.ProtoReflect.Descriptor instead.
-func (*Security_EmailChangeRequestToken) Descriptor() ([]byte, []int) {
+// Deprecated: Use Security_EmailChangeRequest.ProtoReflect.Descriptor instead.
+func (*Security_EmailChangeRequest) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 2}
 }
 
-func (x *Security_EmailChangeRequestToken) GetSecret() string {
+func (x *Security_EmailChangeRequest) GetSecret() string {
 	if x != nil {
 		return x.Secret
 	}
 	return ""
 }
 
-func (x *Security_EmailChangeRequestToken) GetTtl() *durationpb.Duration {
+func (x *Security_EmailChangeRequest) GetTtl() *durationpb.Duration {
+	if x != nil {
+		return x.Ttl
+	}
+	return nil
+}
+
+type Security_AvatarChangeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,1,opt,name=ttl,proto3" json:"ttl,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Security_AvatarChangeRequest) Reset() {
+	*x = Security_AvatarChangeRequest{}
+	mi := &file_conf_conf_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Security_AvatarChangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Security_AvatarChangeRequest) ProtoMessage() {}
+
+func (x *Security_AvatarChangeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Security_AvatarChangeRequest.ProtoReflect.Descriptor instead.
+func (*Security_AvatarChangeRequest) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 3}
+}
+
+func (x *Security_AvatarChangeRequest) GetTtl() *durationpb.Duration {
 	if x != nil {
 		return x.Ttl
 	}
@@ -936,7 +1076,7 @@ type Observability_Tracing struct {
 
 func (x *Observability_Tracing) Reset() {
 	*x = Observability_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[15]
+	mi := &file_conf_conf_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -948,7 +1088,7 @@ func (x *Observability_Tracing) String() string {
 func (*Observability_Tracing) ProtoMessage() {}
 
 func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[15]
+	mi := &file_conf_conf_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1004,7 +1144,7 @@ type Observability_Metrics struct {
 
 func (x *Observability_Metrics) Reset() {
 	*x = Observability_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[16]
+	mi := &file_conf_conf_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1016,7 +1156,7 @@ func (x *Observability_Metrics) String() string {
 func (*Observability_Metrics) ProtoMessage() {}
 
 func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[16]
+	mi := &file_conf_conf_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1070,7 +1210,7 @@ type Gateway_Asset struct {
 
 func (x *Gateway_Asset) Reset() {
 	*x = Gateway_Asset{}
-	mi := &file_conf_conf_proto_msgTypes[17]
+	mi := &file_conf_conf_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1082,7 +1222,7 @@ func (x *Gateway_Asset) String() string {
 func (*Gateway_Asset) ProtoMessage() {}
 
 func (x *Gateway_Asset) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[17]
+	mi := &file_conf_conf_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1123,7 +1263,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x128\n" +
 	"\bsecurity\x18\x03 \x01(\v2\x14.kratos.api.SecurityB\x06\xbaH\x03\xc8\x01\x01R\bsecurity\x12?\n" +
 	"\robservability\x18\x04 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\x125\n" +
-	"\agateway\x18\x05 \x01(\v2\x13.kratos.api.GatewayB\x06\xbaH\x03\xc8\x01\x01R\agateway\"\xb2\x06\n" +
+	"\agateway\x18\x05 \x01(\v2\x13.kratos.api.GatewayB\x06\xbaH\x03\xc8\x01\x01R\agateway\"\xf6\a\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x129\n" +
@@ -1133,20 +1273,24 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xa3\x03\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xe7\x04\n" +
 	"\x05Kafka\x12*\n" +
 	"\abrokers\x18\x01 \x03(\tB\x10\xbaH\r\x92\x01\n" +
 	"\b\x01\x18\x01\"\x04r\x02\x10\x01R\abrokers\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x12O\n" +
-	"\vasset_image\x18\x03 \x01(\v2&.kratos.api.Transport.Kafka.AssetImageB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"assetImage\x1a\xdd\x01\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x12K\n" +
+	"\tconsumers\x18\x03 \x01(\v2%.kratos.api.Transport.Kafka.ConsumersB\x06\xbaH\x03\xc8\x01\x01R\tconsumers\x1a\xa5\x03\n" +
+	"\tConsumers\x12Y\n" +
+	"\vasset_image\x18\x01 \x01(\v20.kratos.api.Transport.Kafka.Consumers.AssetImageB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"assetImage\x1a\xbc\x02\n" +
 	"\n" +
 	"AssetImage\x12\x1d\n" +
 	"\x05topic\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05topic\x12\"\n" +
-	"\bgroup_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\agroupId\x12,\n" +
-	"\rcreated_event\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fcreatedEvent\x120\n" +
-	"\x0ffinalized_event\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x0efinalizedEvent\x12,\n" +
-	"\rdeleted_event\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fdeletedEvent\"\xd8\x05\n" +
+	"\bgroup_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\agroupId\x12W\n" +
+	"\x06events\x18\x03 \x01(\v27.kratos.api.Transport.Kafka.Consumers.AssetImage.EventsB\x06\xbaH\x03\xc8\x01\x01R\x06events\x1a\x91\x01\n" +
+	"\x06Events\x12!\n" +
+	"\acreated\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\acreated\x12A\n" +
+	"\x18object_existence_updated\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x16objectExistenceUpdated\x12!\n" +
+	"\adeleted\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\adeleted\"\xd8\x05\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12,\n" +
 	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x1a\xf1\x03\n" +
@@ -1161,19 +1305,22 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x05Redis\x12\x19\n" +
 	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x129\n" +
 	"\x16max_active_connections\x18\x02 \x01(\rH\x00R\x14maxActiveConnections\x88\x01\x01B\x19\n" +
-	"\x17_max_active_connections\"\xc4\x04\n" +
+	"\x17_max_active_connections\"\xe6\x05\n" +
 	"\bSecurity\x12K\n" +
 	"\faccess_token\x18\x01 \x01(\v2 .kratos.api.Security.AccessTokenB\x06\xbaH\x03\xc8\x01\x01R\vaccessToken\x12N\n" +
-	"\rrefresh_token\x18\x02 \x01(\v2!.kratos.api.Security.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x12q\n" +
-	"\x1aemail_change_request_token\x18\x03 \x01(\v2,.kratos.api.Security.EmailChangeRequestTokenB\x06\xbaH\x03\xc8\x01\x01R\x17emailChangeRequestToken\x1ah\n" +
+	"\rrefresh_token\x18\x02 \x01(\v2!.kratos.api.Security.RefreshTokenB\x06\xbaH\x03\xc8\x01\x01R\frefreshToken\x12a\n" +
+	"\x14email_change_request\x18\x03 \x01(\v2'.kratos.api.Security.EmailChangeRequestB\x06\xbaH\x03\xc8\x01\x01R\x12emailChangeRequest\x12d\n" +
+	"\x15avatar_change_request\x18\x04 \x01(\v2(.kratos.api.Security.AvatarChangeRequestB\x06\xbaH\x03\xc8\x01\x01R\x13avatarChangeRequest\x1ah\n" +
 	"\vAccessToken\x12\x1f\n" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
 	"\fRefreshToken\x128\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1at\n" +
-	"\x17EmailChangeRequestToken\x12\x1f\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1ao\n" +
+	"\x12EmailChangeRequest\x12\x1f\n" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
-	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x87\x06\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aO\n" +
+	"\x13AvatarChangeRequest\x128\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x87\x06\n" +
 	"\rObservability\x12;\n" +
 	"\atracing\x18\x01 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
 	"\ametrics\x18\x02 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x92\x02\n" +
@@ -1215,28 +1362,31 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_conf_conf_proto_goTypes = []any{
-	(Observability_Protocol)(0),              // 0: kratos.api.Observability.Protocol
-	(*Bootstrap)(nil),                        // 1: kratos.api.Bootstrap
-	(*Transport)(nil),                        // 2: kratos.api.Transport
-	(*Data)(nil),                             // 3: kratos.api.Data
-	(*Security)(nil),                         // 4: kratos.api.Security
-	(*Observability)(nil),                    // 5: kratos.api.Observability
-	(*Gateway)(nil),                          // 6: kratos.api.Gateway
-	(*Transport_HTTP)(nil),                   // 7: kratos.api.Transport.HTTP
-	(*Transport_GRPC)(nil),                   // 8: kratos.api.Transport.GRPC
-	(*Transport_Kafka)(nil),                  // 9: kratos.api.Transport.Kafka
-	(*Transport_Kafka_AssetImage)(nil),       // 10: kratos.api.Transport.Kafka.AssetImage
-	(*Data_MySQL)(nil),                       // 11: kratos.api.Data.MySQL
-	(*Data_Redis)(nil),                       // 12: kratos.api.Data.Redis
-	(*Security_AccessToken)(nil),             // 13: kratos.api.Security.AccessToken
-	(*Security_RefreshToken)(nil),            // 14: kratos.api.Security.RefreshToken
-	(*Security_EmailChangeRequestToken)(nil), // 15: kratos.api.Security.EmailChangeRequestToken
-	(*Observability_Tracing)(nil),            // 16: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil),            // 17: kratos.api.Observability.Metrics
-	(*Gateway_Asset)(nil),                    // 18: kratos.api.Gateway.Asset
-	(*durationpb.Duration)(nil),              // 19: google.protobuf.Duration
+	(Observability_Protocol)(0),                         // 0: kratos.api.Observability.Protocol
+	(*Bootstrap)(nil),                                   // 1: kratos.api.Bootstrap
+	(*Transport)(nil),                                   // 2: kratos.api.Transport
+	(*Data)(nil),                                        // 3: kratos.api.Data
+	(*Security)(nil),                                    // 4: kratos.api.Security
+	(*Observability)(nil),                               // 5: kratos.api.Observability
+	(*Gateway)(nil),                                     // 6: kratos.api.Gateway
+	(*Transport_HTTP)(nil),                              // 7: kratos.api.Transport.HTTP
+	(*Transport_GRPC)(nil),                              // 8: kratos.api.Transport.GRPC
+	(*Transport_Kafka)(nil),                             // 9: kratos.api.Transport.Kafka
+	(*Transport_Kafka_Consumers)(nil),                   // 10: kratos.api.Transport.Kafka.Consumers
+	(*Transport_Kafka_Consumers_AssetImage)(nil),        // 11: kratos.api.Transport.Kafka.Consumers.AssetImage
+	(*Transport_Kafka_Consumers_AssetImage_Events)(nil), // 12: kratos.api.Transport.Kafka.Consumers.AssetImage.Events
+	(*Data_MySQL)(nil),                                  // 13: kratos.api.Data.MySQL
+	(*Data_Redis)(nil),                                  // 14: kratos.api.Data.Redis
+	(*Security_AccessToken)(nil),                        // 15: kratos.api.Security.AccessToken
+	(*Security_RefreshToken)(nil),                       // 16: kratos.api.Security.RefreshToken
+	(*Security_EmailChangeRequest)(nil),                 // 17: kratos.api.Security.EmailChangeRequest
+	(*Security_AvatarChangeRequest)(nil),                // 18: kratos.api.Security.AvatarChangeRequest
+	(*Observability_Tracing)(nil),                       // 19: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil),                       // 20: kratos.api.Observability.Metrics
+	(*Gateway_Asset)(nil),                               // 21: kratos.api.Gateway.Asset
+	(*durationpb.Duration)(nil),                         // 22: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
@@ -1247,31 +1397,35 @@ var file_conf_conf_proto_depIdxs = []int32{
 	7,  // 5: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	8,  // 6: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
 	9,  // 7: kratos.api.Transport.kafka:type_name -> kratos.api.Transport.Kafka
-	11, // 8: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
-	12, // 9: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	13, // 10: kratos.api.Security.access_token:type_name -> kratos.api.Security.AccessToken
-	14, // 11: kratos.api.Security.refresh_token:type_name -> kratos.api.Security.RefreshToken
-	15, // 12: kratos.api.Security.email_change_request_token:type_name -> kratos.api.Security.EmailChangeRequestToken
-	16, // 13: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	17, // 14: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	18, // 15: kratos.api.Gateway.asset:type_name -> kratos.api.Gateway.Asset
-	19, // 16: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	19, // 17: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	19, // 18: kratos.api.Transport.Kafka.timeout:type_name -> google.protobuf.Duration
-	10, // 19: kratos.api.Transport.Kafka.asset_image:type_name -> kratos.api.Transport.Kafka.AssetImage
-	19, // 20: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	19, // 21: kratos.api.Security.AccessToken.ttl:type_name -> google.protobuf.Duration
-	19, // 22: kratos.api.Security.RefreshToken.ttl:type_name -> google.protobuf.Duration
-	19, // 23: kratos.api.Security.EmailChangeRequestToken.ttl:type_name -> google.protobuf.Duration
-	0,  // 24: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
-	0,  // 25: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
-	19, // 26: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	19, // 27: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
-	28, // [28:28] is the sub-list for method output_type
-	28, // [28:28] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	13, // 8: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
+	14, // 9: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
+	15, // 10: kratos.api.Security.access_token:type_name -> kratos.api.Security.AccessToken
+	16, // 11: kratos.api.Security.refresh_token:type_name -> kratos.api.Security.RefreshToken
+	17, // 12: kratos.api.Security.email_change_request:type_name -> kratos.api.Security.EmailChangeRequest
+	18, // 13: kratos.api.Security.avatar_change_request:type_name -> kratos.api.Security.AvatarChangeRequest
+	19, // 14: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	20, // 15: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	21, // 16: kratos.api.Gateway.asset:type_name -> kratos.api.Gateway.Asset
+	22, // 17: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	22, // 18: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	22, // 19: kratos.api.Transport.Kafka.timeout:type_name -> google.protobuf.Duration
+	10, // 20: kratos.api.Transport.Kafka.consumers:type_name -> kratos.api.Transport.Kafka.Consumers
+	11, // 21: kratos.api.Transport.Kafka.Consumers.asset_image:type_name -> kratos.api.Transport.Kafka.Consumers.AssetImage
+	12, // 22: kratos.api.Transport.Kafka.Consumers.AssetImage.events:type_name -> kratos.api.Transport.Kafka.Consumers.AssetImage.Events
+	22, // 23: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
+	22, // 24: kratos.api.Security.AccessToken.ttl:type_name -> google.protobuf.Duration
+	22, // 25: kratos.api.Security.RefreshToken.ttl:type_name -> google.protobuf.Duration
+	22, // 26: kratos.api.Security.EmailChangeRequest.ttl:type_name -> google.protobuf.Duration
+	22, // 27: kratos.api.Security.AvatarChangeRequest.ttl:type_name -> google.protobuf.Duration
+	0,  // 28: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
+	0,  // 29: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
+	22, // 30: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	22, // 31: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
+	32, // [32:32] is the sub-list for method output_type
+	32, // [32:32] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -1279,17 +1433,17 @@ func file_conf_conf_proto_init() {
 	if File_conf_conf_proto != nil {
 		return
 	}
-	file_conf_conf_proto_msgTypes[10].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[11].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[15].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[16].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[12].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[13].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[18].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[19].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

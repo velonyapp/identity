@@ -11,36 +11,36 @@ var _ DomainEvent = (*UserAvatarChanged)(nil)
 type UserAvatarChanged struct {
 	BaseDomainEvent
 
-	oldAvatarKey *vo.AvatarKey
-	newAvatarKey *vo.AvatarKey
+	oldAvatarID *vo.AvatarID
+	newAvatarID *vo.AvatarID
 }
 
 func NewUserAvatarChanged(
 	userID vo.UserID,
-	oldAvatarKey *vo.AvatarKey,
-	newAvatarKey *vo.AvatarKey,
+	oldAvatarID *vo.AvatarID,
+	newAvatarID *vo.AvatarID,
 	occurTime time.Time,
 ) *UserAvatarChanged {
 	return &UserAvatarChanged{
 		BaseDomainEvent: NewBaseDomainEvent(userID.Value(), occurTime),
 
-		oldAvatarKey: oldAvatarKey,
-		newAvatarKey: newAvatarKey,
+		oldAvatarID: oldAvatarID,
+		newAvatarID: newAvatarID,
 	}
 }
 
-func (e *UserAvatarChanged) OldAvatarKey() *vo.AvatarKey {
-	if e.oldAvatarKey == nil {
+func (e *UserAvatarChanged) OldAvatarID() *vo.AvatarID {
+	if e.oldAvatarID == nil {
 		return nil
 	}
-	value := *e.oldAvatarKey
+	value := *e.oldAvatarID
 	return &value
 }
 
-func (e *UserAvatarChanged) NewAvatarKey() *vo.AvatarKey {
-	if e.newAvatarKey == nil {
+func (e *UserAvatarChanged) NewAvatarID() *vo.AvatarID {
+	if e.newAvatarID == nil {
 		return nil
 	}
-	value := *e.newAvatarKey
+	value := *e.newAvatarID
 	return &value
 }

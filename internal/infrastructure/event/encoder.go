@@ -82,10 +82,10 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 	case *integrationevent.UserAvatarChanged:
 		if event == nil {
-			return nil, fmt.Errorf("UserAvatarKeyChanged event is nil")
+			return nil, fmt.Errorf("UserAvatarChanged event is nil")
 		}
 
-		return userAvatarKeyChangedPayload(*event), nil
+		return userAvatarChangedPayload(*event), nil
 
 	case *integrationevent.UserDeleted:
 		if event == nil {

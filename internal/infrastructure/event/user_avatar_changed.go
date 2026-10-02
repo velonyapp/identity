@@ -5,9 +5,9 @@ import (
 	"github.com/velonyapp/identity/internal/application/integrationevent"
 )
 
-func userAvatarKeyChangedPayload(event integrationevent.UserAvatarChanged) *eventv1.UserAvatarChangedPayload {
+func userAvatarChangedPayload(event integrationevent.UserAvatarChanged) *eventv1.UserAvatarChangedPayload {
 	return &eventv1.UserAvatarChangedPayload{
-		OldAvatarKey: event.OldAvatarKey(),
-		NewAvatarKey: event.NewAvatarKey(),
+		OldAvatarId: event.OldAvatarID(),
+		NewAvatarId: event.NewAvatarID(),
 	}
 }

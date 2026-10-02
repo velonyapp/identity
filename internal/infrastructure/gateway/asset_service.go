@@ -2,14 +2,19 @@ package gateway
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"time"
 
 	assetv1 "github.com/velonyapp/asset/gen/api/v1"
 	"github.com/velonyapp/identity/internal/application/port"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/velonyapp/identity/internal/domain/vo"
+	"go.einride.tech/aip/resourcename"
+
+	"google.golang.org/protobuf/types/known/durationpb"
+)
+
+const (
+	avatarResourcePattern = "images/{image}"
 )
 
 var _ port.AssetService = (*assetService)(nil)
@@ -22,44 +27,30 @@ func NewAssetService(client assetv1.AssetServiceClient) port.AssetService {
 	return &assetService{client: client}
 }
 
-func (s *assetService) PresignAvatar(ctx context.Context, userID string) (string, error) {
-	var tokenBytes [8]byte
-
-	if _, err := rand.Read(tokenBytes[:]); err != nil {
-		return "", err
+func (s *assetService) CreateAvatar(ctx context.Context, userID vo.UserID) (vo.AvatarID, error) {
+	result, err := s.client.CreateImage(ctx, &assetv1.CreateImageRequest{
+		Image: &assetv1.Image{
+			Tags:      []string{"identity", "user"},
+			ObjectKey: fmt.Sprintf("users/%s/avatar-%s.webp", userID.Value(), "test"),
+		},
+	})
+	if err != nil {
+		return vo.AvatarID{}, err
 	}
 
-	token := hex.EncodeToString(tokenBytes[:])
+	var avatarID string
+	if err := resourcename.Sscan(result.Name, avatarResourcePattern, &avatarID); err != nil {
+		return vo.AvatarID{}, err
+	}
 
-	width := uint32(512)
-	height := uint32(512)
-	quality := uint32(85)
+	return vo.NewAvatarID(avatarID), nil
+}
 
-	result, err := s.client.PresignImage(ctx,
-		&assetv1.PresignImageRequest{
-			StorageKey: fmt.Sprintf(
-				"users/%s/avatar-%s.webp",
-				userID,
-				token,
-			),
-			Transform: &assetv1.ImageTransform{
-				Resize: &assetv1.ImageResize{
-					Width:        &width,
-					Height:       &height,
-					Fit:          assetv1.ImageResizeFit_IMAGE_RESIZE_FIT_COVER,
-					Gravity:      assetv1.ImageGravity_IMAGE_GRAVITY_CENTER,
-					AllowUpscale: true,
-				},
-				Encoding: &assetv1.ImageEncoding{
-					Format:  assetv1.ImageFormat_IMAGE_FORMAT_WEBP,
-					Quality: &quality,
-				},
-			},
-			ExpireTime: timestamppb.New(
-				time.Now().Add(10 * time.Minute),
-			),
-		},
-	)
+func (s *assetService) PresignAvatar(ctx context.Context, avatarID vo.AvatarID, ttl time.Duration) (string, error) {
+	result, err := s.client.PresignImage(ctx, &assetv1.PresignImageRequest{
+		Name: resourcename.Sprint(avatarResourcePattern, avatarID.Value()),
+		Ttl:  durationpb.New(ttl),
+	})
 	if err != nil {
 		return "", err
 	}

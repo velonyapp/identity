@@ -61,7 +61,7 @@ func (h *RequestUserEmailChangeHandler) Execute(
 			return err
 		}
 
-		if err := user.RequestEmailChange(newEmail, h.c.EmailChangeRequestToken.Ttl.AsDuration(), now); err != nil {
+		if err := user.RequestEmailChange(newEmail, h.c.EmailChangeRequest.Ttl.AsDuration(), now); err != nil {
 			return err
 		}
 

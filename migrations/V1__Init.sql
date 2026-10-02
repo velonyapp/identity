@@ -3,10 +3,27 @@ CREATE TABLE users (
     username    VARCHAR(255) NOT NULL UNIQUE,
     full_name   TEXT NOT NULL,
     email       VARCHAR(255) UNIQUE,
-    avatar_key  VARCHAR(128),
+    avatar_id   CHAR(36),
     create_time TIMESTAMP(6) NOT NULL,
     update_time TIMESTAMP(6) NOT NULL
 ) ENGINE = InnoDB;
+
+CREATE TABLE avatars (
+    id      CHAR(36) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    key     VARCHAR(128),
+
+    CONSTRAINT fk_avatar_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_user_avatar
+        FOREIGN KEY (avatar_id)
+        REFERENCES avatars (id)
+        ON DELETE SET NULL;
 
 CREATE TABLE email_change_requests (
     user_id     CHAR(36) PRIMARY KEY,
@@ -15,6 +32,17 @@ CREATE TABLE email_change_requests (
     expire_time TIMESTAMP(6) NOT NULL,
 
     CONSTRAINT fk_change_email_request_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
+        ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE avatar_change_requests (
+    user_id     CHAR(36) PRIMARY KEY,
+    avatar_id   VARCHAR(255) NOT NULL,
+    expire_time TIMESTAMP(6) NOT NULL,
+
+    CONSTRAINT fk_change_avatar_request_user
         FOREIGN KEY (user_id)
         REFERENCES users (id)
         ON DELETE CASCADE
