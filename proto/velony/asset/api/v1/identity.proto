@@ -1,0 +1,273 @@
+syntax = "proto3";
+
+package velony.identity.api.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
+
+service IdentityService {
+  option (google.api.default_host) = "api.velony.app";
+
+  rpc GetUser(GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/v1/{name=users/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc BatchGetUsers(BatchGetUsersRequest) returns (BatchGetUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users:batchGet"
+    };
+  }
+
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=users/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  rpc ChangeUserUsername(ChangeUserUsernameRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:changeUsername"
+      body: "*"
+    };
+  }
+
+  rpc RequestUserEmailChange(RequestUserEmailChangeRequest) returns (RequestUserEmailChangeResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:requestEmailChange"
+      body: "*"
+    };
+  }
+
+  rpc ConfirmUserEmailChange(ConfirmUserEmailChangeRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:confirmEmailChange"
+      body: "*"
+    };
+  }
+
+  rpc RemoveUserEmail(RemoveUserEmailRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:removeEmail"
+      body: "*"
+    };
+  }
+
+  rpc RequestUserAvatarChange(RequestUserAvatarChangeRequest) returns (RequestUserAvatarChangeResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:requestAvatarChange"
+      body: "*"
+    };
+  }
+
+  rpc RemoveUserAvatar(RemoveUserAvatarRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/{name=users/*}:removeAvatar"
+      body: "*"
+    };
+  }
+
+  rpc LoginAuth(LoginAuthRequest) returns (LoginAuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth:login"
+      body: "*"
+    };
+    option (google.api.method_signature) = "identity,password";
+  }
+
+  rpc RegisterAuth(RegisterAuthRequest) returns (RegisterAuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth:register"
+      body: "*"
+    };
+    option (google.api.method_signature) = "username,password";
+  }
+
+  rpc RefreshAuth(RefreshAuthRequest) returns (RefreshAuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth:refresh"
+      body: "*"
+    };
+    option (google.api.method_signature) = "refresh_token";
+  }
+}
+
+message User {
+  option (google.api.resource) = {
+    type    : "api.velony.app/User"
+    pattern : "users/{user}"
+    singular: "user"
+    plural  : "users"
+  };
+
+  string name = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
+
+  string username = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+  optional string email = 3 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  optional string avatar_key = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  google.protobuf.Timestamp create_time = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+message GetUserRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message BatchGetUsersRequest {
+  // max batch = 100
+  repeated string names = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message BatchGetUsersResponse {
+  repeated User users = 1;
+}
+
+message DeleteUserRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message RequestUserEmailChangeRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  string email = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message ChangeUserUsernameRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  string username = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RequestUserEmailChangeResponse {}
+
+message ConfirmUserEmailChangeRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  string token = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RemoveUserEmailRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message RequestUserAvatarChangeRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message RemoveUserAvatarRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message RequestUserAvatarChangeResponse {
+  string upload_url = 1;
+}
+
+message LoginAuthRequest {
+  string identity = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+  string password = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message LoginAuthResponse {
+  string access_token  = 1;
+  string refresh_token = 2;
+}
+
+message RegisterAuthRequest {
+  string username  = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+  string password  = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RegisterAuthResponse {
+  string access_token  = 1;
+  string refresh_token = 2;
+}
+
+message RefreshAuthRequest {
+  string refresh_token = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RefreshAuthResponse {
+  string access_token  = 1;
+  string refresh_token = 2;
+}

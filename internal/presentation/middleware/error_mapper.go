@@ -1,0 +1,60 @@
+package middleware
+
+import (
+	"context"
+	"errors"
+
+	presentationservice "github.com/velonyapp/identity/internal/presentation/service"
+
+	kerrors "github.com/go-kratos/kratos/v3/errors"
+	"github.com/go-kratos/kratos/v3/middleware"
+)
+
+type ErrorMapper middleware.Middleware
+
+func NewErrorMapper() ErrorMapper {
+	return ErrorMapper(
+		func(next middleware.Handler) middleware.Handler {
+			return func(ctx context.Context, req any) (any, error) {
+				reply, err := next(ctx, req)
+				if err == nil {
+					return reply, nil
+				}
+
+				var kratosErr *kerrors.Error
+				if errors.As(err, &kratosErr) {
+					return reply, err
+				}
+
+				switch {
+				// API Service
+				case errors.Is(err, presentationservice.ErrInvalidUserResourceName):
+					return reply, kerrors.BadRequest("",
+						presentationservice.ErrInvalidUserResourceName.Error(),
+					)
+				case errors.Is(err, presentationservice.ErrInvalidUserBatchSize):
+					return reply, kerrors.BadRequest("",
+						presentationservice.ErrInvalidUserBatchSize.Error(),
+					)
+				case errors.Is(err, presentationservice.ErrUnauthenticated):
+					return reply, kerrors.Unauthorized("",
+						presentationservice.ErrUnauthenticated.Error(),
+					)
+				case errors.Is(err, presentationservice.ErrForbidden):
+					return reply, kerrors.Forbidden("",
+						presentationservice.ErrForbidden.Error(),
+					)
+
+				default:
+					return reply, kerrors.InternalServer("",
+						"internal server error",
+					).WithCause(err)
+				}
+			}
+		},
+	)
+}
+
+func (m ErrorMapper) Middleware() middleware.Middleware {
+	return middleware.Middleware(m)
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package velony.identity.event.v1;
+
+option go_package = "github.com/velonyapp/identity/gen/event/v1;eventv1";
+
+message UserCreatedPayload {
+  string user_id  = 1;
+  string username = 2;
+  uint32 version  = 3;
+}

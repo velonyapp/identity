@@ -1,0 +1,34 @@
+package domainevent
+
+import (
+	"context"
+
+	"github.com/velonyapp/identity/internal/application/integrationevent"
+	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/domain/event"
+)
+
+var _ Handler[event.UserCreated] = (*UserCreatedHandler)(nil)
+
+type UserCreatedHandler struct {
+	eventPublisher port.EventPublisher
+}
+
+func NewUserCreatedHandler(
+	eventPublisher port.EventPublisher,
+) *UserCreatedHandler {
+	return &UserCreatedHandler{
+		eventPublisher: eventPublisher,
+	}
+}
+
+func (h *UserCreatedHandler) Execute(ctx context.Context, domainEvent event.UserCreated) error {
+	integrationEvent := integrationevent.NewUserCreated(
+		domainEvent.AggregateID(),
+		domainEvent.CreateTime(),
+		domainEvent.Username().String(),
+		domainEvent.Version(),
+	)
+
+	return h.eventPublisher.Publish(ctx, integrationEvent)
+}

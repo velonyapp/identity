@@ -1,0 +1,405 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: IdentityService API
+    version: 0.0.1
+servers:
+    - url: https://api.velony.app
+paths:
+    /v1/auth:login:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_LoginAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthResponse'
+    /v1/auth:refresh:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RefreshAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthResponse'
+    /v1/auth:register:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RegisterAuth
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthResponse'
+    /v1/users/{user}:
+        get:
+            tags:
+                - IdentityService
+            operationId: IdentityService_GetUser
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+        delete:
+            tags:
+                - IdentityService
+            operationId: IdentityService_DeleteUser
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/users/{user}:changeUsername:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_ChangeUserUsername
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.ChangeUserUsernameRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users/{user}:confirmEmailChange:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_ConfirmUserEmailChange
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.ConfirmUserEmailChangeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users/{user}:removeAvatar:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RemoveUserAvatar
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RemoveUserAvatarRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users/{user}:removeEmail:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RemoveUserEmail
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RemoveUserEmailRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.User'
+    /v1/users/{user}:requestAvatarChange:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RequestUserAvatarChange
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RequestUserAvatarChangeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RequestUserAvatarChangeResponse'
+    /v1/users/{user}:requestEmailChange:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RequestUserEmailChange
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RequestUserEmailChangeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RequestUserEmailChangeResponse'
+    /v1/users:batchGet:
+        get:
+            tags:
+                - IdentityService
+            operationId: IdentityService_BatchGetUsers
+            parameters:
+                - name: names
+                  in: query
+                  description: max batch = 100
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.BatchGetUsersResponse'
+components:
+    schemas:
+        velony.identity.api.v1.BatchGetUsersResponse:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/velony.identity.api.v1.User'
+        velony.identity.api.v1.ChangeUserUsernameRequest:
+            required:
+                - name
+                - username
+            type: object
+            properties:
+                name:
+                    type: string
+                username:
+                    type: string
+        velony.identity.api.v1.ConfirmUserEmailChangeRequest:
+            required:
+                - name
+                - token
+            type: object
+            properties:
+                name:
+                    type: string
+                token:
+                    type: string
+        velony.identity.api.v1.LoginAuthRequest:
+            required:
+                - identity
+                - password
+            type: object
+            properties:
+                identity:
+                    type: string
+                password:
+                    type: string
+        velony.identity.api.v1.LoginAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RefreshAuthRequest:
+            required:
+                - refreshToken
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RefreshAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RegisterAuthRequest:
+            required:
+                - username
+                - password
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        velony.identity.api.v1.RegisterAuthResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+        velony.identity.api.v1.RemoveUserAvatarRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+        velony.identity.api.v1.RemoveUserEmailRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+        velony.identity.api.v1.RequestUserAvatarChangeRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+        velony.identity.api.v1.RequestUserAvatarChangeResponse:
+            type: object
+            properties:
+                uploadUrl:
+                    type: string
+        velony.identity.api.v1.RequestUserEmailChangeRequest:
+            required:
+                - name
+                - email
+            type: object
+            properties:
+                name:
+                    type: string
+                email:
+                    type: string
+        velony.identity.api.v1.RequestUserEmailChangeResponse:
+            type: object
+            properties: {}
+        velony.identity.api.v1.User:
+            required:
+                - username
+            type: object
+            properties:
+                name:
+                    type: string
+                username:
+                    type: string
+                email:
+                    readOnly: true
+                    type: string
+                avatarKey:
+                    readOnly: true
+                    type: string
+                createTime:
+                    readOnly: true
+                    type: string
+                    format: date-time
+tags:
+    - name: IdentityService
