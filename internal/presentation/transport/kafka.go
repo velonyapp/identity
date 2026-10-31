@@ -129,5 +129,9 @@ func (k *KafkaConsumer) Start(ctx context.Context) error {
 }
 
 func (k *KafkaConsumer) Stop(ctx context.Context) error {
-	return k.consumer.Close()
+	if k.consumer != nil {
+		return k.consumer.Close()
+	}
+
+	return nil
 }
