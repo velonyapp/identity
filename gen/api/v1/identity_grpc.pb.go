@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             (unknown)
-// source: velony/asset/api/v1/identity.proto
+// source: velony/identity/api/v1/identity.proto
 
 package apiv1
 
@@ -536,5 +536,5 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "velony/asset/api/v1/identity.proto",
+	Metadata: "velony/identity/api/v1/identity.proto",
 }

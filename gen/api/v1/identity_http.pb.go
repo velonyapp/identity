@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             (unknown)
-// source: velony/asset/api/v1/identity.proto
+// source: velony/identity/api/v1/identity.proto
 
 package apiv1
 

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        (unknown)
-// source: velony/asset/api/v1/identity.proto
+// source: velony/identity/api/v1/identity.proto
 
 package apiv1
 
@@ -38,7 +38,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[0]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +50,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[0]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{0}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *User) GetName() string {
@@ -110,7 +110,7 @@ type GetUserRequest struct {
 
 func (x *GetUserRequest) Reset() {
 	*x = GetUserRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[1]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -122,7 +122,7 @@ func (x *GetUserRequest) String() string {
 func (*GetUserRequest) ProtoMessage() {}
 
 func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[1]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -135,7 +135,7 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{1}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetUserRequest) GetName() string {
@@ -155,7 +155,7 @@ type BatchGetUsersRequest struct {
 
 func (x *BatchGetUsersRequest) Reset() {
 	*x = BatchGetUsersRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[2]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -167,7 +167,7 @@ func (x *BatchGetUsersRequest) String() string {
 func (*BatchGetUsersRequest) ProtoMessage() {}
 
 func (x *BatchGetUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[2]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -180,7 +180,7 @@ func (x *BatchGetUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetUsersRequest.ProtoReflect.Descriptor instead.
 func (*BatchGetUsersRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{2}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *BatchGetUsersRequest) GetNames() []string {
@@ -199,7 +199,7 @@ type BatchGetUsersResponse struct {
 
 func (x *BatchGetUsersResponse) Reset() {
 	*x = BatchGetUsersResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[3]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -211,7 +211,7 @@ func (x *BatchGetUsersResponse) String() string {
 func (*BatchGetUsersResponse) ProtoMessage() {}
 
 func (x *BatchGetUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[3]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -224,7 +224,7 @@ func (x *BatchGetUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetUsersResponse.ProtoReflect.Descriptor instead.
 func (*BatchGetUsersResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{3}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *BatchGetUsersResponse) GetUsers() []*User {
@@ -243,7 +243,7 @@ type DeleteUserRequest struct {
 
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[4]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -255,7 +255,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[4]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -268,7 +268,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{4}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeleteUserRequest) GetName() string {
@@ -288,7 +288,7 @@ type RequestUserEmailChangeRequest struct {
 
 func (x *RequestUserEmailChangeRequest) Reset() {
 	*x = RequestUserEmailChangeRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[5]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -300,7 +300,7 @@ func (x *RequestUserEmailChangeRequest) String() string {
 func (*RequestUserEmailChangeRequest) ProtoMessage() {}
 
 func (x *RequestUserEmailChangeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[5]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -313,7 +313,7 @@ func (x *RequestUserEmailChangeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestUserEmailChangeRequest.ProtoReflect.Descriptor instead.
 func (*RequestUserEmailChangeRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{5}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *RequestUserEmailChangeRequest) GetName() string {
@@ -340,7 +340,7 @@ type ChangeUserUsernameRequest struct {
 
 func (x *ChangeUserUsernameRequest) Reset() {
 	*x = ChangeUserUsernameRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[6]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -352,7 +352,7 @@ func (x *ChangeUserUsernameRequest) String() string {
 func (*ChangeUserUsernameRequest) ProtoMessage() {}
 
 func (x *ChangeUserUsernameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[6]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -365,7 +365,7 @@ func (x *ChangeUserUsernameRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeUserUsernameRequest.ProtoReflect.Descriptor instead.
 func (*ChangeUserUsernameRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{6}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ChangeUserUsernameRequest) GetName() string {
@@ -390,7 +390,7 @@ type RequestUserEmailChangeResponse struct {
 
 func (x *RequestUserEmailChangeResponse) Reset() {
 	*x = RequestUserEmailChangeResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[7]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -402,7 +402,7 @@ func (x *RequestUserEmailChangeResponse) String() string {
 func (*RequestUserEmailChangeResponse) ProtoMessage() {}
 
 func (x *RequestUserEmailChangeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[7]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -415,7 +415,7 @@ func (x *RequestUserEmailChangeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestUserEmailChangeResponse.ProtoReflect.Descriptor instead.
 func (*RequestUserEmailChangeResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{7}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{7}
 }
 
 type ConfirmUserEmailChangeRequest struct {
@@ -428,7 +428,7 @@ type ConfirmUserEmailChangeRequest struct {
 
 func (x *ConfirmUserEmailChangeRequest) Reset() {
 	*x = ConfirmUserEmailChangeRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[8]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -440,7 +440,7 @@ func (x *ConfirmUserEmailChangeRequest) String() string {
 func (*ConfirmUserEmailChangeRequest) ProtoMessage() {}
 
 func (x *ConfirmUserEmailChangeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[8]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -453,7 +453,7 @@ func (x *ConfirmUserEmailChangeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmUserEmailChangeRequest.ProtoReflect.Descriptor instead.
 func (*ConfirmUserEmailChangeRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{8}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ConfirmUserEmailChangeRequest) GetName() string {
@@ -479,7 +479,7 @@ type RemoveUserEmailRequest struct {
 
 func (x *RemoveUserEmailRequest) Reset() {
 	*x = RemoveUserEmailRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[9]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -491,7 +491,7 @@ func (x *RemoveUserEmailRequest) String() string {
 func (*RemoveUserEmailRequest) ProtoMessage() {}
 
 func (x *RemoveUserEmailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[9]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -504,7 +504,7 @@ func (x *RemoveUserEmailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveUserEmailRequest.ProtoReflect.Descriptor instead.
 func (*RemoveUserEmailRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{9}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RemoveUserEmailRequest) GetName() string {
@@ -523,7 +523,7 @@ type RequestUserAvatarChangeRequest struct {
 
 func (x *RequestUserAvatarChangeRequest) Reset() {
 	*x = RequestUserAvatarChangeRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[10]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +535,7 @@ func (x *RequestUserAvatarChangeRequest) String() string {
 func (*RequestUserAvatarChangeRequest) ProtoMessage() {}
 
 func (x *RequestUserAvatarChangeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[10]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +548,7 @@ func (x *RequestUserAvatarChangeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestUserAvatarChangeRequest.ProtoReflect.Descriptor instead.
 func (*RequestUserAvatarChangeRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{10}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RequestUserAvatarChangeRequest) GetName() string {
@@ -567,7 +567,7 @@ type RemoveUserAvatarRequest struct {
 
 func (x *RemoveUserAvatarRequest) Reset() {
 	*x = RemoveUserAvatarRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[11]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -579,7 +579,7 @@ func (x *RemoveUserAvatarRequest) String() string {
 func (*RemoveUserAvatarRequest) ProtoMessage() {}
 
 func (x *RemoveUserAvatarRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[11]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -592,7 +592,7 @@ func (x *RemoveUserAvatarRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveUserAvatarRequest.ProtoReflect.Descriptor instead.
 func (*RemoveUserAvatarRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{11}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RemoveUserAvatarRequest) GetName() string {
@@ -611,7 +611,7 @@ type RequestUserAvatarChangeResponse struct {
 
 func (x *RequestUserAvatarChangeResponse) Reset() {
 	*x = RequestUserAvatarChangeResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[12]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -623,7 +623,7 @@ func (x *RequestUserAvatarChangeResponse) String() string {
 func (*RequestUserAvatarChangeResponse) ProtoMessage() {}
 
 func (x *RequestUserAvatarChangeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[12]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -636,7 +636,7 @@ func (x *RequestUserAvatarChangeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestUserAvatarChangeResponse.ProtoReflect.Descriptor instead.
 func (*RequestUserAvatarChangeResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{12}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RequestUserAvatarChangeResponse) GetUploadUrl() string {
@@ -656,7 +656,7 @@ type LoginAuthRequest struct {
 
 func (x *LoginAuthRequest) Reset() {
 	*x = LoginAuthRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[13]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -668,7 +668,7 @@ func (x *LoginAuthRequest) String() string {
 func (*LoginAuthRequest) ProtoMessage() {}
 
 func (x *LoginAuthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[13]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +681,7 @@ func (x *LoginAuthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginAuthRequest.ProtoReflect.Descriptor instead.
 func (*LoginAuthRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{13}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LoginAuthRequest) GetIdentity() string {
@@ -708,7 +708,7 @@ type LoginAuthResponse struct {
 
 func (x *LoginAuthResponse) Reset() {
 	*x = LoginAuthResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[14]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -720,7 +720,7 @@ func (x *LoginAuthResponse) String() string {
 func (*LoginAuthResponse) ProtoMessage() {}
 
 func (x *LoginAuthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[14]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -733,7 +733,7 @@ func (x *LoginAuthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginAuthResponse.ProtoReflect.Descriptor instead.
 func (*LoginAuthResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{14}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *LoginAuthResponse) GetAccessToken() string {
@@ -760,7 +760,7 @@ type RegisterAuthRequest struct {
 
 func (x *RegisterAuthRequest) Reset() {
 	*x = RegisterAuthRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[15]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +772,7 @@ func (x *RegisterAuthRequest) String() string {
 func (*RegisterAuthRequest) ProtoMessage() {}
 
 func (x *RegisterAuthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[15]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +785,7 @@ func (x *RegisterAuthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterAuthRequest.ProtoReflect.Descriptor instead.
 func (*RegisterAuthRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{15}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RegisterAuthRequest) GetUsername() string {
@@ -812,7 +812,7 @@ type RegisterAuthResponse struct {
 
 func (x *RegisterAuthResponse) Reset() {
 	*x = RegisterAuthResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[16]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -824,7 +824,7 @@ func (x *RegisterAuthResponse) String() string {
 func (*RegisterAuthResponse) ProtoMessage() {}
 
 func (x *RegisterAuthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[16]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -837,7 +837,7 @@ func (x *RegisterAuthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterAuthResponse.ProtoReflect.Descriptor instead.
 func (*RegisterAuthResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{16}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RegisterAuthResponse) GetAccessToken() string {
@@ -863,7 +863,7 @@ type RefreshAuthRequest struct {
 
 func (x *RefreshAuthRequest) Reset() {
 	*x = RefreshAuthRequest{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[17]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -875,7 +875,7 @@ func (x *RefreshAuthRequest) String() string {
 func (*RefreshAuthRequest) ProtoMessage() {}
 
 func (x *RefreshAuthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[17]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -888,7 +888,7 @@ func (x *RefreshAuthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshAuthRequest.ProtoReflect.Descriptor instead.
 func (*RefreshAuthRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{17}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RefreshAuthRequest) GetRefreshToken() string {
@@ -908,7 +908,7 @@ type RefreshAuthResponse struct {
 
 func (x *RefreshAuthResponse) Reset() {
 	*x = RefreshAuthResponse{}
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[18]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -920,7 +920,7 @@ func (x *RefreshAuthResponse) String() string {
 func (*RefreshAuthResponse) ProtoMessage() {}
 
 func (x *RefreshAuthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_identity_proto_msgTypes[18]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -933,7 +933,7 @@ func (x *RefreshAuthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshAuthResponse.ProtoReflect.Descriptor instead.
 func (*RefreshAuthResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_identity_proto_rawDescGZIP(), []int{18}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RefreshAuthResponse) GetAccessToken() string {
@@ -950,11 +950,11 @@ func (x *RefreshAuthResponse) GetRefreshToken() string {
 	return ""
 }
 
-var File_velony_asset_api_v1_identity_proto protoreflect.FileDescriptor
+var File_velony_identity_api_v1_identity_proto protoreflect.FileDescriptor
 
-const file_velony_asset_api_v1_identity_proto_rawDesc = "" +
+const file_velony_identity_api_v1_identity_proto_rawDesc = "" +
 	"\n" +
-	"\"velony/asset/api/v1/identity.proto\x12\x16velony.identity.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x02\n" +
+	"%velony/identity/api/v1/identity.proto\x12\x16velony.identity.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\x02\n" +
 	"\x04User\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x1f\n" +
 	"\busername\x18\x02 \x01(\tB\x03\xe0A\x02R\busername\x12\x1e\n" +
@@ -1035,19 +1035,19 @@ const file_velony_asset_api_v1_identity_proto_rawDesc = "" +
 	"\vRefreshAuth\x12*.velony.identity.api.v1.RefreshAuthRequest\x1a+.velony.identity.api.v1.RefreshAuthResponse\"+\xdaA\rrefresh_token\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/auth:refresh\x1a\x11\xcaA\x0eapi.velony.appB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
-	file_velony_asset_api_v1_identity_proto_rawDescOnce sync.Once
-	file_velony_asset_api_v1_identity_proto_rawDescData []byte
+	file_velony_identity_api_v1_identity_proto_rawDescOnce sync.Once
+	file_velony_identity_api_v1_identity_proto_rawDescData []byte
 )
 
-func file_velony_asset_api_v1_identity_proto_rawDescGZIP() []byte {
-	file_velony_asset_api_v1_identity_proto_rawDescOnce.Do(func() {
-		file_velony_asset_api_v1_identity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_velony_asset_api_v1_identity_proto_rawDesc), len(file_velony_asset_api_v1_identity_proto_rawDesc)))
+func file_velony_identity_api_v1_identity_proto_rawDescGZIP() []byte {
+	file_velony_identity_api_v1_identity_proto_rawDescOnce.Do(func() {
+		file_velony_identity_api_v1_identity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_velony_identity_api_v1_identity_proto_rawDesc), len(file_velony_identity_api_v1_identity_proto_rawDesc)))
 	})
-	return file_velony_asset_api_v1_identity_proto_rawDescData
+	return file_velony_identity_api_v1_identity_proto_rawDescData
 }
 
-var file_velony_asset_api_v1_identity_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
-var file_velony_asset_api_v1_identity_proto_goTypes = []any{
+var file_velony_identity_api_v1_identity_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_velony_identity_api_v1_identity_proto_goTypes = []any{
 	(*User)(nil),                            // 0: velony.identity.api.v1.User
 	(*GetUserRequest)(nil),                  // 1: velony.identity.api.v1.GetUserRequest
 	(*BatchGetUsersRequest)(nil),            // 2: velony.identity.api.v1.BatchGetUsersRequest
@@ -1070,7 +1070,7 @@ var file_velony_asset_api_v1_identity_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil),           // 19: google.protobuf.Timestamp
 	(*emptypb.Empty)(nil),                   // 20: google.protobuf.Empty
 }
-var file_velony_asset_api_v1_identity_proto_depIdxs = []int32{
+var file_velony_identity_api_v1_identity_proto_depIdxs = []int32{
 	19, // 0: velony.identity.api.v1.User.create_time:type_name -> google.protobuf.Timestamp
 	0,  // 1: velony.identity.api.v1.BatchGetUsersResponse.users:type_name -> velony.identity.api.v1.User
 	1,  // 2: velony.identity.api.v1.IdentityService.GetUser:input_type -> velony.identity.api.v1.GetUserRequest
@@ -1104,27 +1104,27 @@ var file_velony_asset_api_v1_identity_proto_depIdxs = []int32{
 	0,  // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_velony_asset_api_v1_identity_proto_init() }
-func file_velony_asset_api_v1_identity_proto_init() {
-	if File_velony_asset_api_v1_identity_proto != nil {
+func init() { file_velony_identity_api_v1_identity_proto_init() }
+func file_velony_identity_api_v1_identity_proto_init() {
+	if File_velony_identity_api_v1_identity_proto != nil {
 		return
 	}
-	file_velony_asset_api_v1_identity_proto_msgTypes[0].OneofWrappers = []any{}
+	file_velony_identity_api_v1_identity_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_api_v1_identity_proto_rawDesc), len(file_velony_asset_api_v1_identity_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_identity_api_v1_identity_proto_rawDesc), len(file_velony_identity_api_v1_identity_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_velony_asset_api_v1_identity_proto_goTypes,
-		DependencyIndexes: file_velony_asset_api_v1_identity_proto_depIdxs,
-		MessageInfos:      file_velony_asset_api_v1_identity_proto_msgTypes,
+		GoTypes:           file_velony_identity_api_v1_identity_proto_goTypes,
+		DependencyIndexes: file_velony_identity_api_v1_identity_proto_depIdxs,
+		MessageInfos:      file_velony_identity_api_v1_identity_proto_msgTypes,
 	}.Build()
-	File_velony_asset_api_v1_identity_proto = out.File
-	file_velony_asset_api_v1_identity_proto_goTypes = nil
-	file_velony_asset_api_v1_identity_proto_depIdxs = nil
+	File_velony_identity_api_v1_identity_proto = out.File
+	file_velony_identity_api_v1_identity_proto_goTypes = nil
+	file_velony_identity_api_v1_identity_proto_depIdxs = nil
 }

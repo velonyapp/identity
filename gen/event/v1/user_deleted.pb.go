@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        (unknown)
-// source: velony/asset/event/v1/user_deleted.proto
+// source: velony/identity/event/v1/user_deleted.proto
 
 package eventv1
 
@@ -31,7 +31,7 @@ type UserDeletedPayload struct {
 
 func (x *UserDeletedPayload) Reset() {
 	*x = UserDeletedPayload{}
-	mi := &file_velony_asset_event_v1_user_deleted_proto_msgTypes[0]
+	mi := &file_velony_identity_event_v1_user_deleted_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *UserDeletedPayload) String() string {
 func (*UserDeletedPayload) ProtoMessage() {}
 
 func (x *UserDeletedPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_event_v1_user_deleted_proto_msgTypes[0]
+	mi := &file_velony_identity_event_v1_user_deleted_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *UserDeletedPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserDeletedPayload.ProtoReflect.Descriptor instead.
 func (*UserDeletedPayload) Descriptor() ([]byte, []int) {
-	return file_velony_asset_event_v1_user_deleted_proto_rawDescGZIP(), []int{0}
+	return file_velony_identity_event_v1_user_deleted_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserDeletedPayload) GetUserId() string {
@@ -73,32 +73,32 @@ func (x *UserDeletedPayload) GetVersion() uint32 {
 	return 0
 }
 
-var File_velony_asset_event_v1_user_deleted_proto protoreflect.FileDescriptor
+var File_velony_identity_event_v1_user_deleted_proto protoreflect.FileDescriptor
 
-const file_velony_asset_event_v1_user_deleted_proto_rawDesc = "" +
+const file_velony_identity_event_v1_user_deleted_proto_rawDesc = "" +
 	"\n" +
-	"(velony/asset/event/v1/user_deleted.proto\x12\x18velony.identity.event.v1\"G\n" +
+	"+velony/identity/event/v1/user_deleted.proto\x12\x18velony.identity.event.v1\"G\n" +
 	"\x12UserDeletedPayload\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x18\n" +
 	"\aversion\x18\x02 \x01(\rR\aversionB4Z2github.com/velonyapp/identity/gen/event/v1;eventv1b\x06proto3"
 
 var (
-	file_velony_asset_event_v1_user_deleted_proto_rawDescOnce sync.Once
-	file_velony_asset_event_v1_user_deleted_proto_rawDescData []byte
+	file_velony_identity_event_v1_user_deleted_proto_rawDescOnce sync.Once
+	file_velony_identity_event_v1_user_deleted_proto_rawDescData []byte
 )
 
-func file_velony_asset_event_v1_user_deleted_proto_rawDescGZIP() []byte {
-	file_velony_asset_event_v1_user_deleted_proto_rawDescOnce.Do(func() {
-		file_velony_asset_event_v1_user_deleted_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_velony_asset_event_v1_user_deleted_proto_rawDesc), len(file_velony_asset_event_v1_user_deleted_proto_rawDesc)))
+func file_velony_identity_event_v1_user_deleted_proto_rawDescGZIP() []byte {
+	file_velony_identity_event_v1_user_deleted_proto_rawDescOnce.Do(func() {
+		file_velony_identity_event_v1_user_deleted_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_velony_identity_event_v1_user_deleted_proto_rawDesc), len(file_velony_identity_event_v1_user_deleted_proto_rawDesc)))
 	})
-	return file_velony_asset_event_v1_user_deleted_proto_rawDescData
+	return file_velony_identity_event_v1_user_deleted_proto_rawDescData
 }
 
-var file_velony_asset_event_v1_user_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_velony_asset_event_v1_user_deleted_proto_goTypes = []any{
+var file_velony_identity_event_v1_user_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_velony_identity_event_v1_user_deleted_proto_goTypes = []any{
 	(*UserDeletedPayload)(nil), // 0: velony.identity.event.v1.UserDeletedPayload
 }
-var file_velony_asset_event_v1_user_deleted_proto_depIdxs = []int32{
+var file_velony_identity_event_v1_user_deleted_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -106,26 +106,26 @@ var file_velony_asset_event_v1_user_deleted_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_velony_asset_event_v1_user_deleted_proto_init() }
-func file_velony_asset_event_v1_user_deleted_proto_init() {
-	if File_velony_asset_event_v1_user_deleted_proto != nil {
+func init() { file_velony_identity_event_v1_user_deleted_proto_init() }
+func file_velony_identity_event_v1_user_deleted_proto_init() {
+	if File_velony_identity_event_v1_user_deleted_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_event_v1_user_deleted_proto_rawDesc), len(file_velony_asset_event_v1_user_deleted_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_identity_event_v1_user_deleted_proto_rawDesc), len(file_velony_identity_event_v1_user_deleted_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_velony_asset_event_v1_user_deleted_proto_goTypes,
-		DependencyIndexes: file_velony_asset_event_v1_user_deleted_proto_depIdxs,
-		MessageInfos:      file_velony_asset_event_v1_user_deleted_proto_msgTypes,
+		GoTypes:           file_velony_identity_event_v1_user_deleted_proto_goTypes,
+		DependencyIndexes: file_velony_identity_event_v1_user_deleted_proto_depIdxs,
+		MessageInfos:      file_velony_identity_event_v1_user_deleted_proto_msgTypes,
 	}.Build()
-	File_velony_asset_event_v1_user_deleted_proto = out.File
-	file_velony_asset_event_v1_user_deleted_proto_goTypes = nil
-	file_velony_asset_event_v1_user_deleted_proto_depIdxs = nil
+	File_velony_identity_event_v1_user_deleted_proto = out.File
+	file_velony_identity_event_v1_user_deleted_proto_goTypes = nil
+	file_velony_identity_event_v1_user_deleted_proto_depIdxs = nil
 }
