@@ -14,11 +14,14 @@ import (
 type Authentication middleware.Middleware
 
 func NewAuthentication(c *conf.Auth) (Authentication, error) {
-	public := map[string]struct{}{
-		"/velony.identity.api.v1.IdentityService/LoginAuth":     {},
-		"/velony.identity.api.v1.IdentityService/RegisterAuth":  {},
-		"/velony.identity.api.v1.IdentityService/RefreshAuth":   {},
-		"/velony.identity.api.v1.IdentityService/BatchGetUsers": {},
+	protected := map[string]struct{}{
+		"/velony.identity.api.v1.IdentityService/DeleteUser":              {},
+		"/velony.identity.api.v1.IdentityService/ChangeUserUsername":      {},
+		"/velony.identity.api.v1.IdentityService/RequestUserEmailChange":  {},
+		"/velony.identity.api.v1.IdentityService/ConfirmUserEmailChange":  {},
+		"/velony.identity.api.v1.IdentityService/RemoveUserEmail":         {},
+		"/velony.identity.api.v1.IdentityService/RequestUserAvatarChange": {},
+		"/velony.identity.api.v1.IdentityService/RemoveUserAvatar":        {},
 	}
 	optional := map[string]struct{}{
 		"/velony.identity.api.v1.IdentityService/GetUser": {},
@@ -53,11 +56,8 @@ func NewAuthentication(c *conf.Auth) (Authentication, error) {
 	selected := middleware.Chain(
 		selector.Server(auth).
 			Match(func(_ context.Context, operation string) bool {
-				if _, ok := public[operation]; ok {
-					return false
-				}
-				_, ok := optional[operation]
-				return !ok
+				_, ok := protected[operation]
+				return ok
 			}).
 			Build(),
 		selector.Server(optionalAuth).
