@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-kratos/kratos/v3/middleware/recovery"
 	"github.com/go-kratos/kratos/v3/transport/http"
+	"github.com/rs/cors"
 )
 
 func NewHTTPServer(
@@ -21,6 +22,22 @@ func NewHTTPServer(
 ) *http.Server {
 	opts := []http.ServerOption{
 		http.Address(c.Http.Address),
+		http.Filter(cors.New(cors.Options{
+			AllowedOrigins: []string{
+				"https://api-docs.velony.app",
+			},
+			AllowedMethods: []string{
+				"GET",
+				"POST",
+				"PUT",
+				"PATCH",
+				"DELETE",
+			},
+			AllowedHeaders: []string{
+				"Content-Type",
+				"Authorization",
+			},
+		}).Handler),
 		http.Middleware(
 			recovery.Recovery(),
 			tracing.Middleware(),
