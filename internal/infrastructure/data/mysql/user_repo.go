@@ -50,11 +50,9 @@ func (r *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User
 
 			email_change_requests.email,
 			email_change_requests.token,
-			email_change_requests.create_time,
 			email_change_requests.expire_time,
 
 			avatar_change_requests.avatar_id,
-			avatar_change_requests.create_time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash
@@ -98,11 +96,9 @@ func (r *userRepo) FindByUsername(ctx context.Context, username vo.Username) (*e
 
 			email_change_requests.email,
 			email_change_requests.token,
-			email_change_requests.create_time,
 			email_change_requests.expire_time,
 
 			avatar_change_requests.avatar_id,
-			avatar_change_requests.create_time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash
@@ -146,11 +142,9 @@ func (r *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.Use
 
 			email_change_requests.email,
 			email_change_requests.token,
-			email_change_requests.create_time,
 			email_change_requests.expire_time,
 
 			avatar_change_requests.avatar_id,
-			avatar_change_requests.create_time,
 			avatar_change_requests.expire_time,
 
 			local_auth_strategies.password_hash
@@ -321,14 +315,12 @@ func (r *userRepo) saveEmailRequestChange(ctx context.Context, user *entity.User
 			user_id,
 			email,
 			token,
-			create_time,
 			expire_time
 		)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			email = ?,
 			token = ?,
-			create_time = ?,
 			expire_time = ?
 	`
 
@@ -338,12 +330,10 @@ func (r *userRepo) saveEmailRequestChange(ctx context.Context, user *entity.User
 		user.ID().String(),
 		emailChangeRequest.Email().String(),
 		emailChangeRequest.Token().String(),
-		emailChangeRequest.CreateTime(),
 		emailChangeRequest.ExpireTime(),
 
 		emailChangeRequest.Email().String(),
 		emailChangeRequest.Token().String(),
-		emailChangeRequest.CreateTime(),
 		emailChangeRequest.ExpireTime(),
 	); err != nil {
 		return err
@@ -372,13 +362,11 @@ func (r *userRepo) saveAvatarRequestChange(ctx context.Context, user *entity.Use
 		INSERT INTO avatar_change_requests (
 			user_id,
 			avatar_id,
-			create_time,
 			expire_time
 		)
-		VALUES (?, ?, ?, ?)
+		VALUES (?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			avatar_id = ?,
-			create_time = ?,
 			expire_time = ?
 	`
 
@@ -387,11 +375,9 @@ func (r *userRepo) saveAvatarRequestChange(ctx context.Context, user *entity.Use
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		user.ID().String(),
 		avatarChangeRequest.AvatarID().String(),
-		avatarChangeRequest.CreateTime(),
 		avatarChangeRequest.ExpireTime(),
 
 		avatarChangeRequest.AvatarID().String(),
-		avatarChangeRequest.CreateTime(),
 		avatarChangeRequest.ExpireTime(),
 	); err != nil {
 		return err
@@ -453,11 +439,9 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 
 		emailChangeRequestEmailRaw      sql.NullString
 		emailChangeRequestTokenRaw      sql.NullString
-		emailChangeRequestCreateTimeRaw sql.NullTime
 		emailChangeRequestExpireTimeRaw sql.NullTime
 
 		avatarChangeRequestAvatarIDRaw   sql.NullString
-		avatarChangeRequestCreateTimeRaw sql.NullTime
 		avatarChangeRequestExpireTimeRaw sql.NullTime
 
 		passwordHashRaw []byte
@@ -476,11 +460,9 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 
 		&emailChangeRequestEmailRaw,
 		&emailChangeRequestTokenRaw,
-		&emailChangeRequestCreateTimeRaw,
 		&emailChangeRequestExpireTimeRaw,
 
 		&avatarChangeRequestAvatarIDRaw,
-		&avatarChangeRequestCreateTimeRaw,
 		&avatarChangeRequestExpireTimeRaw,
 
 		&passwordHashRaw,
@@ -508,7 +490,6 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		value := vo.NewEmailChangeRequest(
 			email,
 			token,
-			emailChangeRequestCreateTimeRaw.Time,
 			emailChangeRequestExpireTimeRaw.Time,
 		)
 		emailChangeRequest = &value
@@ -519,7 +500,6 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 
 		value := vo.NewAvatarChangeRequest(
 			avatarID,
-			avatarChangeRequestCreateTimeRaw.Time,
 			avatarChangeRequestExpireTimeRaw.Time,
 		)
 		avatarChangeRequest = &value

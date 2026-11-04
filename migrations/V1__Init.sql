@@ -34,7 +34,6 @@ CREATE TABLE email_change_requests (
     user_id     CHAR(36) PRIMARY KEY,
     token       TEXT NOT NULL,
     email       VARCHAR(255) NOT NULL,
-    create_time TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 
     CONSTRAINT fk_email_change_requests_user_id
@@ -48,7 +47,6 @@ CREATE TABLE email_change_requests (
 CREATE TABLE avatar_change_requests (
     user_id     CHAR(36) PRIMARY KEY,
     avatar_id   CHAR(36) NOT NULL,
-    create_time TIMESTAMP(6) NOT NULL,
     expire_time TIMESTAMP(6) NOT NULL,
 
     CONSTRAINT fk_avatar_change_requests_user_id

@@ -284,7 +284,6 @@ func (u *User) RequestEmailChange(newEmail vo.Email, token vo.EmailChangeRequest
 	value := vo.NewEmailChangeRequest(
 		newEmail,
 		token,
-		now,
 		now.Add(ttl),
 	)
 	u.emailChangeRequest = &value
@@ -361,7 +360,6 @@ func (u *User) RequestAvatarChange(newAvatarID vo.AvatarID, ttl time.Duration, c
 
 	value := vo.NewAvatarChangeRequest(
 		newAvatarID,
-		now,
 		now.Add(ttl),
 	)
 	u.avatarChangeRequest = &value
