@@ -174,6 +174,10 @@ func (r *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.Use
 }
 
 func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
+	if !user.IsDirty() {
+		return nil
+	}
+
 	if user.IsDeleted() {
 		if !user.IsNew() {
 			const query = `
@@ -245,7 +249,7 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 			        next_username_change_time = ?,
 			        next_email_change_request_time = ?,
 			        next_avatar_change_request_time = ?,
-			        version = version + 1
+			        version = ?
 			    WHERE id = ?
 			        AND version = ?
 			`
@@ -257,8 +261,9 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 				user.NextUsernameChangeTime(),
 				user.NextEmailChangeRequestTime(),
 				user.NextAvatarChangeRequestTime(),
-				user.ID().String(),
 				user.Version(),
+				user.ID().String(),
+				user.Version()-1,
 			)
 			if err != nil {
 				return err

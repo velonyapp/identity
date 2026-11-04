@@ -22,6 +22,7 @@ type Session struct {
 
 	version uint32
 	isNew   bool
+	isDirty bool
 }
 
 func NewSession(
@@ -39,6 +40,7 @@ func NewSession(
 
 		version: 0,
 		isNew:   true,
+		isDirty: true,
 	}
 }
 
@@ -120,6 +122,8 @@ func (s *Session) Refresh(
 	s.tokenHash = tokenHash
 	s.expireTime = now.Add(ttl)
 
+	s.markDirty()
+
 	return nil
 }
 
@@ -129,6 +133,8 @@ func (s *Session) Revoke(now time.Time) error {
 	}
 
 	s.revokeTime = &now
+
+	s.markDirty()
 
 	return nil
 }
@@ -141,12 +147,20 @@ func (s *Session) IsNew() bool {
 	return s.isNew
 }
 
-func (s *Session) MarkPersisted() {
-	if s.isNew{
-		s.isNew = false
+func (s *Session) IsDirty() bool {
+	return s.isDirty
+}
 
+func (s *Session) markDirty() {
+	if s.isDirty {
 		return
 	}
-	
+
+	s.isDirty = true
 	s.version++
+}
+
+func (s *Session) MarkPersisted() {
+	s.isNew = false
+	s.isDirty = false
 }

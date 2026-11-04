@@ -45,6 +45,7 @@ type User struct {
 
 	version uint32
 	isNew   bool
+	isDirty bool
 }
 
 func NewUser(
@@ -62,6 +63,7 @@ func NewUser(
 
 		version: 0,
 		isNew:   true,
+		isDirty: true,
 	}
 
 	u.recordEvent(
@@ -257,6 +259,8 @@ func (u *User) ChangeUsername(newUsername vo.Username, cooldown time.Duration, n
 	u.username = newUsername
 	u.nextUsernameChangeTime = now.Add(cooldown)
 
+	u.markDirty()
+
 	u.recordEvent(
 		event.NewUserUpdated(
 			u.id,
@@ -289,6 +293,8 @@ func (u *User) RequestEmailChange(newEmail vo.Email, token vo.EmailChangeRequest
 	u.emailChangeRequest = &value
 	u.nextEmailChangeRequestTime = now.Add(cooldown)
 
+	u.markDirty()
+
 	return nil
 }
 
@@ -310,6 +316,8 @@ func (u *User) ConfirmEmailChange(now time.Time) error {
 	newEmail := &value
 	u.email = newEmail
 	u.emailChangeRequest = nil
+
+	u.markDirty()
 
 	u.recordEvent(
 		event.NewUserUpdated(
@@ -333,6 +341,8 @@ func (u *User) RemoveEmail(now time.Time) error {
 	}
 
 	u.email = nil
+
+	u.markDirty()
 
 	u.recordEvent(
 		event.NewUserUpdated(
@@ -365,6 +375,8 @@ func (u *User) RequestAvatarChange(newAvatarID vo.AvatarID, ttl time.Duration, c
 	u.avatarChangeRequest = &value
 	u.nextAvatarChangeRequestTime = now.Add(cooldown)
 
+	u.markDirty()
+
 	return nil
 }
 
@@ -387,6 +399,8 @@ func (u *User) ConfirmAvatarChange(now time.Time) error {
 	u.avatarID = newAvatar
 	u.avatarChangeRequest = nil
 
+	u.markDirty()
+
 	return nil
 }
 
@@ -401,6 +415,8 @@ func (u *User) RemoveAvatar() error {
 
 	u.avatarID = nil
 
+	u.markDirty()
+
 	return nil
 }
 
@@ -410,6 +426,8 @@ func (u *User) Delete(now time.Time) error {
 	}
 
 	u.deleteTime = &now
+
+	u.markDirty()
 
 	u.recordEvent(
 		event.NewUserDeleted(
@@ -430,6 +448,8 @@ func (u *User) ChangeLocalAuthStrategy(localAuthStrategy vo.LocalAuthStrategy) e
 	value := localAuthStrategy
 	u.localAuthStrategy = &value
 
+	u.markDirty()
+
 	return nil
 }
 
@@ -445,6 +465,8 @@ func (u *User) RemoveLocalAuthStrategy() error {
 	}
 
 	u.localAuthStrategy = nil
+
+	u.markDirty()
 
 	return nil
 }
@@ -467,12 +489,20 @@ func (u *User) IsNew() bool {
 	return u.isNew
 }
 
-func (u *User) MarkPersisted() {
-	if u.isNew {
-		u.isNew = false
+func (u *User) IsDirty() bool {
+	return u.isDirty
+}
 
+func (u *User) markDirty() {
+	if u.isDirty {
 		return
 	}
 
+	u.isDirty = true
 	u.version++
+}
+
+func (u *User) MarkPersisted() {
+	u.isNew = false
+	u.isDirty = false
 }

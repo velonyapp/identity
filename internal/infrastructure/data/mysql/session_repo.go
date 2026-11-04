@@ -57,6 +57,10 @@ func (r *sessionRepo) FindByTokenHash(ctx context.Context, tokenHash vo.SessionT
 }
 
 func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
+	if !session.IsDirty() {
+		return nil
+	}
+
 	var revokeTime any
 	if session.RevokeTime() != nil {
 		revokeTime = *session.RevokeTime()
@@ -94,7 +98,7 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 		        token_hash = ?,
 		        expire_time = ?,
 		        revoke_time = ?,
-		        version = version + 1
+		        version = ?
 		    WHERE id = ?
 		        AND version = ?
 		`
@@ -103,8 +107,9 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 			session.TokenHash().Bytes(),
 			session.ExpireTime(),
 			revokeTime,
-			session.ID().String(),
 			session.Version(),
+			session.ID().String(),
+			session.Version()-1,
 		)
 		if err != nil {
 			return err
