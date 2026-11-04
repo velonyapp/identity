@@ -64,7 +64,7 @@ func (h *changeUsernameHandler) Handle(
 		return ChangeUsernameResult{}, err
 	}
 
-	if err := user.ChangeUsername(newUsername, now); err != nil {
+	if err := user.ChangeUsername(newUsername, common.UsernameChangeCooldown, now); err != nil {
 		return ChangeUsernameResult{}, err
 	}
 

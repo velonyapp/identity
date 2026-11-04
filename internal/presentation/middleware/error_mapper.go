@@ -82,6 +82,18 @@ func NewErrorMapper() ErrorMapper {
 					)
 
 				// Domain Entity
+				case errors.Is(err, domainentity.ErrUsernameChangeRateLimitExceeded):
+					return reply, kerrors.New(429, "",
+						domainentity.ErrUsernameChangeRateLimitExceeded.Error(),
+					)
+				case errors.Is(err, domainentity.ErrEmailChangeRequestRateLimitExceeded):
+					return reply, kerrors.New(429, "",
+						domainentity.ErrEmailChangeRequestRateLimitExceeded.Error(),
+					)
+				case errors.Is(err, domainentity.ErrAvatarChangeRequestRateLimitExceeded):
+					return reply, kerrors.New(429, "",
+						domainentity.ErrAvatarChangeRequestRateLimitExceeded.Error(),
+					)
 				case errors.Is(err, domainentity.ErrUserDeleted):
 					return reply, kerrors.NotFound("",
 						applicationcommon.ErrUserNotFound.Error(),

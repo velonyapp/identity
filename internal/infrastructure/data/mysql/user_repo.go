@@ -43,6 +43,9 @@ func (r *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User
 			users.email,
 			users.avatar_id,
 			users.create_time,
+			users.next_username_change_time,
+			users.next_email_change_request_time,
+			users.next_avatar_change_request_time,
 			users.version,
 
 			email_change_requests.email,
@@ -88,6 +91,9 @@ func (r *userRepo) FindByUsername(ctx context.Context, username vo.Username) (*e
 			users.email,
 			users.avatar_id,
 			users.create_time,
+			users.next_username_change_time,
+			users.next_email_change_request_time,
+			users.next_avatar_change_request_time,
 			users.version,
 
 			email_change_requests.email,
@@ -133,6 +139,9 @@ func (r *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.Use
 			users.email,
 			users.avatar_id,
 			users.create_time,
+			users.next_username_change_time,
+			users.next_email_change_request_time,
+			users.next_avatar_change_request_time,
 			users.version,
 
 			email_change_requests.email,
@@ -201,9 +210,12 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 					email,
 					avatar_id,
 					create_time,
+					next_username_change_time,
+					next_email_change_request_time,
+					next_avatar_change_request_time,
 					version
 				)
-				VALUES (?, ?, ?, ?, ?, ?)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 			`
 
 			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
@@ -212,6 +224,9 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 				email,
 				avatarID,
 				user.CreateTime(),
+				user.NextUsernameChangeTime(),
+				user.NextEmailChangeRequestTime(),
+				user.NextAvatarChangeRequestTime(),
 				user.Version(),
 			); err != nil {
 				var mysqlErr *mysql.MySQLError
@@ -233,6 +248,9 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 			        username = ?,
 			        email = ?,
 			        avatar_id = ?,
+			        next_username_change_time = ?,
+			        next_email_change_request_time = ?,
+			        next_avatar_change_request_time = ?,
 			        version = version + 1
 			    WHERE id = ?
 			        AND version = ?
@@ -242,6 +260,9 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 				user.Username().String(),
 				email,
 				avatarID,
+				user.NextUsernameChangeTime(),
+				user.NextEmailChangeRequestTime(),
+				user.NextAvatarChangeRequestTime(),
 				user.ID().String(),
 				user.Version(),
 			)
@@ -426,6 +447,10 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		createTime  time.Time
 		version     uint32
 
+		nextUsernameChangeTime      time.Time
+		nextEmailChangeRequestTime  time.Time
+		nextAvatarChangeRequestTime time.Time
+
 		emailChangeRequestEmailRaw      sql.NullString
 		emailChangeRequestTokenRaw      sql.NullString
 		emailChangeRequestCreateTimeRaw sql.NullTime
@@ -444,6 +469,9 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		&emailRaw,
 		&avatarIDRaw,
 		&createTime,
+		&nextUsernameChangeTime,
+		&nextEmailChangeRequestTime,
+		&nextAvatarChangeRequestTime,
 		&version,
 
 		&emailChangeRequestEmailRaw,
@@ -514,6 +542,9 @@ func scanRepoUser(scanner repoUserScanner) (*entity.User, error) {
 		emailChangeRequest,
 		avatarChangeRequest,
 		localAuthStrategy,
+		nextUsernameChangeTime,
+		nextEmailChangeRequestTime,
+		nextAvatarChangeRequestTime,
 		version,
 	), nil
 }

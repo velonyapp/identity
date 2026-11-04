@@ -3,6 +3,9 @@ package common
 import "time"
 
 const (
-	EmailChangeRequestTTL  = 15 * time.Minute
-	AvatarChangeRequestTTL = 30 * time.Second
+	UsernameChangeCooldown      = 7 * 24 * time.Hour
+	EmailChangeRequestCooldown  = time.Minute
+	AvatarChangeRequestCooldown = 10 * time.Second
+	EmailChangeRequestTTL       = 15 * time.Minute
+	AvatarChangeRequestTTL      = 30 * time.Second
 )

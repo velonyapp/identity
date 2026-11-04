@@ -1,10 +1,13 @@
 CREATE TABLE users (
-    id          CHAR(36) PRIMARY KEY,
-    username    VARCHAR(255) NOT NULL,
-    email       VARCHAR(255),
-    avatar_id   CHAR(36),
-    create_time TIMESTAMP(6) NOT NULL,
-    version     INT NOT NULL,
+    id                              CHAR(36) PRIMARY KEY,
+    username                        VARCHAR(255) NOT NULL,
+    email                           VARCHAR(255),
+    avatar_id                       CHAR(36),
+    create_time                     TIMESTAMP(6) NOT NULL,
+    next_username_change_time       TIMESTAMP(6) NOT NULL,
+    next_email_change_request_time  TIMESTAMP(6) NOT NULL,
+    next_avatar_change_request_time TIMESTAMP(6) NOT NULL,
+    version                         INT NOT NULL,
 
     UNIQUE KEY uq_users_username (username),
     UNIQUE KEY uq_users_email    (email)

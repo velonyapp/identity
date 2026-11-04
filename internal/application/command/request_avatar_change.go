@@ -6,6 +6,7 @@ import (
 
 	"github.com/velonyapp/identity/internal/application/common"
 	"github.com/velonyapp/identity/internal/application/port"
+	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
@@ -63,13 +64,16 @@ func (h *requestAvatarChangeHandler) Handle(
 	if user == nil {
 		return RequestAvatarChangeResult{}, common.ErrUserNotFound
 	}
+	if now.Before(user.NextAvatarChangeRequestTime()) {
+		return RequestAvatarChangeResult{}, entity.ErrAvatarChangeRequestRateLimitExceeded
+	}
 
 	avatar, uploadURL, err := h.assetService.CreateAvatar(ctx, userID)
 	if err != nil {
 		return RequestAvatarChangeResult{}, err
 	}
 
-	if err := user.RequestAvatarChange(avatar.ID(), common.AvatarChangeRequestTTL, now); err != nil {
+	if err := user.RequestAvatarChange(avatar.ID(), common.AvatarChangeRequestTTL, common.AvatarChangeRequestCooldown, now); err != nil {
 		return RequestAvatarChangeResult{}, err
 	}
 

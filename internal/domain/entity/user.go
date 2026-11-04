@@ -9,16 +9,19 @@ import (
 )
 
 var (
-	ErrUserDeleted                  = errors.New("user is deleted")
-	ErrEmailAlreadySet              = errors.New("email already set")
-	ErrEmailChangeNotRequested      = errors.New("email change not requested")
-	ErrEmailChangeRequestExpired    = errors.New("email change request expired")
-	ErrAvatarAlreadySet             = errors.New("avatar already set")
-	ErrAvatarChangeNotRequested     = errors.New("avatar change not requested")
-	ErrAvatarChangeRequestExpired   = errors.New("avatar change request expired")
-	ErrLocalAuthStrategyNotSet      = errors.New("local authentication strategy not set")
-	ErrGoogleAuthStrategyNotSet     = errors.New("google authentication strategy not set")
-	ErrCannotRemoveLastAuthStrategy = errors.New("cannot remove the last authentication strategy")
+	ErrUserDeleted                          = errors.New("user is deleted")
+	ErrUsernameChangeRateLimitExceeded      = errors.New("username change rate limit exceeded")
+	ErrEmailChangeRequestRateLimitExceeded  = errors.New("email change request rate limit exceeded")
+	ErrAvatarChangeRequestRateLimitExceeded = errors.New("avatar change request rate limit exceeded")
+	ErrEmailAlreadySet                      = errors.New("email already set")
+	ErrEmailChangeNotRequested              = errors.New("email change not requested")
+	ErrEmailChangeRequestExpired            = errors.New("email change request expired")
+	ErrAvatarAlreadySet                     = errors.New("avatar already set")
+	ErrAvatarChangeNotRequested             = errors.New("avatar change not requested")
+	ErrAvatarChangeRequestExpired           = errors.New("avatar change request expired")
+	ErrLocalAuthStrategyNotSet              = errors.New("local authentication strategy not set")
+	ErrGoogleAuthStrategyNotSet             = errors.New("google authentication strategy not set")
+	ErrCannotRemoveLastAuthStrategy         = errors.New("cannot remove the last authentication strategy")
 )
 
 type User struct {
@@ -34,6 +37,10 @@ type User struct {
 
 	localAuthStrategy *vo.LocalAuthStrategy
 
+	nextUsernameChangeTime      time.Time
+	nextEmailChangeRequestTime  time.Time
+	nextAvatarChangeRequestTime time.Time
+
 	domainEvents []event.DomainEvent
 
 	version uint32
@@ -48,6 +55,10 @@ func NewUser(
 		id:         vo.GenerateUserID(),
 		username:   username,
 		createTime: now,
+
+		nextUsernameChangeTime:      now,
+		nextEmailChangeRequestTime:  now,
+		nextAvatarChangeRequestTime: now,
 
 		version: 0,
 		isNew:   true,
@@ -75,12 +86,19 @@ func ReconstituteUser(
 	emailChangeRequest *vo.EmailChangeRequest,
 	avatarChangeRequest *vo.AvatarChangeRequest,
 	localAuthStrategy *vo.LocalAuthStrategy,
+	nextUsernameChangeTime time.Time,
+	nextEmailChangeRequestTime time.Time,
+	nextAvatarChangeRequestTime time.Time,
 	version uint32,
 ) *User {
 	u := &User{
 		id:         id,
 		username:   username,
 		createTime: createTime,
+
+		nextUsernameChangeTime:      nextUsernameChangeTime,
+		nextEmailChangeRequestTime:  nextEmailChangeRequestTime,
+		nextAvatarChangeRequestTime: nextAvatarChangeRequestTime,
 
 		version: version,
 	}
@@ -179,6 +197,18 @@ func (u *User) LocalAuthStrategy() *vo.LocalAuthStrategy {
 	return &value
 }
 
+func (u *User) NextUsernameChangeTime() time.Time {
+	return u.nextUsernameChangeTime
+}
+
+func (u *User) NextEmailChangeRequestTime() time.Time {
+	return u.nextEmailChangeRequestTime
+}
+
+func (u *User) NextAvatarChangeRequestTime() time.Time {
+	return u.nextAvatarChangeRequestTime
+}
+
 func (u *User) HasAvatar() bool {
 	return u.avatarID != nil
 }
@@ -213,15 +243,19 @@ func (u *User) IsDeleted() bool {
 	return u.deleteTime != nil
 }
 
-func (u *User) ChangeUsername(newUsername vo.Username, now time.Time) error {
+func (u *User) ChangeUsername(newUsername vo.Username, cooldown time.Duration, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
+	}
+	if now.Before(u.nextUsernameChangeTime) {
+		return ErrUsernameChangeRateLimitExceeded
 	}
 	if newUsername.Equal(u.username) {
 		return nil
 	}
 
 	u.username = newUsername
+	u.nextUsernameChangeTime = now.Add(cooldown)
 
 	u.recordEvent(
 		event.NewUserUpdated(
@@ -236,9 +270,12 @@ func (u *User) ChangeUsername(newUsername vo.Username, now time.Time) error {
 	return nil
 }
 
-func (u *User) RequestEmailChange(newEmail vo.Email, token vo.EmailChangeRequestToken, ttl time.Duration, now time.Time) error {
+func (u *User) RequestEmailChange(newEmail vo.Email, token vo.EmailChangeRequestToken, ttl time.Duration, cooldown time.Duration, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
+	}
+	if now.Before(u.nextEmailChangeRequestTime) {
+		return ErrEmailChangeRequestRateLimitExceeded
 	}
 	if u.HasEmail() && newEmail.Equal(*u.email) {
 		return ErrEmailAlreadySet
@@ -251,6 +288,7 @@ func (u *User) RequestEmailChange(newEmail vo.Email, token vo.EmailChangeRequest
 		now.Add(ttl),
 	)
 	u.emailChangeRequest = &value
+	u.nextEmailChangeRequestTime = now.Add(cooldown)
 
 	return nil
 }
@@ -310,9 +348,12 @@ func (u *User) RemoveEmail(now time.Time) error {
 	return nil
 }
 
-func (u *User) RequestAvatarChange(newAvatarID vo.AvatarID, ttl time.Duration, now time.Time) error {
+func (u *User) RequestAvatarChange(newAvatarID vo.AvatarID, ttl time.Duration, cooldown time.Duration, now time.Time) error {
 	if u.IsDeleted() {
 		return ErrUserDeleted
+	}
+	if now.Before(u.nextAvatarChangeRequestTime) {
+		return ErrAvatarChangeRequestRateLimitExceeded
 	}
 	if u.HasAvatar() && newAvatarID.Equal(*u.avatarID) {
 		return ErrAvatarAlreadySet
@@ -324,6 +365,7 @@ func (u *User) RequestAvatarChange(newAvatarID vo.AvatarID, ttl time.Duration, n
 		now.Add(ttl),
 	)
 	u.avatarChangeRequest = &value
+	u.nextAvatarChangeRequestTime = now.Add(cooldown)
 
 	return nil
 }

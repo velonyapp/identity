@@ -71,7 +71,7 @@ func (h *requestEmailChangeHandler) Handle(
 		return RequestEmailChangeResult{}, err
 	}
 
-	if err := user.RequestEmailChange(newEmail, requestToken, common.EmailChangeRequestTTL, now); err != nil {
+	if err := user.RequestEmailChange(newEmail, requestToken, common.EmailChangeRequestTTL, common.EmailChangeRequestCooldown, now); err != nil {
 		return RequestEmailChangeResult{}, err
 	}
 
