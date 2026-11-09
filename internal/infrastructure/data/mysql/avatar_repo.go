@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 
 	"github.com/velonyapp/identity/internal/domain/entity"
 	"github.com/velonyapp/identity/internal/domain/repo"
@@ -13,12 +14,19 @@ import (
 var _ repo.Avatar = (*avatarRepo)(nil)
 
 type avatarRepo struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewAvatarRepo(db *sql.DB) repo.Avatar {
+func NewAvatarRepo(
+	db *sql.DB,
+	log *slog.Logger,
+) repo.Avatar {
 	return &avatarRepo{
 		db: db,
+		log: log.With(
+			slog.String("component", "mysql.avatar_repo"),
+		),
 	}
 }
 
@@ -45,6 +53,11 @@ func (r *avatarRepo) FindByID(ctx context.Context, avatarID vo.AvatarID) (*entit
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find avatar by ID",
+			slog.String("avatar_id", avatarID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -66,6 +79,12 @@ func (r *avatarRepo) Create(ctx context.Context, avatar *entity.Avatar) error {
 		avatar.UserID().String(),
 		avatar.Key().String(),
 	); err != nil {
+		r.log.Error(
+			"failed to create avatar",
+			slog.String("avatar_id", avatar.ID().String()),
+			slog.String("user_id", avatar.UserID().String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -81,6 +100,11 @@ func (r *avatarRepo) Delete(ctx context.Context, avatarID vo.AvatarID) error {
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		avatarID.String(),
 	); err != nil {
+		r.log.Error(
+			"failed to delete avatar",
+			slog.String("avatar_id", avatarID.String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 

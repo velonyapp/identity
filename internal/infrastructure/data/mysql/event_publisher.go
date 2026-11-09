@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"log/slog"
 
 	"github.com/velonyapp/identity/internal/application/integrationevent"
 	"github.com/velonyapp/identity/internal/application/port"
@@ -16,26 +17,43 @@ var _ port.EventPublisher = (*eventPublisher)(nil)
 type eventPublisher struct {
 	db      *sql.DB
 	encoder *protobuf.EventEncoder
+	log     *slog.Logger
 }
 
 func NewEventPublisher(
 	db *sql.DB,
 	encoder *protobuf.EventEncoder,
+	log *slog.Logger,
 ) port.EventPublisher {
 	return &eventPublisher{
 		db:      db,
 		encoder: encoder,
+		log: log.With(
+			slog.String("component", "mysql.event_publisher"),
+		),
 	}
 }
 
 func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.IntegrationEvent) error {
 	eventPayload, err := pub.encoder.Encode(event)
 	if err != nil {
+		pub.log.Error(
+			"failed to encode integration event",
+			slog.Any("event_id", event.ID()),
+			slog.Any("event_type", event.Type()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
 	payload, err := protojson.Marshal(eventPayload)
 	if err != nil {
+		pub.log.Error(
+			"failed to marshal integration event payload",
+			slog.Any("event_id", event.ID()),
+			slog.Any("event_type", event.Type()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -59,6 +77,15 @@ func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.I
 		string(payload),
 		event.OccurTime(),
 	)
+	if err != nil {
+		pub.log.Error(
+			"failed to insert integration event into outbox",
+			slog.Any("event_id", event.ID()),
+			slog.Any("event_type", event.Type()),
+			slog.Any("error", err),
+		)
+		return err
+	}
 
-	return err
+	return nil
 }

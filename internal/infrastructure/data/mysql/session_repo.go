@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/identity/internal/domain/entity"
@@ -14,12 +15,19 @@ import (
 var _ repo.Session = (*sessionRepo)(nil)
 
 type sessionRepo struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewSessionRepo(db *sql.DB) repo.Session {
+func NewSessionRepo(
+	db *sql.DB,
+	log *slog.Logger,
+) repo.Session {
 	return &sessionRepo{
 		db: db,
+		log: log.With(
+			slog.String("component", "mysql.session_repo"),
+		),
 	}
 }
 
@@ -50,6 +58,10 @@ func (r *sessionRepo) FindByTokenHash(ctx context.Context, tokenHash vo.SessionT
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find session by token hash",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -89,6 +101,12 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 			revokeTime,
 			session.Version(),
 		); err != nil {
+			r.log.Error(
+				"failed to insert session",
+				slog.String("session_id", session.ID().String()),
+				slog.String("user_id", session.UserID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	} else {
@@ -112,10 +130,21 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 			session.Version()-1,
 		)
 		if err != nil {
+			r.log.Error(
+				"failed to update session",
+				slog.String("session_id", session.ID().String()),
+				slog.String("user_id", session.UserID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
+			r.log.Error(
+				"failed to get affected rows after updating session",
+				slog.String("session_id", session.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 		if rowsAffected == 0 {

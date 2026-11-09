@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -19,15 +20,20 @@ var _ repo.User = (*userRepo)(nil)
 type userRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
+	log        *slog.Logger
 }
 
 func NewUserRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
+	log *slog.Logger,
 ) repo.User {
 	return &userRepo{
 		db:         db,
 		dispatcher: dispatcher,
+		log: log.With(
+			slog.String("component", "mysql.user_repo"),
+		),
 	}
 }
 
@@ -75,6 +81,11 @@ func (r *userRepo) FindByID(ctx context.Context, userID vo.UserID) (*entity.User
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find user by ID",
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -121,6 +132,10 @@ func (r *userRepo) FindByUsername(ctx context.Context, username vo.Username) (*e
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find user by username",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -167,6 +182,10 @@ func (r *userRepo) FindByEmail(ctx context.Context, email vo.Email) (*entity.Use
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find user by email",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -187,6 +206,11 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 
 			_, err := executor(ctx, r.db).ExecContext(ctx, query, user.ID().String())
 			if err != nil {
+				r.log.Error(
+					"failed to delete user",
+					slog.String("user_id", user.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		}
@@ -237,6 +261,11 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 					}
 				}
 
+				r.log.Error(
+					"failed to insert user",
+					slog.String("user_id", user.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		} else {
@@ -266,10 +295,20 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 				user.Version()-1,
 			)
 			if err != nil {
+				r.log.Error(
+					"failed to update user",
+					slog.String("user_id", user.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
+				r.log.Error(
+					"failed to get affected rows after updating user",
+					slog.String("user_id", user.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			if rowsAffected == 0 {
@@ -290,6 +329,11 @@ func (r *userRepo) Save(ctx context.Context, user *entity.User) error {
 
 	for _, domainEvent := range user.PullEvents() {
 		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			r.log.Error(
+				"failed to dispatch user domain event",
+				slog.String("user_id", user.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	}
@@ -309,6 +353,11 @@ func (r *userRepo) saveEmailRequestChange(ctx context.Context, user *entity.User
 		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 			user.ID().String(),
 		); err != nil {
+			r.log.Error(
+				"failed to delete email change request",
+				slog.String("user_id", user.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 
@@ -341,6 +390,11 @@ func (r *userRepo) saveEmailRequestChange(ctx context.Context, user *entity.User
 		emailChangeRequest.Token().String(),
 		emailChangeRequest.ExpireTime(),
 	); err != nil {
+		r.log.Error(
+			"failed to save email change request",
+			slog.String("user_id", user.ID().String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -357,6 +411,11 @@ func (r *userRepo) saveAvatarRequestChange(ctx context.Context, user *entity.Use
 		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 			user.ID().String(),
 		); err != nil {
+			r.log.Error(
+				"failed to delete avatar change request",
+				slog.String("user_id", user.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 
@@ -385,6 +444,11 @@ func (r *userRepo) saveAvatarRequestChange(ctx context.Context, user *entity.Use
 		avatarChangeRequest.AvatarID().String(),
 		avatarChangeRequest.ExpireTime(),
 	); err != nil {
+		r.log.Error(
+			"failed to save avatar change request",
+			slog.String("user_id", user.ID().String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -401,6 +465,11 @@ func (r *userRepo) saveLocalAuthStrategy(ctx context.Context, user *entity.User)
 		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 			user.ID().String(),
 		); err != nil {
+			r.log.Error(
+				"failed to delete local auth strategy",
+				slog.String("user_id", user.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 
@@ -423,6 +492,11 @@ func (r *userRepo) saveLocalAuthStrategy(ctx context.Context, user *entity.User)
 
 		user.LocalAuthStrategy().PasswordHash().Bytes(),
 	); err != nil {
+		r.log.Error(
+			"failed to save local auth strategy",
+			slog.String("user_id", user.ID().String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 

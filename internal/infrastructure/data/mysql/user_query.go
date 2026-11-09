@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -15,12 +16,19 @@ import (
 var _ query.User = (*userQuery)(nil)
 
 type userQuery struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
-func NewUserQuery(db *sql.DB) query.User {
+func NewUserQuery(
+	db *sql.DB,
+	log *slog.Logger,
+) query.User {
 	return &userQuery{
 		db: db,
+		log: log.With(
+			slog.String("component", "mysql.user_query"),
+		),
 	}
 }
 
@@ -52,6 +60,11 @@ func (r *userQuery) Find(ctx context.Context, userID vo.UserID) (*common.UserRes
 			return nil, nil
 		}
 
+		r.log.Error(
+			"failed to find user",
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -88,6 +101,11 @@ func (r *userQuery) BatchFind(ctx context.Context, userIDs []vo.UserID) (map[vo.
 
 	rows, err := executor(ctx, r.db).QueryContext(ctx, query, args...)
 	if err != nil {
+		r.log.Error(
+			"failed to batch find users",
+			slog.Int("user_count", len(userIDs)),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 	defer rows.Close()
@@ -97,6 +115,10 @@ func (r *userQuery) BatchFind(ctx context.Context, userIDs []vo.UserID) (map[vo.
 	for rows.Next() {
 		user, err := scanQueryUser(rows)
 		if err != nil {
+			r.log.Error(
+				"failed to scan user during batch find",
+				slog.Any("error", err),
+			)
 			return nil, err
 		}
 
@@ -104,6 +126,10 @@ func (r *userQuery) BatchFind(ctx context.Context, userIDs []vo.UserID) (map[vo.
 	}
 
 	if err := rows.Err(); err != nil {
+		r.log.Error(
+			"failed to iterate users during batch find",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
