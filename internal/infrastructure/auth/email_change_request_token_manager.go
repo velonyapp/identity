@@ -21,9 +21,7 @@ func NewEmailChangeRequestTokenManager(
 	log *slog.Logger,
 ) port.EmailChangeRequestTokenManager {
 	return &emailChangeRequestTokenManager{
-		log: log.With(
-			slog.String("component", "auth.email_change_request_token_manager"),
-		),
+		log: log,
 	}
 }
 

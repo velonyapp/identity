@@ -1,4 +1,3 @@
-
 package mysql
 
 import (
@@ -29,9 +28,7 @@ func NewJobPublisher(
 	return &jobPublisher{
 		db:      db,
 		encoder: encoder,
-		log: log.With(
-			slog.String("component", "mysql.job_publisher"),
-		),
+		log:     log,
 	}
 }
 

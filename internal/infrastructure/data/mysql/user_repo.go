@@ -31,9 +31,7 @@ func NewUserRepo(
 	return &userRepo{
 		db:         db,
 		dispatcher: dispatcher,
-		log: log.With(
-			slog.String("component", "mysql.user_repo"),
-		),
+		log:        log,
 	}
 }
 

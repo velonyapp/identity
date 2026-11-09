@@ -24,10 +24,8 @@ func NewSessionRepo(
 	log *slog.Logger,
 ) repo.Session {
 	return &sessionRepo{
-		db: db,
-		log: log.With(
-			slog.String("component", "mysql.session_repo"),
-		),
+		db:  db,
+		log: log,
 	}
 }
 

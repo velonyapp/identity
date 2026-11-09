@@ -23,10 +23,8 @@ func NewAvatarRepo(
 	log *slog.Logger,
 ) repo.Avatar {
 	return &avatarRepo{
-		db: db,
-		log: log.With(
-			slog.String("component", "mysql.avatar_repo"),
-		),
+		db:  db,
+		log: log,
 	}
 }
 

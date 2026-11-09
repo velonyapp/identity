@@ -21,9 +21,7 @@ func NewSessionTokenManager(
 	log *slog.Logger,
 ) port.SessionTokenManager {
 	return &sessionTokenManager{
-		log: log.With(
-			slog.String("component", "auth.session_token_manager"),
-		),
+		log: log,
 	}
 }
 

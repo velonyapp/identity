@@ -22,9 +22,7 @@ func NewPasswordManager(
 ) port.PasswordManager {
 	return &passwordManager{
 		cost: bcrypt.DefaultCost,
-		log: log.With(
-			slog.String("component", "auth.password_manager"),
-		),
+		log:  log,
 	}
 }
 

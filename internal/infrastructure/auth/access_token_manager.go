@@ -23,10 +23,8 @@ func NewAccessTokenManager(
 	log *slog.Logger,
 ) port.AccessTokenManager {
 	return &accessTokenManager{
-		c: c,
-		log: log.With(
-			slog.String("component", "auth.access_token_manager"),
-		),
+		c:   c,
+		log: log,
 	}
 }
 

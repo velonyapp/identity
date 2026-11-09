@@ -25,10 +25,8 @@ func NewUserQuery(
 	log *slog.Logger,
 ) query.User {
 	return &userQuery{
-		db: db,
-		log: log.With(
-			slog.String("component", "mysql.user_query"),
-		),
+		db:  db,
+		log: log,
 	}
 }
 

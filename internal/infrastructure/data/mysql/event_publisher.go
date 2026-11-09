@@ -28,9 +28,7 @@ func NewEventPublisher(
 	return &eventPublisher{
 		db:      db,
 		encoder: encoder,
-		log: log.With(
-			slog.String("component", "mysql.event_publisher"),
-		),
+		log:     log,
 	}
 }
 
