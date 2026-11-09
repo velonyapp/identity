@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/subtle"
 	"fmt"
+	"log/slog"
 	"math/big"
 
 	"github.com/velonyapp/identity/internal/application/port"
@@ -12,15 +13,27 @@ import (
 
 var _ port.EmailChangeRequestTokenManager = (*emailChangeRequestTokenManager)(nil)
 
-type emailChangeRequestTokenManager struct{}
+type emailChangeRequestTokenManager struct {
+	log *slog.Logger
+}
 
-func NewEmailChangeRequestTokenManager() port.EmailChangeRequestTokenManager {
-	return &emailChangeRequestTokenManager{}
+func NewEmailChangeRequestTokenManager(
+	log *slog.Logger,
+) port.EmailChangeRequestTokenManager {
+	return &emailChangeRequestTokenManager{
+		log: log.With(
+			slog.String("component", "auth.email_change_request_token_manager"),
+		),
+	}
 }
 
 func (m *emailChangeRequestTokenManager) Generate() (vo.EmailChangeRequestToken, error) {
 	n, err := rand.Int(rand.Reader, big.NewInt(1_000_000))
 	if err != nil {
+		m.log.Error(
+			"failed to generate email change request token",
+			slog.Any("error", err),
+		)
 		return vo.EmailChangeRequestToken{}, err
 	}
 

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/identity/internal/application/port"
@@ -13,11 +14,20 @@ import (
 var _ port.AccessTokenManager = (*accessTokenManager)(nil)
 
 type accessTokenManager struct {
-	c *conf.Auth
+	c   *conf.Auth
+	log *slog.Logger
 }
 
-func NewAccessTokenManager(c *conf.Auth) port.AccessTokenManager {
-	return &accessTokenManager{c: c}
+func NewAccessTokenManager(
+	c *conf.Auth,
+	log *slog.Logger,
+) port.AccessTokenManager {
+	return &accessTokenManager{
+		c: c,
+		log: log.With(
+			slog.String("component", "auth.access_token_manager"),
+		),
+	}
 }
 
 func (p *accessTokenManager) Generate(userID vo.UserID) (string, error) {
@@ -34,6 +44,11 @@ func (p *accessTokenManager) Generate(userID vo.UserID) (string, error) {
 
 	signedToken, err := token.SignedString([]byte(p.c.AccessToken.Secret))
 	if err != nil {
+		p.log.Error(
+			"failed to sign access token",
+			slog.String("user_id", userID.String()),
+			slog.Any("error", err),
+		)
 		return "", err
 	}
 
