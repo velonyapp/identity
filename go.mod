@@ -12,7 +12,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/wire v0.6.0
 	github.com/rs/cors v1.11.1
-	github.com/velonyapp/asset v0.0.0-20261028060023-97f029474c90
+	github.com/velonyapp/asset v0.0.0-20261109035050-b5149db68459
 	github.com/velonyapp/email v0.0.0-20261024052759-062f34a4f1ab
 	go.einride.tech/aip v0.86.3
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0

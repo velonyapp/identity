@@ -38,8 +38,8 @@ func (s *service) CreateAvatar(ctx context.Context, userID vo.UserID) (*entity.A
 			Tags:      []string{"identity", "user"},
 			Metadata:  map[string]string{"user_id": userID.String()},
 			ObjectKey: fmt.Sprintf("users/%s/avatar-%s.webp", userID.String(), suffix),
-			Width:     512,
-			Height:    512,
+			WidthPx:   512,
+			HeightPx:  512,
 			Format:    v1.Image_WEBP,
 		},
 	})
