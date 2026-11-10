@@ -16,9 +16,9 @@ func NewBus(
 	confirmAvatarChangeHandler ConfirmAvatarChangeHandler,
 	removeAvatarHandler RemoveAvatarHandler,
 	deleteUserHandler DeleteUserHandler,
-	registerAuthHandler RegisterAuthHandler,
-	loginAuthHandler LoginAuthHandler,
-	refreshAuthHandler RefreshAuthHandler,
+	registerUserHandler RegisterUserHandler,
+	loginUserHandler LoginUserHandler,
+	refreshUserSessionHandler RefreshUserSessionHandler,
 ) *Bus {
 	bus := &Bus{}
 
@@ -30,9 +30,9 @@ func NewBus(
 	Register(bus, confirmAvatarChangeHandler)
 	Register(bus, removeAvatarHandler)
 	Register(bus, deleteUserHandler)
-	Register(bus, registerAuthHandler)
-	Register(bus, loginAuthHandler)
-	Register(bus, refreshAuthHandler)
+	Register(bus, registerUserHandler)
+	Register(bus, loginUserHandler)
+	Register(bus, refreshUserSessionHandler)
 
 	return bus
 }

@@ -8,60 +8,6 @@ info:
 servers:
     - url: https://api.velony.app
 paths:
-    /v1/auth:login:
-        post:
-            tags:
-                - IdentityService
-            operationId: IdentityService_LoginAuth
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.identity.api.v1.LoginAuthResponse'
-    /v1/auth:refresh:
-        post:
-            tags:
-                - IdentityService
-            operationId: IdentityService_RefreshAuth
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.identity.api.v1.RefreshAuthResponse'
-    /v1/auth:register:
-        post:
-            tags:
-                - IdentityService
-            operationId: IdentityService_RegisterAuth
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.identity.api.v1.RegisterAuthResponse'
     /v1/users/{user}:
         get:
             tags:
@@ -266,6 +212,60 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.BatchGetUsersResponse'
+    /v1/users:login:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_LoginUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.LoginUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.LoginUserResponse'
+    /v1/users:refreshSession:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RefreshUserSession
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RefreshUserSessionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RefreshUserSessionResponse'
+    /v1/users:register:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_RegisterUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.RegisterUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.RegisterUserResponse'
 components:
     schemas:
         velony.identity.api.v1.BatchGetUsersResponse:
@@ -295,7 +295,7 @@ components:
                     type: string
                 token:
                     type: string
-        velony.identity.api.v1.LoginAuthRequest:
+        velony.identity.api.v1.LoginUserRequest:
             required:
                 - identity
                 - password
@@ -305,28 +305,28 @@ components:
                     type: string
                 password:
                     type: string
-        velony.identity.api.v1.LoginAuthResponse:
+        velony.identity.api.v1.LoginUserResponse:
             type: object
             properties:
                 accessToken:
                     type: string
                 refreshToken:
                     type: string
-        velony.identity.api.v1.RefreshAuthRequest:
+        velony.identity.api.v1.RefreshUserSessionRequest:
             required:
                 - refreshToken
             type: object
             properties:
                 refreshToken:
                     type: string
-        velony.identity.api.v1.RefreshAuthResponse:
+        velony.identity.api.v1.RefreshUserSessionResponse:
             type: object
             properties:
                 accessToken:
                     type: string
                 refreshToken:
                     type: string
-        velony.identity.api.v1.RegisterAuthRequest:
+        velony.identity.api.v1.RegisterUserRequest:
             required:
                 - username
                 - password
@@ -336,7 +336,7 @@ components:
                     type: string
                 password:
                     type: string
-        velony.identity.api.v1.RegisterAuthResponse:
+        velony.identity.api.v1.RegisterUserResponse:
             type: object
             properties:
                 accessToken:

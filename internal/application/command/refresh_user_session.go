@@ -13,22 +13,22 @@ import (
 
 var ErrInvalidRefreshToken = errors.New("invalid refresh token")
 
-type RefreshAuth struct {
+type RefreshUserSession struct {
 	RefreshToken string
 }
 
-type RefreshAuthResult struct {
+type RefreshUserSessionResult struct {
 	AccessToken  string
 	RefreshToken string
 }
 
-func (RefreshAuth) resultType() RefreshAuthResult {
-	return RefreshAuthResult{}
+func (RefreshUserSession) resultType() RefreshUserSessionResult {
+	return RefreshUserSessionResult{}
 }
 
-type RefreshAuthHandler Handler[RefreshAuth, RefreshAuthResult]
+type RefreshUserSessionHandler Handler[RefreshUserSession, RefreshUserSessionResult]
 
-type refreshAuthHandler struct {
+type refreshUserSessionHandler struct {
 	c                   *conf.Auth
 	userRepo            repo.User
 	sessionRepo         repo.Session
@@ -37,15 +37,15 @@ type refreshAuthHandler struct {
 	sessionTokenManager port.SessionTokenManager
 }
 
-func NewRefreshAuthHandler(
+func NewRefreshUserSessionHandler(
 	c *conf.Auth,
 	userRepo repo.User,
 	sessionRepo repo.Session,
 	unitOfWork port.UnitOfWork,
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
-) RefreshAuthHandler {
-	return &refreshAuthHandler{
+) RefreshUserSessionHandler {
+	return &refreshUserSessionHandler{
 		c:                   c,
 		userRepo:            userRepo,
 		sessionRepo:         sessionRepo,
@@ -55,52 +55,52 @@ func NewRefreshAuthHandler(
 	}
 }
 
-func (h *refreshAuthHandler) Handle(
+func (h *refreshUserSessionHandler) Handle(
 	ctx context.Context,
-	cmd RefreshAuth,
-) (RefreshAuthResult, error) {
+	cmd RefreshUserSession,
+) (RefreshUserSessionResult, error) {
 	now := time.Now().UTC()
 
 	token, _ := vo.NewSessionToken(cmd.RefreshToken)
 	tokenHash, err := h.sessionTokenManager.Hash(ctx, token)
 	if err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 
 	session, err := h.sessionRepo.FindByTokenHash(ctx, tokenHash)
 	if err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 	if session == nil {
-		return RefreshAuthResult{}, ErrInvalidRefreshToken
+		return RefreshUserSessionResult{}, ErrInvalidRefreshToken
 	}
 
 	newSessionToken, err := h.sessionTokenManager.Generate(ctx)
 	if err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 	newSessionTokenHash, err := h.sessionTokenManager.Hash(ctx, newSessionToken)
 	if err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 
 	if err := session.Refresh(newSessionTokenHash, h.c.RefreshToken.Ttl.AsDuration(), now); err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 
 	newAccessToken, err := h.accessTokenManager.Generate(ctx, session.UserID())
 	if err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 	newRefeshToken := newSessionToken.String()
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.sessionRepo.Save(ctx, session)
 	}); err != nil {
-		return RefreshAuthResult{}, err
+		return RefreshUserSessionResult{}, err
 	}
 
-	return RefreshAuthResult{
+	return RefreshUserSessionResult{
 		AccessToken:  newAccessToken,
 		RefreshToken: newRefeshToken,
 	}, nil

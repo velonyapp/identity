@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/velonyapp/identity/internal/application/port"
@@ -11,23 +12,25 @@ import (
 	"github.com/velonyapp/identity/internal/domain/vo"
 )
 
-type RegisterAuth struct {
-	Username string
+var ErrInvalidCredentials = errors.New("invalid credentials")
+
+type LoginUser struct {
+	Identity string
 	Password string
 }
 
-type RegisterAuthResult struct {
+type LoginUserResult struct {
 	AccessToken  string
 	RefreshToken string
 }
 
-func (RegisterAuth) resultType() RegisterAuthResult {
-	return RegisterAuthResult{}
+func (LoginUser) resultType() LoginUserResult {
+	return LoginUserResult{}
 }
 
-type RegisterAuthHandler Handler[RegisterAuth, RegisterAuthResult]
+type LoginUserHandler Handler[LoginUser, LoginUserResult]
 
-type registerAuthHandler struct {
+type loginUserHandler struct {
 	c                   *conf.Auth
 	userRepo            repo.User
 	sessionRepo         repo.Session
@@ -37,7 +40,7 @@ type registerAuthHandler struct {
 	sessionTokenManager port.SessionTokenManager
 }
 
-func NewRegisterAuthHandler(
+func NewLoginUserHandler(
 	c *conf.Auth,
 	userRepo repo.User,
 	sessionRepo repo.Session,
@@ -45,8 +48,8 @@ func NewRegisterAuthHandler(
 	passwordManager port.PasswordManager,
 	accessTokenManager port.AccessTokenManager,
 	sessionTokenManager port.SessionTokenManager,
-) RegisterAuthHandler {
-	return &registerAuthHandler{
+) LoginUserHandler {
+	return &loginUserHandler{
 		c:                   c,
 		userRepo:            userRepo,
 		sessionRepo:         sessionRepo,
@@ -57,39 +60,45 @@ func NewRegisterAuthHandler(
 	}
 }
 
-func (h *registerAuthHandler) Handle(
+func (h *loginUserHandler) Handle(
 	ctx context.Context,
-	cmd RegisterAuth,
-) (RegisterAuthResult, error) {
+	cmd LoginUser,
+) (LoginUserResult, error) {
 	now := time.Now().UTC()
 
-	username, err := vo.NewUsername(cmd.Username)
+	username, _ := vo.NewUsername(cmd.Identity)
+	email, _ := vo.NewEmail(cmd.Identity)
+
+	user, err := h.userRepo.FindByUsername(ctx, username)
 	if err != nil {
-		return RegisterAuthResult{}, err
+		return LoginUserResult{}, err
 	}
-	password, err := vo.NewPassword(cmd.Password)
-	if err != nil {
-		return RegisterAuthResult{}, err
+	if user == nil {
+		user, err = h.userRepo.FindByEmail(ctx, email)
+		if err != nil {
+			return LoginUserResult{}, err
+		}
 	}
-	passwordHash, err := h.passwordManager.Hash(ctx, password)
-	if err != nil {
-		return RegisterAuthResult{}, err
+	if user == nil {
+		return LoginUserResult{}, ErrInvalidCredentials
 	}
 
-	user := entity.NewUser(
-		username,
-		now,
-	)
-	localAuthStrategy := vo.NewLocalAuthStrategy(passwordHash)
-	user.ChangeLocalAuthStrategy(localAuthStrategy)
+	password, err := vo.NewPassword(cmd.Password)
+	if err != nil {
+		return LoginUserResult{}, err
+	}
+
+	if err := h.passwordManager.Verify(ctx, password, user.LocalAuthStrategy().PasswordHash()); err != nil {
+		return LoginUserResult{}, err
+	}
 
 	sessionToken, err := h.sessionTokenManager.Generate(ctx)
 	if err != nil {
-		return RegisterAuthResult{}, err
+		return LoginUserResult{}, err
 	}
 	sessionTokenHash, err := h.sessionTokenManager.Hash(ctx, sessionToken)
 	if err != nil {
-		return RegisterAuthResult{}, err
+		return LoginUserResult{}, err
 	}
 
 	session := entity.NewSession(
@@ -101,21 +110,17 @@ func (h *registerAuthHandler) Handle(
 
 	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID())
 	if err != nil {
-		return RegisterAuthResult{}, err
+		return LoginUserResult{}, err
 	}
 	refeshToken := sessionToken.String()
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		if err := h.userRepo.Save(ctx, user); err != nil {
-			return err
-		}
-
 		return h.sessionRepo.Save(ctx, session)
 	}); err != nil {
-		return RegisterAuthResult{}, err
+		return LoginUserResult{}, err
 	}
 
-	return RegisterAuthResult{
+	return LoginUserResult{
 		AccessToken:  accessToken,
 		RefreshToken: refeshToken,
 	}, nil

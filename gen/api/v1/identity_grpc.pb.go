@@ -29,9 +29,9 @@ const (
 	IdentityService_RemoveUserEmail_FullMethodName         = "/velony.identity.api.v1.IdentityService/RemoveUserEmail"
 	IdentityService_RequestUserAvatarChange_FullMethodName = "/velony.identity.api.v1.IdentityService/RequestUserAvatarChange"
 	IdentityService_RemoveUserAvatar_FullMethodName        = "/velony.identity.api.v1.IdentityService/RemoveUserAvatar"
-	IdentityService_LoginAuth_FullMethodName               = "/velony.identity.api.v1.IdentityService/LoginAuth"
-	IdentityService_RegisterAuth_FullMethodName            = "/velony.identity.api.v1.IdentityService/RegisterAuth"
-	IdentityService_RefreshAuth_FullMethodName             = "/velony.identity.api.v1.IdentityService/RefreshAuth"
+	IdentityService_RegisterUser_FullMethodName            = "/velony.identity.api.v1.IdentityService/RegisterUser"
+	IdentityService_LoginUser_FullMethodName               = "/velony.identity.api.v1.IdentityService/LoginUser"
+	IdentityService_RefreshUserSession_FullMethodName      = "/velony.identity.api.v1.IdentityService/RefreshUserSession"
 )
 
 // IdentityServiceClient is the client API for IdentityService service.
@@ -47,9 +47,9 @@ type IdentityServiceClient interface {
 	RemoveUserEmail(ctx context.Context, in *RemoveUserEmailRequest, opts ...grpc.CallOption) (*User, error)
 	RequestUserAvatarChange(ctx context.Context, in *RequestUserAvatarChangeRequest, opts ...grpc.CallOption) (*RequestUserAvatarChangeResponse, error)
 	RemoveUserAvatar(ctx context.Context, in *RemoveUserAvatarRequest, opts ...grpc.CallOption) (*User, error)
-	LoginAuth(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthResponse, error)
-	RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthResponse, error)
-	RefreshAuth(ctx context.Context, in *RefreshAuthRequest, opts ...grpc.CallOption) (*RefreshAuthResponse, error)
+	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
+	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
+	RefreshUserSession(ctx context.Context, in *RefreshUserSessionRequest, opts ...grpc.CallOption) (*RefreshUserSessionResponse, error)
 }
 
 type identityServiceClient struct {
@@ -150,30 +150,30 @@ func (c *identityServiceClient) RemoveUserAvatar(ctx context.Context, in *Remove
 	return out, nil
 }
 
-func (c *identityServiceClient) LoginAuth(ctx context.Context, in *LoginAuthRequest, opts ...grpc.CallOption) (*LoginAuthResponse, error) {
+func (c *identityServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LoginAuthResponse)
-	err := c.cc.Invoke(ctx, IdentityService_LoginAuth_FullMethodName, in, out, cOpts...)
+	out := new(RegisterUserResponse)
+	err := c.cc.Invoke(ctx, IdentityService_RegisterUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityServiceClient) RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthResponse, error) {
+func (c *identityServiceClient) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RegisterAuthResponse)
-	err := c.cc.Invoke(ctx, IdentityService_RegisterAuth_FullMethodName, in, out, cOpts...)
+	out := new(LoginUserResponse)
+	err := c.cc.Invoke(ctx, IdentityService_LoginUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityServiceClient) RefreshAuth(ctx context.Context, in *RefreshAuthRequest, opts ...grpc.CallOption) (*RefreshAuthResponse, error) {
+func (c *identityServiceClient) RefreshUserSession(ctx context.Context, in *RefreshUserSessionRequest, opts ...grpc.CallOption) (*RefreshUserSessionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RefreshAuthResponse)
-	err := c.cc.Invoke(ctx, IdentityService_RefreshAuth_FullMethodName, in, out, cOpts...)
+	out := new(RefreshUserSessionResponse)
+	err := c.cc.Invoke(ctx, IdentityService_RefreshUserSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -193,9 +193,9 @@ type IdentityServiceServer interface {
 	RemoveUserEmail(context.Context, *RemoveUserEmailRequest) (*User, error)
 	RequestUserAvatarChange(context.Context, *RequestUserAvatarChangeRequest) (*RequestUserAvatarChangeResponse, error)
 	RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error)
-	LoginAuth(context.Context, *LoginAuthRequest) (*LoginAuthResponse, error)
-	RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error)
-	RefreshAuth(context.Context, *RefreshAuthRequest) (*RefreshAuthResponse, error)
+	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
 	mustEmbedUnimplementedIdentityServiceServer()
 }
 
@@ -233,14 +233,14 @@ func (UnimplementedIdentityServiceServer) RequestUserAvatarChange(context.Contex
 func (UnimplementedIdentityServiceServer) RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method RemoveUserAvatar not implemented")
 }
-func (UnimplementedIdentityServiceServer) LoginAuth(context.Context, *LoginAuthRequest) (*LoginAuthResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method LoginAuth not implemented")
+func (UnimplementedIdentityServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RegisterUser not implemented")
 }
-func (UnimplementedIdentityServiceServer) RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method RegisterAuth not implemented")
+func (UnimplementedIdentityServiceServer) LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LoginUser not implemented")
 }
-func (UnimplementedIdentityServiceServer) RefreshAuth(context.Context, *RefreshAuthRequest) (*RefreshAuthResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method RefreshAuth not implemented")
+func (UnimplementedIdentityServiceServer) RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RefreshUserSession not implemented")
 }
 func (UnimplementedIdentityServiceServer) mustEmbedUnimplementedIdentityServiceServer() {}
 func (UnimplementedIdentityServiceServer) testEmbeddedByValue()                         {}
@@ -425,56 +425,56 @@ func _IdentityService_RemoveUserAvatar_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityService_LoginAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginAuthRequest)
+func _IdentityService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityServiceServer).LoginAuth(ctx, in)
+		return srv.(IdentityServiceServer).RegisterUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityService_LoginAuth_FullMethodName,
+		FullMethod: IdentityService_RegisterUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).LoginAuth(ctx, req.(*LoginAuthRequest))
+		return srv.(IdentityServiceServer).RegisterUser(ctx, req.(*RegisterUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityService_RegisterAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterAuthRequest)
+func _IdentityService_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityServiceServer).RegisterAuth(ctx, in)
+		return srv.(IdentityServiceServer).LoginUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityService_RegisterAuth_FullMethodName,
+		FullMethod: IdentityService_LoginUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).RegisterAuth(ctx, req.(*RegisterAuthRequest))
+		return srv.(IdentityServiceServer).LoginUser(ctx, req.(*LoginUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityService_RefreshAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefreshAuthRequest)
+func _IdentityService_RefreshUserSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshUserSessionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityServiceServer).RefreshAuth(ctx, in)
+		return srv.(IdentityServiceServer).RefreshUserSession(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityService_RefreshAuth_FullMethodName,
+		FullMethod: IdentityService_RefreshUserSession_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).RefreshAuth(ctx, req.(*RefreshAuthRequest))
+		return srv.(IdentityServiceServer).RefreshUserSession(ctx, req.(*RefreshUserSessionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -523,16 +523,16 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IdentityService_RemoveUserAvatar_Handler,
 		},
 		{
-			MethodName: "LoginAuth",
-			Handler:    _IdentityService_LoginAuth_Handler,
+			MethodName: "RegisterUser",
+			Handler:    _IdentityService_RegisterUser_Handler,
 		},
 		{
-			MethodName: "RegisterAuth",
-			Handler:    _IdentityService_RegisterAuth_Handler,
+			MethodName: "LoginUser",
+			Handler:    _IdentityService_LoginUser_Handler,
 		},
 		{
-			MethodName: "RefreshAuth",
-			Handler:    _IdentityService_RefreshAuth_Handler,
+			MethodName: "RefreshUserSession",
+			Handler:    _IdentityService_RefreshUserSession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -343,8 +343,8 @@ func (s *API) RemoveUserAvatar(ctx context.Context, req *v1.RemoveUserAvatarRequ
 	}, nil
 }
 
-func (s *API) RegisterAuth(ctx context.Context, req *v1.RegisterAuthRequest) (*v1.RegisterAuthResponse, error) {
-	result, err := command.Send(ctx, s.commandBus, command.RegisterAuth{
+func (s *API) RegisterUser(ctx context.Context, req *v1.RegisterUserRequest) (*v1.RegisterUserResponse, error) {
+	result, err := command.Send(ctx, s.commandBus, command.RegisterUser{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -352,14 +352,14 @@ func (s *API) RegisterAuth(ctx context.Context, req *v1.RegisterAuthRequest) (*v
 		return nil, err
 	}
 
-	return &v1.RegisterAuthResponse{
+	return &v1.RegisterUserResponse{
 		AccessToken:  result.AccessToken,
 		RefreshToken: result.RefreshToken,
 	}, nil
 }
 
-func (s *API) LoginAuth(ctx context.Context, req *v1.LoginAuthRequest) (*v1.LoginAuthResponse, error) {
-	result, err := command.Send(ctx, s.commandBus, command.LoginAuth{
+func (s *API) LoginUser(ctx context.Context, req *v1.LoginUserRequest) (*v1.LoginUserResponse, error) {
+	result, err := command.Send(ctx, s.commandBus, command.LoginUser{
 		Identity: req.Identity,
 		Password: req.Password,
 	})
@@ -367,21 +367,21 @@ func (s *API) LoginAuth(ctx context.Context, req *v1.LoginAuthRequest) (*v1.Logi
 		return nil, err
 	}
 
-	return &v1.LoginAuthResponse{
+	return &v1.LoginUserResponse{
 		AccessToken:  result.AccessToken,
 		RefreshToken: result.RefreshToken,
 	}, nil
 }
 
-func (s *API) RefreshAuth(ctx context.Context, req *v1.RefreshAuthRequest) (*v1.RefreshAuthResponse, error) {
-	result, err := command.Send(ctx, s.commandBus, command.RefreshAuth{
+func (s *API) RefreshUserSession(ctx context.Context, req *v1.RefreshUserSessionRequest) (*v1.RefreshUserSessionResponse, error) {
+	result, err := command.Send(ctx, s.commandBus, command.RefreshUserSession{
 		RefreshToken: req.RefreshToken,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.RefreshAuthResponse{
+	return &v1.RefreshUserSessionResponse{
 		AccessToken:  result.AccessToken,
 		RefreshToken: result.RefreshToken,
 	}, nil

@@ -23,9 +23,9 @@ const OperationIdentityServiceChangeUserUsername = "/velony.identity.api.v1.Iden
 const OperationIdentityServiceConfirmUserEmailChange = "/velony.identity.api.v1.IdentityService/ConfirmUserEmailChange"
 const OperationIdentityServiceDeleteUser = "/velony.identity.api.v1.IdentityService/DeleteUser"
 const OperationIdentityServiceGetUser = "/velony.identity.api.v1.IdentityService/GetUser"
-const OperationIdentityServiceLoginAuth = "/velony.identity.api.v1.IdentityService/LoginAuth"
-const OperationIdentityServiceRefreshAuth = "/velony.identity.api.v1.IdentityService/RefreshAuth"
-const OperationIdentityServiceRegisterAuth = "/velony.identity.api.v1.IdentityService/RegisterAuth"
+const OperationIdentityServiceLoginUser = "/velony.identity.api.v1.IdentityService/LoginUser"
+const OperationIdentityServiceRefreshUserSession = "/velony.identity.api.v1.IdentityService/RefreshUserSession"
+const OperationIdentityServiceRegisterUser = "/velony.identity.api.v1.IdentityService/RegisterUser"
 const OperationIdentityServiceRemoveUserAvatar = "/velony.identity.api.v1.IdentityService/RemoveUserAvatar"
 const OperationIdentityServiceRemoveUserEmail = "/velony.identity.api.v1.IdentityService/RemoveUserEmail"
 const OperationIdentityServiceRequestUserAvatarChange = "/velony.identity.api.v1.IdentityService/RequestUserAvatarChange"
@@ -37,9 +37,9 @@ type IdentityServiceHTTPServer interface {
 	ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
-	LoginAuth(context.Context, *LoginAuthRequest) (*LoginAuthResponse, error)
-	RefreshAuth(context.Context, *RefreshAuthRequest) (*RefreshAuthResponse, error)
-	RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error)
+	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
+	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error)
 	RemoveUserEmail(context.Context, *RemoveUserEmailRequest) (*User, error)
 	RequestUserAvatarChange(context.Context, *RequestUserAvatarChangeRequest) (*RequestUserAvatarChangeResponse, error)
@@ -57,9 +57,9 @@ func RegisterIdentityServiceHTTPServer(s *http.Server, srv IdentityServiceHTTPSe
 	r.Handle("POST", "/v1/{name:users/[^/]+}:removeEmail", _IdentityService_RemoveUserEmail0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:users/[^/]+}:requestAvatarChange", _IdentityService_RequestUserAvatarChange0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:users/[^/]+}:removeAvatar", _IdentityService_RemoveUserAvatar0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/auth:login", _IdentityService_LoginAuth0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/auth:register", _IdentityService_RegisterAuth0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/auth:refresh", _IdentityService_RefreshAuth0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/users:register", _IdentityService_RegisterUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/users:login", _IdentityService_LoginUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/users:refreshSession", _IdentityService_RefreshUserSession0_HTTP_Handler(srv))
 }
 
 func _IdentityService_GetUser0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
@@ -257,59 +257,59 @@ func _IdentityService_RemoveUserAvatar0_HTTP_Handler(srv IdentityServiceHTTPServ
 	}
 }
 
-func _IdentityService_LoginAuth0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+func _IdentityService_RegisterUser0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LoginAuthRequest
+		var in RegisterUserRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationIdentityServiceLoginAuth)
+		http.SetOperation(ctx, OperationIdentityServiceRegisterUser)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.LoginAuth(ctx, req.(*LoginAuthRequest))
+			return srv.RegisterUser(ctx, req.(*RegisterUserRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*LoginAuthResponse)
+		reply := out.(*RegisterUserResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _IdentityService_RegisterAuth0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+func _IdentityService_LoginUser0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in RegisterAuthRequest
+		var in LoginUserRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationIdentityServiceRegisterAuth)
+		http.SetOperation(ctx, OperationIdentityServiceLoginUser)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.RegisterAuth(ctx, req.(*RegisterAuthRequest))
+			return srv.LoginUser(ctx, req.(*LoginUserRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*RegisterAuthResponse)
+		reply := out.(*LoginUserResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _IdentityService_RefreshAuth0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+func _IdentityService_RefreshUserSession0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in RefreshAuthRequest
+		var in RefreshUserSessionRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationIdentityServiceRefreshAuth)
+		http.SetOperation(ctx, OperationIdentityServiceRefreshUserSession)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.RefreshAuth(ctx, req.(*RefreshAuthRequest))
+			return srv.RefreshUserSession(ctx, req.(*RefreshUserSessionRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*RefreshAuthResponse)
+		reply := out.(*RefreshUserSessionResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -320,9 +320,9 @@ type IdentityServiceHTTPClient interface {
 	ConfirmUserEmailChange(ctx context.Context, req *ConfirmUserEmailChangeRequest, opts ...http.CallOption) (rsp *User, err error)
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
-	LoginAuth(ctx context.Context, req *LoginAuthRequest, opts ...http.CallOption) (rsp *LoginAuthResponse, err error)
-	RefreshAuth(ctx context.Context, req *RefreshAuthRequest, opts ...http.CallOption) (rsp *RefreshAuthResponse, err error)
-	RegisterAuth(ctx context.Context, req *RegisterAuthRequest, opts ...http.CallOption) (rsp *RegisterAuthResponse, err error)
+	LoginUser(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResponse, err error)
+	RefreshUserSession(ctx context.Context, req *RefreshUserSessionRequest, opts ...http.CallOption) (rsp *RefreshUserSessionResponse, err error)
+	RegisterUser(ctx context.Context, req *RegisterUserRequest, opts ...http.CallOption) (rsp *RegisterUserResponse, err error)
 	RemoveUserAvatar(ctx context.Context, req *RemoveUserAvatarRequest, opts ...http.CallOption) (rsp *User, err error)
 	RemoveUserEmail(ctx context.Context, req *RemoveUserEmailRequest, opts ...http.CallOption) (rsp *User, err error)
 	RequestUserAvatarChange(ctx context.Context, req *RequestUserAvatarChangeRequest, opts ...http.CallOption) (rsp *RequestUserAvatarChangeResponse, err error)
@@ -419,14 +419,14 @@ func (c *IdentityServiceHTTPClientImpl) GetUser(ctx context.Context, in *GetUser
 	return &out, nil
 }
 
-func (c *IdentityServiceHTTPClientImpl) LoginAuth(ctx context.Context, in *LoginAuthRequest, opts ...http.CallOption) (*LoginAuthResponse, error) {
-	var out LoginAuthResponse
-	pattern := "/v1/auth:login"
+func (c *IdentityServiceHTTPClientImpl) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...http.CallOption) (*LoginUserResponse, error) {
+	var out LoginUserResponse
+	pattern := "/v1/users:login"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
-		http.Operation(OperationIdentityServiceLoginAuth),
+		http.Operation(OperationIdentityServiceLoginUser),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
@@ -436,14 +436,14 @@ func (c *IdentityServiceHTTPClientImpl) LoginAuth(ctx context.Context, in *Login
 	return &out, nil
 }
 
-func (c *IdentityServiceHTTPClientImpl) RefreshAuth(ctx context.Context, in *RefreshAuthRequest, opts ...http.CallOption) (*RefreshAuthResponse, error) {
-	var out RefreshAuthResponse
-	pattern := "/v1/auth:refresh"
+func (c *IdentityServiceHTTPClientImpl) RefreshUserSession(ctx context.Context, in *RefreshUserSessionRequest, opts ...http.CallOption) (*RefreshUserSessionResponse, error) {
+	var out RefreshUserSessionResponse
+	pattern := "/v1/users:refreshSession"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
-		http.Operation(OperationIdentityServiceRefreshAuth),
+		http.Operation(OperationIdentityServiceRefreshUserSession),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
@@ -453,14 +453,14 @@ func (c *IdentityServiceHTTPClientImpl) RefreshAuth(ctx context.Context, in *Ref
 	return &out, nil
 }
 
-func (c *IdentityServiceHTTPClientImpl) RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...http.CallOption) (*RegisterAuthResponse, error) {
-	var out RegisterAuthResponse
-	pattern := "/v1/auth:register"
+func (c *IdentityServiceHTTPClientImpl) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...http.CallOption) (*RegisterUserResponse, error) {
+	var out RegisterUserResponse
+	pattern := "/v1/users:register"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
-		http.Operation(OperationIdentityServiceRegisterAuth),
+		http.Operation(OperationIdentityServiceRegisterUser),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

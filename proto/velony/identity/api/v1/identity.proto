@@ -77,25 +77,25 @@ service IdentityService {
     };
   }
 
-  rpc LoginAuth(LoginAuthRequest) returns (LoginAuthResponse) {
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {
     option (google.api.http) = {
-      post: "/v1/auth:login"
-      body: "*"
-    };
-    option (google.api.method_signature) = "identity,password";
-  }
-
-  rpc RegisterAuth(RegisterAuthRequest) returns (RegisterAuthResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth:register"
+      post: "/v1/users:register"
       body: "*"
     };
     option (google.api.method_signature) = "username,password";
   }
 
-  rpc RefreshAuth(RefreshAuthRequest) returns (RefreshAuthResponse) {
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
     option (google.api.http) = {
-      post: "/v1/auth:refresh"
+      post: "/v1/users:login"
+      body: "*"
+    };
+    option (google.api.method_signature) = "username,password";
+  }
+
+  rpc RefreshUserSession(RefreshUserSessionRequest) returns (RefreshUserSessionResponse) {
+    option (google.api.http) = {
+      post: "/v1/users:refreshSession"
       body: "*"
     };
     option (google.api.method_signature) = "refresh_token";
@@ -233,7 +233,7 @@ message RequestUserAvatarChangeResponse {
   string upload_url = 1;
 }
 
-message LoginAuthRequest {
+message LoginUserRequest {
   string identity = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
@@ -242,12 +242,12 @@ message LoginAuthRequest {
   ];
 }
 
-message LoginAuthResponse {
+message LoginUserResponse {
   string access_token  = 1;
   string refresh_token = 2;
 }
 
-message RegisterAuthRequest {
+message RegisterUserRequest {
   string username  = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
@@ -256,18 +256,18 @@ message RegisterAuthRequest {
   ];
 }
 
-message RegisterAuthResponse {
+message RegisterUserResponse {
   string access_token  = 1;
   string refresh_token = 2;
 }
 
-message RefreshAuthRequest {
+message RefreshUserSessionRequest {
   string refresh_token = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
-message RefreshAuthResponse {
+message RefreshUserSessionResponse {
   string access_token  = 1;
   string refresh_token = 2;
 }
