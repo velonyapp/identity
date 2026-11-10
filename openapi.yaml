@@ -230,6 +230,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.LoginUserResponse'
+    /v1/users:logout:
+        post:
+            tags:
+                - IdentityService
+            operationId: IdentityService_LogoutUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.identity.api.v1.LogoutUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.LogoutUserResponse'
     /v1/users:refreshSession:
         post:
             tags:
@@ -312,6 +330,12 @@ components:
                     type: string
                 refreshToken:
                     type: string
+        velony.identity.api.v1.LogoutUserRequest:
+            type: object
+            properties: {}
+        velony.identity.api.v1.LogoutUserResponse:
+            type: object
+            properties: {}
         velony.identity.api.v1.RefreshUserSessionRequest:
             required:
                 - refreshToken

@@ -93,6 +93,14 @@ service IdentityService {
     option (google.api.method_signature) = "username,password";
   }
 
+  rpc LogoutUser(LogoutUserRequest) returns (LogoutUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/users:logout"
+      body: "*"
+    };
+    option (google.api.method_signature) = "username,password";
+  }
+
   rpc RefreshUserSession(RefreshUserSessionRequest) returns (RefreshUserSessionResponse) {
     option (google.api.http) = {
       post: "/v1/users:refreshSession"
@@ -246,6 +254,10 @@ message LoginUserResponse {
   string access_token  = 1;
   string refresh_token = 2;
 }
+
+message LogoutUserRequest {}
+
+message LogoutUserResponse {}
 
 message RegisterUserRequest {
   string username  = 1 [

@@ -374,6 +374,21 @@ func (s *API) LoginUser(ctx context.Context, req *v1.LoginUserRequest) (*v1.Logi
 	}, nil
 }
 
+func (s *API) LogoutUser(ctx context.Context, req *v1.LogoutUserRequest) (*v1.LogoutUserResponse, error) {
+	sessionID, err := parseSessionID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := command.Send(ctx, s.commandBus, command.LogoutUser{
+		SessionID: sessionID,
+	}); err != nil {
+		return nil, err
+	}
+
+	return &v1.LogoutUserResponse{}, nil
+}
+
 func (s *API) RefreshUserSession(ctx context.Context, req *v1.RefreshUserSessionRequest) (*v1.RefreshUserSessionResponse, error) {
 	result, err := command.Send(ctx, s.commandBus, command.RefreshUserSession{
 		RefreshToken: req.RefreshToken,

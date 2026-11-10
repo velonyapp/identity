@@ -20,6 +20,7 @@ var ProviderSet = wire.NewSet(
 	command.NewDeleteUserHandler,
 	command.NewRegisterUserHandler,
 	command.NewLoginUserHandler,
+	command.NewLogoutUserHandler,
 	command.NewRefreshUserSessionHandler,
 	query.NewBus,
 	query.NewGetUserHandler,

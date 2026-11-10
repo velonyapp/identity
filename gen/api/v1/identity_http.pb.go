@@ -24,6 +24,7 @@ const OperationIdentityServiceConfirmUserEmailChange = "/velony.identity.api.v1.
 const OperationIdentityServiceDeleteUser = "/velony.identity.api.v1.IdentityService/DeleteUser"
 const OperationIdentityServiceGetUser = "/velony.identity.api.v1.IdentityService/GetUser"
 const OperationIdentityServiceLoginUser = "/velony.identity.api.v1.IdentityService/LoginUser"
+const OperationIdentityServiceLogoutUser = "/velony.identity.api.v1.IdentityService/LogoutUser"
 const OperationIdentityServiceRefreshUserSession = "/velony.identity.api.v1.IdentityService/RefreshUserSession"
 const OperationIdentityServiceRegisterUser = "/velony.identity.api.v1.IdentityService/RegisterUser"
 const OperationIdentityServiceRemoveUserAvatar = "/velony.identity.api.v1.IdentityService/RemoveUserAvatar"
@@ -38,6 +39,7 @@ type IdentityServiceHTTPServer interface {
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	LogoutUser(context.Context, *LogoutUserRequest) (*LogoutUserResponse, error)
 	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error)
@@ -59,6 +61,7 @@ func RegisterIdentityServiceHTTPServer(s *http.Server, srv IdentityServiceHTTPSe
 	r.Handle("POST", "/v1/{name:users/[^/]+}:removeAvatar", _IdentityService_RemoveUserAvatar0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/users:register", _IdentityService_RegisterUser0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/users:login", _IdentityService_LoginUser0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/users:logout", _IdentityService_LogoutUser0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/users:refreshSession", _IdentityService_RefreshUserSession0_HTTP_Handler(srv))
 }
 
@@ -295,6 +298,25 @@ func _IdentityService_LoginUser0_HTTP_Handler(srv IdentityServiceHTTPServer) fun
 	}
 }
 
+func _IdentityService_LogoutUser0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LogoutUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationIdentityServiceLogoutUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.LogoutUser(ctx, req.(*LogoutUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LogoutUserResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _IdentityService_RefreshUserSession0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in RefreshUserSessionRequest
@@ -321,6 +343,7 @@ type IdentityServiceHTTPClient interface {
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	LoginUser(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResponse, err error)
+	LogoutUser(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResponse, err error)
 	RefreshUserSession(ctx context.Context, req *RefreshUserSessionRequest, opts ...http.CallOption) (rsp *RefreshUserSessionResponse, err error)
 	RegisterUser(ctx context.Context, req *RegisterUserRequest, opts ...http.CallOption) (rsp *RegisterUserResponse, err error)
 	RemoveUserAvatar(ctx context.Context, req *RemoveUserAvatarRequest, opts ...http.CallOption) (rsp *User, err error)
@@ -427,6 +450,23 @@ func (c *IdentityServiceHTTPClientImpl) LoginUser(ctx context.Context, in *Login
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
 		http.Operation(OperationIdentityServiceLoginUser),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *IdentityServiceHTTPClientImpl) LogoutUser(ctx context.Context, in *LogoutUserRequest, opts ...http.CallOption) (*LogoutUserResponse, error) {
+	var out LogoutUserResponse
+	pattern := "/v1/users:logout"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationIdentityServiceLogoutUser),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

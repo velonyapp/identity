@@ -750,6 +750,78 @@ func (x *LoginUserResponse) GetRefreshToken() string {
 	return ""
 }
 
+type LogoutUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LogoutUserRequest) Reset() {
+	*x = LogoutUserRequest{}
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LogoutUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LogoutUserRequest) ProtoMessage() {}
+
+func (x *LogoutUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LogoutUserRequest.ProtoReflect.Descriptor instead.
+func (*LogoutUserRequest) Descriptor() ([]byte, []int) {
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{15}
+}
+
+type LogoutUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LogoutUserResponse) Reset() {
+	*x = LogoutUserResponse{}
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LogoutUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LogoutUserResponse) ProtoMessage() {}
+
+func (x *LogoutUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LogoutUserResponse.ProtoReflect.Descriptor instead.
+func (*LogoutUserResponse) Descriptor() ([]byte, []int) {
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{16}
+}
+
 type RegisterUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
@@ -760,7 +832,7 @@ type RegisterUserRequest struct {
 
 func (x *RegisterUserRequest) Reset() {
 	*x = RegisterUserRequest{}
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +844,7 @@ func (x *RegisterUserRequest) String() string {
 func (*RegisterUserRequest) ProtoMessage() {}
 
 func (x *RegisterUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[15]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +857,7 @@ func (x *RegisterUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterUserRequest.ProtoReflect.Descriptor instead.
 func (*RegisterUserRequest) Descriptor() ([]byte, []int) {
-	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{15}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RegisterUserRequest) GetUsername() string {
@@ -812,7 +884,7 @@ type RegisterUserResponse struct {
 
 func (x *RegisterUserResponse) Reset() {
 	*x = RegisterUserResponse{}
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -824,7 +896,7 @@ func (x *RegisterUserResponse) String() string {
 func (*RegisterUserResponse) ProtoMessage() {}
 
 func (x *RegisterUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[16]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -837,7 +909,7 @@ func (x *RegisterUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterUserResponse.ProtoReflect.Descriptor instead.
 func (*RegisterUserResponse) Descriptor() ([]byte, []int) {
-	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{16}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RegisterUserResponse) GetAccessToken() string {
@@ -863,7 +935,7 @@ type RefreshUserSessionRequest struct {
 
 func (x *RefreshUserSessionRequest) Reset() {
 	*x = RefreshUserSessionRequest{}
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -875,7 +947,7 @@ func (x *RefreshUserSessionRequest) String() string {
 func (*RefreshUserSessionRequest) ProtoMessage() {}
 
 func (x *RefreshUserSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[17]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -888,7 +960,7 @@ func (x *RefreshUserSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshUserSessionRequest.ProtoReflect.Descriptor instead.
 func (*RefreshUserSessionRequest) Descriptor() ([]byte, []int) {
-	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{17}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RefreshUserSessionRequest) GetRefreshToken() string {
@@ -908,7 +980,7 @@ type RefreshUserSessionResponse struct {
 
 func (x *RefreshUserSessionResponse) Reset() {
 	*x = RefreshUserSessionResponse{}
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -920,7 +992,7 @@ func (x *RefreshUserSessionResponse) String() string {
 func (*RefreshUserSessionResponse) ProtoMessage() {}
 
 func (x *RefreshUserSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[18]
+	mi := &file_velony_identity_api_v1_identity_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -933,7 +1005,7 @@ func (x *RefreshUserSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshUserSessionResponse.ProtoReflect.Descriptor instead.
 func (*RefreshUserSessionResponse) Descriptor() ([]byte, []int) {
-	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{18}
+	return file_velony_identity_api_v1_identity_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RefreshUserSessionResponse) GetAccessToken() string {
@@ -1007,7 +1079,9 @@ const file_velony_identity_api_v1_identity_proto_rawDesc = "" +
 	"\bpassword\x18\x02 \x01(\tB\x03\xe0A\x02R\bpassword\"[\n" +
 	"\x11LoginUserResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"W\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"\x13\n" +
+	"\x11LogoutUserRequest\"\x14\n" +
+	"\x12LogoutUserResponse\"W\n" +
 	"\x13RegisterUserRequest\x12\x1f\n" +
 	"\busername\x18\x01 \x01(\tB\x03\xe0A\x02R\busername\x12\x1f\n" +
 	"\bpassword\x18\x02 \x01(\tB\x03\xe0A\x02R\bpassword\"^\n" +
@@ -1018,7 +1092,7 @@ const file_velony_identity_api_v1_identity_proto_rawDesc = "" +
 	"\rrefresh_token\x18\x01 \x01(\tB\x03\xe0A\x02R\frefreshToken\"d\n" +
 	"\x1aRefreshUserSessionResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\xcd\x0e\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\xe4\x0f\n" +
 	"\x0fIdentityService\x12r\n" +
 	"\aGetUser\x12&.velony.identity.api.v1.GetUserRequest\x1a\x1c.velony.identity.api.v1.User\"!\xdaA\x04name\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/{name=users/*}\x12\x88\x01\n" +
 	"\rBatchGetUsers\x12,.velony.identity.api.v1.BatchGetUsersRequest\x1a-.velony.identity.api.v1.BatchGetUsersResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/users:batchGet\x12r\n" +
@@ -1031,7 +1105,9 @@ const file_velony_identity_api_v1_identity_proto_rawDesc = "" +
 	"\x17RequestUserAvatarChange\x126.velony.identity.api.v1.RequestUserAvatarChangeRequest\x1a7.velony.identity.api.v1.RequestUserAvatarChangeResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/{name=users/*}:requestAvatarChange\x12\x8d\x01\n" +
 	"\x10RemoveUserAvatar\x12/.velony.identity.api.v1.RemoveUserAvatarRequest\x1a\x1c.velony.identity.api.v1.User\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/v1/{name=users/*}:removeAvatar\x12\x9c\x01\n" +
 	"\fRegisterUser\x12+.velony.identity.api.v1.RegisterUserRequest\x1a,.velony.identity.api.v1.RegisterUserResponse\"1\xdaA\x11username,password\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/v1/users:register\x12\x90\x01\n" +
-	"\tLoginUser\x12(.velony.identity.api.v1.LoginUserRequest\x1a).velony.identity.api.v1.LoginUserResponse\".\xdaA\x11username,password\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/users:login\x12\xb0\x01\n" +
+	"\tLoginUser\x12(.velony.identity.api.v1.LoginUserRequest\x1a).velony.identity.api.v1.LoginUserResponse\".\xdaA\x11username,password\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/users:login\x12\x94\x01\n" +
+	"\n" +
+	"LogoutUser\x12).velony.identity.api.v1.LogoutUserRequest\x1a*.velony.identity.api.v1.LogoutUserResponse\"/\xdaA\x11username,password\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/users:logout\x12\xb0\x01\n" +
 	"\x12RefreshUserSession\x121.velony.identity.api.v1.RefreshUserSessionRequest\x1a2.velony.identity.api.v1.RefreshUserSessionResponse\"3\xdaA\rrefresh_token\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/users:refreshSession\x1a\x11\xcaA\x0eapi.velony.appB0Z.github.com/velonyapp/identity/gen/api/v1;apiv1b\x06proto3"
 
 var (
@@ -1046,7 +1122,7 @@ func file_velony_identity_api_v1_identity_proto_rawDescGZIP() []byte {
 	return file_velony_identity_api_v1_identity_proto_rawDescData
 }
 
-var file_velony_identity_api_v1_identity_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_velony_identity_api_v1_identity_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_velony_identity_api_v1_identity_proto_goTypes = []any{
 	(*User)(nil),                            // 0: velony.identity.api.v1.User
 	(*GetUserRequest)(nil),                  // 1: velony.identity.api.v1.GetUserRequest
@@ -1063,15 +1139,17 @@ var file_velony_identity_api_v1_identity_proto_goTypes = []any{
 	(*RequestUserAvatarChangeResponse)(nil), // 12: velony.identity.api.v1.RequestUserAvatarChangeResponse
 	(*LoginUserRequest)(nil),                // 13: velony.identity.api.v1.LoginUserRequest
 	(*LoginUserResponse)(nil),               // 14: velony.identity.api.v1.LoginUserResponse
-	(*RegisterUserRequest)(nil),             // 15: velony.identity.api.v1.RegisterUserRequest
-	(*RegisterUserResponse)(nil),            // 16: velony.identity.api.v1.RegisterUserResponse
-	(*RefreshUserSessionRequest)(nil),       // 17: velony.identity.api.v1.RefreshUserSessionRequest
-	(*RefreshUserSessionResponse)(nil),      // 18: velony.identity.api.v1.RefreshUserSessionResponse
-	(*timestamppb.Timestamp)(nil),           // 19: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                   // 20: google.protobuf.Empty
+	(*LogoutUserRequest)(nil),               // 15: velony.identity.api.v1.LogoutUserRequest
+	(*LogoutUserResponse)(nil),              // 16: velony.identity.api.v1.LogoutUserResponse
+	(*RegisterUserRequest)(nil),             // 17: velony.identity.api.v1.RegisterUserRequest
+	(*RegisterUserResponse)(nil),            // 18: velony.identity.api.v1.RegisterUserResponse
+	(*RefreshUserSessionRequest)(nil),       // 19: velony.identity.api.v1.RefreshUserSessionRequest
+	(*RefreshUserSessionResponse)(nil),      // 20: velony.identity.api.v1.RefreshUserSessionResponse
+	(*timestamppb.Timestamp)(nil),           // 21: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                   // 22: google.protobuf.Empty
 }
 var file_velony_identity_api_v1_identity_proto_depIdxs = []int32{
-	19, // 0: velony.identity.api.v1.User.create_time:type_name -> google.protobuf.Timestamp
+	21, // 0: velony.identity.api.v1.User.create_time:type_name -> google.protobuf.Timestamp
 	0,  // 1: velony.identity.api.v1.BatchGetUsersResponse.users:type_name -> velony.identity.api.v1.User
 	1,  // 2: velony.identity.api.v1.IdentityService.GetUser:input_type -> velony.identity.api.v1.GetUserRequest
 	2,  // 3: velony.identity.api.v1.IdentityService.BatchGetUsers:input_type -> velony.identity.api.v1.BatchGetUsersRequest
@@ -1082,23 +1160,25 @@ var file_velony_identity_api_v1_identity_proto_depIdxs = []int32{
 	9,  // 8: velony.identity.api.v1.IdentityService.RemoveUserEmail:input_type -> velony.identity.api.v1.RemoveUserEmailRequest
 	10, // 9: velony.identity.api.v1.IdentityService.RequestUserAvatarChange:input_type -> velony.identity.api.v1.RequestUserAvatarChangeRequest
 	11, // 10: velony.identity.api.v1.IdentityService.RemoveUserAvatar:input_type -> velony.identity.api.v1.RemoveUserAvatarRequest
-	15, // 11: velony.identity.api.v1.IdentityService.RegisterUser:input_type -> velony.identity.api.v1.RegisterUserRequest
+	17, // 11: velony.identity.api.v1.IdentityService.RegisterUser:input_type -> velony.identity.api.v1.RegisterUserRequest
 	13, // 12: velony.identity.api.v1.IdentityService.LoginUser:input_type -> velony.identity.api.v1.LoginUserRequest
-	17, // 13: velony.identity.api.v1.IdentityService.RefreshUserSession:input_type -> velony.identity.api.v1.RefreshUserSessionRequest
-	0,  // 14: velony.identity.api.v1.IdentityService.GetUser:output_type -> velony.identity.api.v1.User
-	3,  // 15: velony.identity.api.v1.IdentityService.BatchGetUsers:output_type -> velony.identity.api.v1.BatchGetUsersResponse
-	20, // 16: velony.identity.api.v1.IdentityService.DeleteUser:output_type -> google.protobuf.Empty
-	0,  // 17: velony.identity.api.v1.IdentityService.ChangeUserUsername:output_type -> velony.identity.api.v1.User
-	7,  // 18: velony.identity.api.v1.IdentityService.RequestUserEmailChange:output_type -> velony.identity.api.v1.RequestUserEmailChangeResponse
-	0,  // 19: velony.identity.api.v1.IdentityService.ConfirmUserEmailChange:output_type -> velony.identity.api.v1.User
-	0,  // 20: velony.identity.api.v1.IdentityService.RemoveUserEmail:output_type -> velony.identity.api.v1.User
-	12, // 21: velony.identity.api.v1.IdentityService.RequestUserAvatarChange:output_type -> velony.identity.api.v1.RequestUserAvatarChangeResponse
-	0,  // 22: velony.identity.api.v1.IdentityService.RemoveUserAvatar:output_type -> velony.identity.api.v1.User
-	16, // 23: velony.identity.api.v1.IdentityService.RegisterUser:output_type -> velony.identity.api.v1.RegisterUserResponse
-	14, // 24: velony.identity.api.v1.IdentityService.LoginUser:output_type -> velony.identity.api.v1.LoginUserResponse
-	18, // 25: velony.identity.api.v1.IdentityService.RefreshUserSession:output_type -> velony.identity.api.v1.RefreshUserSessionResponse
-	14, // [14:26] is the sub-list for method output_type
-	2,  // [2:14] is the sub-list for method input_type
+	15, // 13: velony.identity.api.v1.IdentityService.LogoutUser:input_type -> velony.identity.api.v1.LogoutUserRequest
+	19, // 14: velony.identity.api.v1.IdentityService.RefreshUserSession:input_type -> velony.identity.api.v1.RefreshUserSessionRequest
+	0,  // 15: velony.identity.api.v1.IdentityService.GetUser:output_type -> velony.identity.api.v1.User
+	3,  // 16: velony.identity.api.v1.IdentityService.BatchGetUsers:output_type -> velony.identity.api.v1.BatchGetUsersResponse
+	22, // 17: velony.identity.api.v1.IdentityService.DeleteUser:output_type -> google.protobuf.Empty
+	0,  // 18: velony.identity.api.v1.IdentityService.ChangeUserUsername:output_type -> velony.identity.api.v1.User
+	7,  // 19: velony.identity.api.v1.IdentityService.RequestUserEmailChange:output_type -> velony.identity.api.v1.RequestUserEmailChangeResponse
+	0,  // 20: velony.identity.api.v1.IdentityService.ConfirmUserEmailChange:output_type -> velony.identity.api.v1.User
+	0,  // 21: velony.identity.api.v1.IdentityService.RemoveUserEmail:output_type -> velony.identity.api.v1.User
+	12, // 22: velony.identity.api.v1.IdentityService.RequestUserAvatarChange:output_type -> velony.identity.api.v1.RequestUserAvatarChangeResponse
+	0,  // 23: velony.identity.api.v1.IdentityService.RemoveUserAvatar:output_type -> velony.identity.api.v1.User
+	18, // 24: velony.identity.api.v1.IdentityService.RegisterUser:output_type -> velony.identity.api.v1.RegisterUserResponse
+	14, // 25: velony.identity.api.v1.IdentityService.LoginUser:output_type -> velony.identity.api.v1.LoginUserResponse
+	16, // 26: velony.identity.api.v1.IdentityService.LogoutUser:output_type -> velony.identity.api.v1.LogoutUserResponse
+	20, // 27: velony.identity.api.v1.IdentityService.RefreshUserSession:output_type -> velony.identity.api.v1.RefreshUserSessionResponse
+	15, // [15:28] is the sub-list for method output_type
+	2,  // [2:15] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
 	2,  // [2:2] is the sub-list for extension extendee
 	0,  // [0:2] is the sub-list for field type_name
@@ -1116,7 +1196,7 @@ func file_velony_identity_api_v1_identity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_identity_api_v1_identity_proto_rawDesc), len(file_velony_identity_api_v1_identity_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

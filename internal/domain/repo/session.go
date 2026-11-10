@@ -13,6 +13,7 @@ var (
 )
 
 type Session interface {
+	FindByID(ctx context.Context, sessionID vo.SessionID) (*entity.Session, error)
 	FindByTokenHash(ctx context.Context, tokenHash vo.SessionTokenHash) (*entity.Session, error)
 
 	Save(ctx context.Context, session *entity.Session) error

@@ -18,6 +18,7 @@ func NewBus(
 	deleteUserHandler DeleteUserHandler,
 	registerUserHandler RegisterUserHandler,
 	loginUserHandler LoginUserHandler,
+	logoutUserHandler LogoutUserHandler,
 	refreshUserSessionHandler RefreshUserSessionHandler,
 ) *Bus {
 	bus := &Bus{}
@@ -32,6 +33,7 @@ func NewBus(
 	Register(bus, deleteUserHandler)
 	Register(bus, registerUserHandler)
 	Register(bus, loginUserHandler)
+	Register(bus, logoutUserHandler)
 	Register(bus, refreshUserSessionHandler)
 
 	return bus

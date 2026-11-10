@@ -33,6 +33,40 @@ type repoSessionScanner interface {
 	Scan(dest ...any) error
 }
 
+func (r *sessionRepo) FindByID(ctx context.Context, sessionID vo.SessionID) (*entity.Session, error) {
+	const query = `
+		SELECT
+			id,
+			user_id,
+			token_hash,
+			create_time,
+			expire_time,
+			revoke_time,
+			version
+		FROM sessions
+		WHERE id = ?
+		LIMIT 1
+	`
+
+	row := executor(ctx, r.db).QueryRowContext(ctx, query, sessionID.String())
+
+	session, err := scanRepoSession(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		r.log.ErrorContext(ctx,
+			"failed to find session by session id",
+			slog.String("session_id", sessionID.String()),
+			slog.Any("error", err),
+		)
+		return nil, err
+	}
+
+	return session, nil
+}
+
 func (r *sessionRepo) FindByTokenHash(ctx context.Context, tokenHash vo.SessionTokenHash) (*entity.Session, error) {
 	const query = `
 		SELECT
