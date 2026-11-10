@@ -601,11 +601,14 @@ func (x *Transport_GRPC) GetTimeout() *durationpb.Duration {
 }
 
 type Transport_Kafka struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Brokers       []string               `protobuf:"bytes,1,rep,name=brokers,proto3" json:"brokers,omitempty"`
-	Timeout       *durationpb.Duration   `protobuf:"bytes,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Brokers              []string               `protobuf:"bytes,1,rep,name=brokers,proto3" json:"brokers,omitempty"`
+	Timeout              *durationpb.Duration   `protobuf:"bytes,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	RetryInitialInterval *durationpb.Duration   `protobuf:"bytes,3,opt,name=retry_initial_interval,json=retryInitialInterval,proto3" json:"retry_initial_interval,omitempty"`
+	RetryMaxInterval     *durationpb.Duration   `protobuf:"bytes,4,opt,name=retry_max_interval,json=retryMaxInterval,proto3" json:"retry_max_interval,omitempty"`
+	RetryMultiplier      float64                `protobuf:"fixed64,5,opt,name=retry_multiplier,json=retryMultiplier,proto3" json:"retry_multiplier,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Transport_Kafka) Reset() {
@@ -650,6 +653,27 @@ func (x *Transport_Kafka) GetTimeout() *durationpb.Duration {
 		return x.Timeout
 	}
 	return nil
+}
+
+func (x *Transport_Kafka) GetRetryInitialInterval() *durationpb.Duration {
+	if x != nil {
+		return x.RetryInitialInterval
+	}
+	return nil
+}
+
+func (x *Transport_Kafka) GetRetryMaxInterval() *durationpb.Duration {
+	if x != nil {
+		return x.RetryMaxInterval
+	}
+	return nil
+}
+
+func (x *Transport_Kafka) GetRetryMultiplier() float64 {
+	if x != nil {
+		return x.RetryMultiplier
+	}
+	return 0
 }
 
 type Data_MySQL struct {
@@ -927,7 +951,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x06secret\x18\x01 \x01(\tB\a\xbaH\x04r\x02  R\x06secret\x128\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\x1aH\n" +
 	"\fRefreshToken\x128\n" +
-	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\x80\x04\n" +
+	"\x03ttl\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x03ttl\"\xea\x05\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x129\n" +
@@ -937,11 +961,14 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ar\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xdb\x02\n" +
 	"\x05Kafka\x12*\n" +
 	"\abrokers\x18\x01 \x03(\tB\x10\xbaH\r\x92\x01\n" +
 	"\b\x01\x18\x01\"\x04r\x02\x10\x01R\abrokers\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xb0\x04\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x12Y\n" +
+	"\x16retry_initial_interval\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\x14retryInitialInterval\x12Q\n" +
+	"\x12retry_max_interval\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\x10retryMaxInterval\x129\n" +
+	"\x10retry_multiplier\x18\x05 \x01(\x01B\x0e\xbaH\v\x12\t)\x00\x00\x00\x00\x00\x00\xf0?R\x0fretryMultiplier\"\xb0\x04\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x1a\xf1\x03\n" +
 	"\x05MySQL\x12\x19\n" +
@@ -1033,16 +1060,18 @@ var file_conf_conf_proto_depIdxs = []int32{
 	16, // 16: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
 	16, // 17: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
 	16, // 18: kratos.api.Transport.Kafka.timeout:type_name -> google.protobuf.Duration
-	16, // 19: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	16, // 20: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
-	0,  // 21: kratos.api.Telemetry.Tracing.protocol:type_name -> kratos.api.Telemetry.Protocol
-	0,  // 22: kratos.api.Telemetry.Metrics.protocol:type_name -> kratos.api.Telemetry.Protocol
-	16, // 23: kratos.api.Telemetry.Metrics.export_interval:type_name -> google.protobuf.Duration
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	16, // 19: kratos.api.Transport.Kafka.retry_initial_interval:type_name -> google.protobuf.Duration
+	16, // 20: kratos.api.Transport.Kafka.retry_max_interval:type_name -> google.protobuf.Duration
+	16, // 21: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
+	16, // 22: kratos.api.Gateway.Asset.timeout:type_name -> google.protobuf.Duration
+	0,  // 23: kratos.api.Telemetry.Tracing.protocol:type_name -> kratos.api.Telemetry.Protocol
+	0,  // 24: kratos.api.Telemetry.Metrics.protocol:type_name -> kratos.api.Telemetry.Protocol
+	16, // 25: kratos.api.Telemetry.Metrics.export_interval:type_name -> google.protobuf.Duration
+	26, // [26:26] is the sub-list for method output_type
+	26, // [26:26] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }

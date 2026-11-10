@@ -5,6 +5,7 @@ import (
 	"errors"
 	"slices"
 	"strings"
+	"time"
 
 	assetv1 "github.com/velonyapp/asset/gen/event/v1"
 	"github.com/velonyapp/identity/internal/conf"
@@ -96,6 +97,8 @@ func (k *KafkaConsumer) Start(ctx context.Context) error {
 		return err
 	}
 
+	k.consumer = consumer
+
 	topics := []string{
 		assetImageTopic,
 	}
@@ -112,7 +115,20 @@ func (k *KafkaConsumer) Start(ctx context.Context) error {
 
 		switch e := event.(type) {
 		case *kafka.Message:
-			if err := k.handleMessage(ctx, e); err != nil && !errors.Is(err, ErrInvalidMessage) {
+			retryDuration := k.c.Kafka.RetryInitialInterval.AsDuration()
+
+			for attempt := 1; ; attempt++ {
+				if err := k.handleMessage(ctx, e); err != nil && !errors.Is(err, ErrInvalidMessage) {
+					time.Sleep(retryDuration)
+
+					retryDuration = min(
+						time.Duration(float64(retryDuration)*k.c.Kafka.RetryMultiplier),
+						k.c.Kafka.RetryMaxInterval.AsDuration(),
+					)
+
+					continue
+				}
+
 				break
 			}
 
