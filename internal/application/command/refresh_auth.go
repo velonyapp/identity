@@ -62,7 +62,7 @@ func (h *refreshAuthHandler) Handle(
 	now := time.Now().UTC()
 
 	token, _ := vo.NewSessionToken(cmd.RefreshToken)
-	tokenHash, err := h.sessionTokenManager.Hash(token)
+	tokenHash, err := h.sessionTokenManager.Hash(ctx, token)
 	if err != nil {
 		return RefreshAuthResult{}, err
 	}
@@ -75,11 +75,11 @@ func (h *refreshAuthHandler) Handle(
 		return RefreshAuthResult{}, ErrInvalidRefreshToken
 	}
 
-	newSessionToken, err := h.sessionTokenManager.Generate()
+	newSessionToken, err := h.sessionTokenManager.Generate(ctx)
 	if err != nil {
 		return RefreshAuthResult{}, err
 	}
-	newSessionTokenHash, err := h.sessionTokenManager.Hash(newSessionToken)
+	newSessionTokenHash, err := h.sessionTokenManager.Hash(ctx, newSessionToken)
 	if err != nil {
 		return RefreshAuthResult{}, err
 	}
@@ -88,7 +88,7 @@ func (h *refreshAuthHandler) Handle(
 		return RefreshAuthResult{}, err
 	}
 
-	newAccessToken, err := h.accessTokenManager.Generate(session.UserID())
+	newAccessToken, err := h.accessTokenManager.Generate(ctx, session.UserID())
 	if err != nil {
 		return RefreshAuthResult{}, err
 	}

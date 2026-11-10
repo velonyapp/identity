@@ -65,7 +65,7 @@ func (h *confirmEmailChangeHandler) Handle(
 	if user.HasEmailChangeRequest() {
 		requestToken, _ := vo.NewEmailChangeRequestToken(cmd.Token)
 
-		if err := h.requestTokenManager.Verify(requestToken, user.EmailChangeRequest().Token()); err != nil {
+		if err := h.requestTokenManager.Verify(ctx, requestToken, user.EmailChangeRequest().Token()); err != nil {
 			return ConfirmEmailChangeResult{}, err
 		}
 	}

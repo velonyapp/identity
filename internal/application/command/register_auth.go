@@ -71,7 +71,7 @@ func (h *registerAuthHandler) Handle(
 	if err != nil {
 		return RegisterAuthResult{}, err
 	}
-	passwordHash, err := h.passwordManager.Hash(password)
+	passwordHash, err := h.passwordManager.Hash(ctx, password)
 	if err != nil {
 		return RegisterAuthResult{}, err
 	}
@@ -83,11 +83,11 @@ func (h *registerAuthHandler) Handle(
 	localAuthStrategy := vo.NewLocalAuthStrategy(passwordHash)
 	user.ChangeLocalAuthStrategy(localAuthStrategy)
 
-	sessionToken, err := h.sessionTokenManager.Generate()
+	sessionToken, err := h.sessionTokenManager.Generate(ctx)
 	if err != nil {
 		return RegisterAuthResult{}, err
 	}
-	sessionTokenHash, err := h.sessionTokenManager.Hash(sessionToken)
+	sessionTokenHash, err := h.sessionTokenManager.Hash(ctx, sessionToken)
 	if err != nil {
 		return RegisterAuthResult{}, err
 	}
@@ -99,7 +99,7 @@ func (h *registerAuthHandler) Handle(
 		now,
 	)
 
-	accessToken, err := h.accessTokenManager.Generate(user.ID())
+	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID())
 	if err != nil {
 		return RegisterAuthResult{}, err
 	}

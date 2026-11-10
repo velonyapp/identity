@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 
@@ -26,10 +27,10 @@ func NewPasswordManager(
 	}
 }
 
-func (h *passwordManager) Hash(password vo.Password) (vo.PasswordHash, error) {
+func (h *passwordManager) Hash(ctx context.Context, password vo.Password) (vo.PasswordHash, error) {
 	rawPasswordHash, err := bcrypt.GenerateFromPassword([]byte(password.String()), h.cost)
 	if err != nil {
-		h.log.Error(
+		h.log.ErrorContext(ctx,
 			"failed to generate password hash",
 			slog.Any("error", err),
 		)
@@ -38,7 +39,7 @@ func (h *passwordManager) Hash(password vo.Password) (vo.PasswordHash, error) {
 
 	passwordHash, err := vo.NewPasswordHash(rawPasswordHash)
 	if err != nil {
-		h.log.Error(
+		h.log.ErrorContext(ctx,
 			"failed to create password hash value object",
 			slog.Any("error", err),
 		)
@@ -48,7 +49,7 @@ func (h *passwordManager) Hash(password vo.Password) (vo.PasswordHash, error) {
 	return vo.PasswordHash(passwordHash), nil
 }
 
-func (h *passwordManager) Verify(password vo.Password, passwordHash vo.PasswordHash) error {
+func (h *passwordManager) Verify(ctx context.Context, password vo.Password, passwordHash vo.PasswordHash) error {
 	err := bcrypt.CompareHashAndPassword(passwordHash.Bytes(), []byte(password.String()))
 	if err == nil {
 		return nil
@@ -58,7 +59,7 @@ func (h *passwordManager) Verify(password vo.Password, passwordHash vo.PasswordH
 		return port.ErrPasswordMismatch
 	}
 
-	h.log.Error(
+	h.log.ErrorContext(ctx,
 		"failed to verify password hash",
 		slog.Any("error", err),
 	)

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -28,7 +29,7 @@ func NewAccessTokenManager(
 	}
 }
 
-func (p *accessTokenManager) Generate(userID vo.UserID) (string, error) {
+func (p *accessTokenManager) Generate(ctx context.Context, userID vo.UserID) (string, error) {
 	now := time.Now()
 
 	claims := jwt.RegisteredClaims{
@@ -42,7 +43,7 @@ func (p *accessTokenManager) Generate(userID vo.UserID) (string, error) {
 
 	signedToken, err := token.SignedString([]byte(p.c.AccessToken.Secret))
 	if err != nil {
-		p.log.Error(
+		p.log.ErrorContext(ctx,
 			"failed to sign access token",
 			slog.String("user_id", userID.String()),
 			slog.Any("error", err),

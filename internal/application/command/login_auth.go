@@ -88,15 +88,15 @@ func (h *loginAuthHandler) Handle(
 		return LoginAuthResult{}, err
 	}
 
-	if err := h.passwordManager.Verify(password, user.LocalAuthStrategy().PasswordHash()); err != nil {
+	if err := h.passwordManager.Verify(ctx, password, user.LocalAuthStrategy().PasswordHash()); err != nil {
 		return LoginAuthResult{}, err
 	}
 
-	sessionToken, err := h.sessionTokenManager.Generate()
+	sessionToken, err := h.sessionTokenManager.Generate(ctx)
 	if err != nil {
 		return LoginAuthResult{}, err
 	}
-	sessionTokenHash, err := h.sessionTokenManager.Hash(sessionToken)
+	sessionTokenHash, err := h.sessionTokenManager.Hash(ctx, sessionToken)
 	if err != nil {
 		return LoginAuthResult{}, err
 	}
@@ -108,7 +108,7 @@ func (h *loginAuthHandler) Handle(
 		now,
 	)
 
-	accessToken, err := h.accessTokenManager.Generate(user.ID())
+	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID())
 	if err != nil {
 		return LoginAuthResult{}, err
 	}

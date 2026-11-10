@@ -66,7 +66,7 @@ func (h *requestEmailChangeHandler) Handle(
 	if err != nil {
 		return RequestEmailChangeResult{}, err
 	}
-	requestToken, err := h.requestTokenManager.Generate()
+	requestToken, err := h.requestTokenManager.Generate(ctx)
 	if err != nil {
 		return RequestEmailChangeResult{}, err
 	}

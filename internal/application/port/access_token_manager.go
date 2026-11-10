@@ -1,7 +1,11 @@
 package port
 
-import "github.com/velonyapp/identity/internal/domain/vo"
+import (
+	"context"
+
+	"github.com/velonyapp/identity/internal/domain/vo"
+)
 
 type AccessTokenManager interface {
-	Generate(userID vo.UserID) (string, error)
+	Generate(ctx context.Context, userID vo.UserID) (string, error)
 }

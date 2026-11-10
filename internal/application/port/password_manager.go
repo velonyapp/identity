@@ -1,6 +1,7 @@
 package port
 
 import (
+	"context"
 	"errors"
 
 	"github.com/velonyapp/identity/internal/domain/vo"
@@ -9,6 +10,6 @@ import (
 var ErrPasswordMismatch = errors.New("password does not match")
 
 type PasswordManager interface {
-	Hash(password vo.Password) (vo.PasswordHash, error)
-	Verify(password vo.Password, hash vo.PasswordHash) error
+	Hash(ctx context.Context, password vo.Password) (vo.PasswordHash, error)
+	Verify(ctx context.Context, password vo.Password, hash vo.PasswordHash) error
 }

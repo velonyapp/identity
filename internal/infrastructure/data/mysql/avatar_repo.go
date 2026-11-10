@@ -51,7 +51,7 @@ func (r *avatarRepo) FindByID(ctx context.Context, avatarID vo.AvatarID) (*entit
 			return nil, nil
 		}
 
-		r.log.Error(
+		r.log.ErrorContext(ctx,
 			"failed to find avatar by ID",
 			slog.String("avatar_id", avatarID.String()),
 			slog.Any("error", err),
@@ -77,7 +77,7 @@ func (r *avatarRepo) Create(ctx context.Context, avatar *entity.Avatar) error {
 		avatar.UserID().String(),
 		avatar.Key().String(),
 	); err != nil {
-		r.log.Error(
+		r.log.ErrorContext(ctx,
 			"failed to create avatar",
 			slog.String("avatar_id", avatar.ID().String()),
 			slog.String("user_id", avatar.UserID().String()),
@@ -98,7 +98,7 @@ func (r *avatarRepo) Delete(ctx context.Context, avatarID vo.AvatarID) error {
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		avatarID.String(),
 	); err != nil {
-		r.log.Error(
+		r.log.ErrorContext(ctx,
 			"failed to delete avatar",
 			slog.String("avatar_id", avatarID.String()),
 			slog.Any("error", err),

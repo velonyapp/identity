@@ -56,7 +56,7 @@ func (r *sessionRepo) FindByTokenHash(ctx context.Context, tokenHash vo.SessionT
 			return nil, nil
 		}
 
-		r.log.Error(
+		r.log.ErrorContext(ctx,
 			"failed to find session by token hash",
 			slog.Any("error", err),
 		)
@@ -99,7 +99,7 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 			revokeTime,
 			session.Version(),
 		); err != nil {
-			r.log.Error(
+			r.log.ErrorContext(ctx,
 				"failed to insert session",
 				slog.String("session_id", session.ID().String()),
 				slog.String("user_id", session.UserID().String()),
@@ -128,7 +128,7 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 			session.Version()-1,
 		)
 		if err != nil {
-			r.log.Error(
+			r.log.ErrorContext(ctx,
 				"failed to update session",
 				slog.String("session_id", session.ID().String()),
 				slog.String("user_id", session.UserID().String()),
@@ -138,7 +138,7 @@ func (r *sessionRepo) Save(ctx context.Context, session *entity.Session) error {
 		}
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			r.log.Error(
+			r.log.ErrorContext(ctx,
 				"failed to get affected rows after updating session",
 				slog.String("session_id", session.ID().String()),
 				slog.Any("error", err),

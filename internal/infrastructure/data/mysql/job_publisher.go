@@ -35,7 +35,7 @@ func NewJobPublisher(
 func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 	jobPayload, err := pub.encoder.Encode(job)
 	if err != nil {
-		pub.log.Error(
+		pub.log.ErrorContext(ctx,
 			"failed to encode job",
 			slog.Any("job_id", job.ID()),
 			slog.Any("job_type", job.Type()),
@@ -46,7 +46,7 @@ func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 
 	payload, err := protojson.Marshal(jobPayload)
 	if err != nil {
-		pub.log.Error(
+		pub.log.ErrorContext(ctx,
 			"failed to marshal job payload",
 			slog.Any("job_id", job.ID()),
 			slog.Any("job_type", job.Type()),
@@ -72,7 +72,7 @@ func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 		job.EnqueueTime(),
 	)
 	if err != nil {
-		pub.log.Error(
+		pub.log.ErrorContext(ctx,
 			"failed to insert job into outbox",
 			slog.Any("job_id", job.ID()),
 			slog.Any("job_type", job.Type()),

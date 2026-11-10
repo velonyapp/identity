@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
@@ -25,10 +26,10 @@ func NewSessionTokenManager(
 	}
 }
 
-func (m *sessionTokenManager) Generate() (vo.SessionToken, error) {
+func (m *sessionTokenManager) Generate(ctx context.Context) (vo.SessionToken, error) {
 	tokenBytes := make([]byte, 32)
 	if _, err := rand.Read(tokenBytes); err != nil {
-		m.log.Error(
+		m.log.ErrorContext(ctx,
 			"failed to generate session token bytes",
 			slog.Any("error", err),
 		)
@@ -38,7 +39,7 @@ func (m *sessionTokenManager) Generate() (vo.SessionToken, error) {
 
 	sessionToken, err := vo.NewSessionToken(token)
 	if err != nil {
-		m.log.Error(
+		m.log.ErrorContext(ctx,
 			"failed to create session token value object",
 			slog.Any("error", err),
 		)
@@ -48,12 +49,12 @@ func (m *sessionTokenManager) Generate() (vo.SessionToken, error) {
 	return sessionToken, nil
 }
 
-func (m *sessionTokenManager) Hash(token vo.SessionToken) (vo.SessionTokenHash, error) {
+func (m *sessionTokenManager) Hash(ctx context.Context, token vo.SessionToken) (vo.SessionTokenHash, error) {
 	hash := sha256.Sum256([]byte(token.String()))
 
 	sessionTokenHash, err := vo.NewSessionTokenHash(hash[:])
 	if err != nil {
-		m.log.Error(
+		m.log.ErrorContext(ctx,
 			"failed to create session token hash value object",
 			slog.Any("error", err),
 		)
@@ -63,7 +64,7 @@ func (m *sessionTokenManager) Hash(token vo.SessionToken) (vo.SessionTokenHash, 
 	return sessionTokenHash, nil
 }
 
-func (m *sessionTokenManager) Verify(token vo.SessionToken, hash vo.SessionTokenHash) error {
+func (m *sessionTokenManager) Verify(ctx context.Context, token vo.SessionToken, hash vo.SessionTokenHash) error {
 	computedHash := sha256.Sum256([]byte(token.String()))
 
 	if subtle.ConstantTimeCompare(computedHash[:], hash.Bytes()) != 1 {
