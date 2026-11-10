@@ -29,14 +29,15 @@ func NewAccessTokenManager(
 	}
 }
 
-func (p *accessTokenManager) Generate(ctx context.Context, userID vo.UserID) (string, error) {
+func (p *accessTokenManager) Generate(ctx context.Context, userID vo.UserID, sessionID vo.SessionID) (string, error) {
 	now := time.Now()
 
-	claims := jwt.RegisteredClaims{
-		Subject:   userID.String(),
-		IssuedAt:  jwt.NewNumericDate(now),
-		NotBefore: jwt.NewNumericDate(now),
-		ExpiresAt: jwt.NewNumericDate(now.Add(p.c.AccessToken.Ttl.AsDuration())),
+	claims := jwt.MapClaims{
+		"sid": sessionID.String(),
+		"sub": userID.String(),
+		"iat": now.Unix(),
+		"nbf": now.Unix(),
+		"exp": now.Add(p.c.AccessToken.Ttl.AsDuration()).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

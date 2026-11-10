@@ -108,7 +108,7 @@ func (h *loginUserHandler) Handle(
 		now,
 	)
 
-	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID())
+	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID(), session.ID())
 	if err != nil {
 		return LoginUserResult{}, err
 	}

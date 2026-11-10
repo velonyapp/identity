@@ -88,7 +88,7 @@ func (h *refreshUserSessionHandler) Handle(
 		return RefreshUserSessionResult{}, err
 	}
 
-	newAccessToken, err := h.accessTokenManager.Generate(ctx, session.UserID())
+	newAccessToken, err := h.accessTokenManager.Generate(ctx, session.UserID(), session.ID())
 	if err != nil {
 		return RefreshUserSessionResult{}, err
 	}

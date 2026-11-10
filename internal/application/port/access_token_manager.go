@@ -7,5 +7,5 @@ import (
 )
 
 type AccessTokenManager interface {
-	Generate(ctx context.Context, userID vo.UserID) (string, error)
+	Generate(ctx context.Context, userID vo.UserID, sessionID vo.SessionID) (string, error)
 }

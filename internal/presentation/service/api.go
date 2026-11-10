@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/golang-jwt/jwt/v5"
 	v1 "github.com/velonyapp/identity/gen/api/v1"
 	"github.com/velonyapp/identity/internal/application/command"
 	"github.com/velonyapp/identity/internal/application/query"
@@ -403,6 +404,25 @@ func parseSubject(ctx context.Context) (string, error) {
 	}
 
 	return subject, nil
+}
+
+func parseSessionID(ctx context.Context) (string, error) {
+	claims, ok := kjwt.FromContext(ctx)
+	if !ok {
+		return "", ErrUnauthenticated
+	}
+
+	mapClaims, ok := claims.(jwt.MapClaims)
+	if !ok {
+		return "", ErrUnauthenticated
+	}
+
+	sessionID, ok := mapClaims["sid"].(string)
+	if !ok || sessionID == "" {
+		return "", ErrUnauthenticated
+	}
+
+	return sessionID, nil
 }
 
 func parseUserName(name string) (string, error) {

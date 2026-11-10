@@ -99,7 +99,7 @@ func (h *registerUserHandler) Handle(
 		now,
 	)
 
-	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID())
+	accessToken, err := h.accessTokenManager.Generate(ctx, user.ID(), session.ID())
 	if err != nil {
 		return RegisterUserResult{}, err
 	}
