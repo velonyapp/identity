@@ -134,22 +134,22 @@ func (k *KafkaConsumer) Start(ctx context.Context) error {
 
 		switch e := event.(type) {
 		case *kafka.Message:
-			retryDuration := k.c.Kafka.RetryInitialInterval.AsDuration()
+			retryDelay := k.c.Kafka.RetryInitialInterval.AsDuration()
 
 			for attempt := 1; ; attempt++ {
 				if err := k.handleMessage(ctx, e); err != nil && !errors.Is(err, ErrInvalidMessage) {
 					k.log.WarnContext(ctx,
 						"failed to handle Kafka message, retrying",
 						slog.Int("attempt", attempt),
-						slog.Duration("retry_delay", retryDuration),
+						slog.Duration("retry_delay", retryDelay),
 						slog.Any("topic_partition", e.TopicPartition),
 						slog.Any("error", err),
 					)
 
-					time.Sleep(retryDuration)
+					time.Sleep(retryDelay)
 
-					retryDuration = min(
-						time.Duration(float64(retryDuration)*k.c.Kafka.RetryMultiplier),
+					retryDelay = min(
+						time.Duration(float64(retryDelay)*k.c.Kafka.RetryMultiplier),
 						k.c.Kafka.RetryMaxInterval.AsDuration(),
 					)
 
