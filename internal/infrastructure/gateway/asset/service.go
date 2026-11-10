@@ -3,6 +3,7 @@ package asset
 import (
 	"context"
 	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"log/slog"
 
@@ -46,7 +47,7 @@ func (s *service) CreateAvatar(ctx context.Context, userID vo.UserID) (*entity.A
 		Image: &v1.Image{
 			Tags:      []string{"identity", "user"},
 			Metadata:  map[string]string{"user_id": userID.String()},
-			ObjectKey: fmt.Sprintf("users/%s/avatar-%s.webp", userID.String(), suffix),
+			ObjectKey: fmt.Sprintf("users/%s/avatar-%s.webp", userID.String(), hex.EncodeToString(suffix[:])),
 			WidthPx:   512,
 			HeightPx:  512,
 			Format:    v1.Image_WEBP,
