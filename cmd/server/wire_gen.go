@@ -88,7 +88,7 @@ func wireApp(confAuth *conf.Auth, confTransport *conf.Transport, data *conf.Data
 	server := transport.NewGRPCServer(confTransport, api, tracing, metrics, errorMapper, authentication, validation)
 	httpServer := transport.NewHTTPServer(confTransport, api, tracing, metrics, errorMapper, authentication, validation)
 	consumer := service.NewConsumer(bus)
-	kafkaConsumer := transport.NewKafkaConsumer(confTransport, consumer)
+	kafkaConsumer := transport.NewKafkaConsumer(confTransport, consumer, logger)
 	app := newApp(logger, server, httpServer, kafkaConsumer)
 	return app, func() {
 		cleanup()
