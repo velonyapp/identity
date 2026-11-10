@@ -50,11 +50,11 @@ func wireApp(confAuth *conf.Auth, confTransport *conf.Transport, data *conf.Data
 	requestEmailChangeHandler := command.NewRequestEmailChangeHandler(user, unitOfWork, jobPublisher, emailChangeRequestTokenManager)
 	confirmEmailChangeHandler := command.NewConfirmEmailChangeHandler(user, avatar, unitOfWork, emailChangeRequestTokenManager)
 	removeEmailHandler := command.NewRemoveEmailHandler(user, unitOfWork)
-	assetServiceClient, cleanup, err := asset.NewClient(gateway)
+	assetServiceClient, cleanup, err := asset.NewClient(gateway, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	assetService := asset.NewService(assetServiceClient)
+	assetService := asset.NewService(assetServiceClient, logger)
 	requestAvatarChangeHandler := command.NewRequestAvatarChangeHandler(user, avatar, unitOfWork, jobPublisher, assetService)
 	confirmAvatarChangeHandler := command.NewConfirmAvatarChangeHandler(user, avatar, unitOfWork, jobPublisher)
 	removeAvatarHandler := command.NewRemoveAvatarHandler(user, avatar, unitOfWork, jobPublisher)
