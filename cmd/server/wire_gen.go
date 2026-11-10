@@ -30,7 +30,7 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confAuth *conf.Auth, confTransport *conf.Transport, data *conf.Data, gateway *conf.Gateway, logger *slog.Logger) (*kratos.App, func(), error) {
-	db, err := mysql.NewConnection(data)
+	db, err := mysql.NewConnection(data, logger)
 	if err != nil {
 		return nil, nil, err
 	}
