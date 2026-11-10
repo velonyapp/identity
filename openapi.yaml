@@ -4,6 +4,7 @@
 openapi: 3.0.3
 info:
     title: IdentityService API
+    description: "Provides user identity and session management operations.\r\n\r\n Most methods that accept a user resource name also support `users/me`\r\n to refer to the currently authenticated user."
     version: 0.0.1
 servers:
     - url: https://api.velony.app
@@ -12,6 +13,7 @@ paths:
         get:
             tags:
                 - IdentityService
+            description: Retrieves a user by resource name.
             operationId: IdentityService_GetUser
             parameters:
                 - name: user
@@ -30,6 +32,7 @@ paths:
         delete:
             tags:
                 - IdentityService
+            description: Deletes a user account.
             operationId: IdentityService_DeleteUser
             parameters:
                 - name: user
@@ -46,6 +49,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Changes the username of a user.
             operationId: IdentityService_ChangeUserUsername
             parameters:
                 - name: user
@@ -71,6 +75,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Confirms a pending email change using a verification token.
             operationId: IdentityService_ConfirmUserEmailChange
             parameters:
                 - name: user
@@ -96,6 +101,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Removes the avatar associated with a user.
             operationId: IdentityService_RemoveUserAvatar
             parameters:
                 - name: user
@@ -121,6 +127,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Removes the email address associated with a user.
             operationId: IdentityService_RemoveUserEmail
             parameters:
                 - name: user
@@ -146,6 +153,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: "Requests an upload URL to change a user's avatar.\r\n The change is automatically confirmed after a successful image upload."
             operationId: IdentityService_RequestUserAvatarChange
             parameters:
                 - name: user
@@ -171,6 +179,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: "Requests an email change for a user.\r\n Sends a verification email containing the token required to confirm the change."
             operationId: IdentityService_RequestUserEmailChange
             parameters:
                 - name: user
@@ -196,11 +205,12 @@ paths:
         get:
             tags:
                 - IdentityService
+            description: Retrieves multiple users by their resource names.
             operationId: IdentityService_BatchGetUsers
             parameters:
                 - name: names
                   in: query
-                  description: max batch = 100
+                  description: "The users to retrieve.\r\n A maximum of `100` users can be retrieved in a batch.\r\n\r\n Format: `users/{user}`"
                   schema:
                     type: array
                     items:
@@ -216,6 +226,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Authenticates a user using a username or email address and password.
             operationId: IdentityService_LoginUser
             requestBody:
                 content:
@@ -234,6 +245,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Logs out a user by invalidating the current session.
             operationId: IdentityService_LogoutUser
             requestBody:
                 content:
@@ -252,6 +264,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Renews a user session using a refresh token.
             operationId: IdentityService_RefreshUserSession
             requestBody:
                 content:
@@ -270,6 +283,7 @@ paths:
         post:
             tags:
                 - IdentityService
+            description: Registers a new user account and returns authentication tokens.
             operationId: IdentityService_RegisterUser
             requestBody:
                 content:
@@ -293,6 +307,7 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/velony.identity.api.v1.User'
+                    description: Users requested
         velony.identity.api.v1.ChangeUserUsernameRequest:
             required:
                 - name
@@ -301,8 +316,10 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose username is being changed.\r\n\r\n Format: `users/{user}`"
                 username:
                     type: string
+                    description: The new username, 3–31 characters long, containing only letters, numbers, and underscores.
         velony.identity.api.v1.ConfirmUserEmailChangeRequest:
             required:
                 - name
@@ -311,8 +328,10 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose email change is being confirmed.\r\n\r\n Format: `users/{user}`"
                 token:
                     type: string
+                    description: The token used to confirm the email change.
         velony.identity.api.v1.LoginUserRequest:
             required:
                 - identity
@@ -321,15 +340,19 @@ components:
             properties:
                 identity:
                     type: string
+                    description: The username or email address used to identify the user.
                 password:
                     type: string
+                    description: The password associated with the user.
         velony.identity.api.v1.LoginUserResponse:
             type: object
             properties:
                 accessToken:
                     type: string
+                    description: The access token used to authenticate API requests.
                 refreshToken:
                     type: string
+                    description: The refresh token used to renew the user session.
         velony.identity.api.v1.LogoutUserRequest:
             type: object
             properties: {}
@@ -343,13 +366,16 @@ components:
             properties:
                 refreshToken:
                     type: string
+                    description: The refresh token used to renew the user session.
         velony.identity.api.v1.RefreshUserSessionResponse:
             type: object
             properties:
                 accessToken:
                     type: string
+                    description: The new access token used to authenticate API requests.
                 refreshToken:
                     type: string
+                    description: The new refresh token used to renew the session.
         velony.identity.api.v1.RegisterUserRequest:
             required:
                 - username
@@ -358,15 +384,19 @@ components:
             properties:
                 username:
                     type: string
+                    description: The username, 3–31 characters long, containing only letters, numbers, and underscores.
                 password:
                     type: string
+                    description: "The password, 8–64 characters long, containing at least one uppercase letter,\r\n lowercase letter, number, and symbol, with no whitespace."
         velony.identity.api.v1.RegisterUserResponse:
             type: object
             properties:
                 accessToken:
                     type: string
+                    description: The access token used to authenticate API requests.
                 refreshToken:
                     type: string
+                    description: The refresh token used to renew the user session.
         velony.identity.api.v1.RemoveUserAvatarRequest:
             required:
                 - name
@@ -374,6 +404,7 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose avatar is being removed.\r\n\r\n Format: `users/{user}`"
         velony.identity.api.v1.RemoveUserEmailRequest:
             required:
                 - name
@@ -381,6 +412,7 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose email is being removed.\r\n\r\n Format: `users/{user}`"
         velony.identity.api.v1.RequestUserAvatarChangeRequest:
             required:
                 - name
@@ -388,11 +420,13 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose email change is being requested.\r\n\r\n Format: `users/{user}`"
         velony.identity.api.v1.RequestUserAvatarChangeResponse:
             type: object
             properties:
                 uploadUrl:
                     type: string
+                    description: The URL to upload the new avatar image.
         velony.identity.api.v1.RequestUserEmailChangeRequest:
             required:
                 - name
@@ -401,29 +435,35 @@ components:
             properties:
                 name:
                     type: string
+                    description: "The user whose email change is being requested.\r\n\r\n Format: `users/{user}`"
                 email:
                     type: string
+                    description: The new email address for the user. Must be a valid email address.
         velony.identity.api.v1.RequestUserEmailChangeResponse:
             type: object
             properties: {}
         velony.identity.api.v1.User:
-            required:
-                - username
             type: object
             properties:
                 name:
                     type: string
+                    description: "The resource name of the user.\r\n\r\n Format: `users/{user}`"
                 username:
+                    readOnly: true
                     type: string
+                    description: The username of the user.
                 email:
                     readOnly: true
                     type: string
+                    description: The email address of the user, if set.
                 avatarKey:
                     readOnly: true
                     type: string
+                    description: The storage key of the user's avatar, if set.
                 createTime:
                     readOnly: true
                     type: string
+                    description: The time when the user was registered.
                     format: date-time
 tags:
     - name: IdentityService

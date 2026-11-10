@@ -12,9 +12,14 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/identity/gen/api/v1;apiv1";
 
+// Provides user identity and session management operations.
+//
+// Most methods that accept a user resource name also support `users/me`
+// to refer to the currently authenticated user.
 service IdentityService {
   option (google.api.default_host) = "api.velony.app";
 
+  // Retrieves a user by resource name.
   rpc GetUser(GetUserRequest) returns (User) {
     option (google.api.http) = {
       get: "/v1/{name=users/*}"
@@ -22,12 +27,14 @@ service IdentityService {
     option (google.api.method_signature) = "name";
   }
 
+  // Retrieves multiple users by their resource names.
   rpc BatchGetUsers(BatchGetUsersRequest) returns (BatchGetUsersResponse) {
     option (google.api.http) = {
       get: "/v1/users:batchGet"
     };
   }
 
+  // Deletes a user account.
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=users/*}"
@@ -35,6 +42,7 @@ service IdentityService {
     option (google.api.method_signature) = "name";
   }
 
+  // Changes the username of a user.
   rpc ChangeUserUsername(ChangeUserUsernameRequest) returns (User) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:changeUsername"
@@ -42,6 +50,8 @@ service IdentityService {
     };
   }
 
+  // Requests an email change for a user.
+  // Sends a verification email containing the token required to confirm the change.
   rpc RequestUserEmailChange(RequestUserEmailChangeRequest) returns (RequestUserEmailChangeResponse) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:requestEmailChange"
@@ -49,6 +59,7 @@ service IdentityService {
     };
   }
 
+  // Confirms a pending email change using a verification token.
   rpc ConfirmUserEmailChange(ConfirmUserEmailChangeRequest) returns (User) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:confirmEmailChange"
@@ -56,6 +67,7 @@ service IdentityService {
     };
   }
 
+  // Removes the email address associated with a user.
   rpc RemoveUserEmail(RemoveUserEmailRequest) returns (User) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:removeEmail"
@@ -63,6 +75,8 @@ service IdentityService {
     };
   }
 
+  // Requests an upload URL to change a user's avatar.
+  // The change is automatically confirmed after a successful image upload.
   rpc RequestUserAvatarChange(RequestUserAvatarChangeRequest) returns (RequestUserAvatarChangeResponse) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:requestAvatarChange"
@@ -70,6 +84,7 @@ service IdentityService {
     };
   }
 
+  // Removes the avatar associated with a user.
   rpc RemoveUserAvatar(RemoveUserAvatarRequest) returns (User) {
     option (google.api.http) = {
       post: "/v1/{name=users/*}:removeAvatar"
@@ -77,6 +92,7 @@ service IdentityService {
     };
   }
 
+  // Registers a new user account and returns authentication tokens.
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {
     option (google.api.http) = {
       post: "/v1/users:register"
@@ -85,6 +101,7 @@ service IdentityService {
     option (google.api.method_signature) = "username,password";
   }
 
+  // Authenticates a user using a username or email address and password.
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
     option (google.api.http) = {
       post: "/v1/users:login"
@@ -93,6 +110,7 @@ service IdentityService {
     option (google.api.method_signature) = "username,password";
   }
 
+  // Logs out a user by invalidating the current session.
   rpc LogoutUser(LogoutUserRequest) returns (LogoutUserResponse) {
     option (google.api.http) = {
       post: "/v1/users:logout"
@@ -101,6 +119,7 @@ service IdentityService {
     option (google.api.method_signature) = "username,password";
   }
 
+  // Renews a user session using a refresh token.
   rpc RefreshUserSession(RefreshUserSessionRequest) returns (RefreshUserSessionResponse) {
     option (google.api.http) = {
       post: "/v1/users:refreshSession"
@@ -118,26 +137,38 @@ message User {
     plural  : "users"
   };
 
+  // The resource name of the user.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
 
+  // The username of the user.
   string username = 2 [
-    (google.api.field_behavior) = REQUIRED
+    (google.api.field_behavior) = OUTPUT_ONLY
   ];
+
+  // The email address of the user, if set.
   optional string email = 3 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
+
+  // The storage key of the user's avatar, if set.
   optional string avatar_key = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
+  // The time when the user was registered.
   google.protobuf.Timestamp create_time = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }
 
 message GetUserRequest {
+  // The user to retrieve.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -147,7 +178,10 @@ message GetUserRequest {
 }
 
 message BatchGetUsersRequest {
-  // max batch = 100
+  // The users to retrieve.
+  // A maximum of `100` users can be retrieved in a batch.
+  //
+  // Format: `users/{user}`
   repeated string names = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -157,32 +191,26 @@ message BatchGetUsersRequest {
 }
 
 message BatchGetUsersResponse {
+  // Users requested
   repeated User users = 1;
 }
 
 message DeleteUserRequest {
+  // The user to delete.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
     type: "api.velony.app/User"
     }
-  ];
-}
-
-message RequestUserEmailChangeRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/User"
-    }
-  ];
-
-  string email = 2 [
-    (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message ChangeUserUsernameRequest {
+  // The user whose username is being changed.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -190,7 +218,25 @@ message ChangeUserUsernameRequest {
     }
   ];
 
+  // The new username, 3–31 characters long, containing only letters, numbers, and underscores.
   string username = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RequestUserEmailChangeRequest {
+  // The user whose email change is being requested.
+  //
+  // Format: `users/{user}`
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+
+  // The new email address for the user. Must be a valid email address.
+  string email = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
@@ -198,6 +244,9 @@ message ChangeUserUsernameRequest {
 message RequestUserEmailChangeResponse {}
 
 message ConfirmUserEmailChangeRequest {
+  // The user whose email change is being confirmed.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -205,12 +254,16 @@ message ConfirmUserEmailChangeRequest {
     }
   ];
 
+  // The token used to confirm the email change.
   string token = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message RemoveUserEmailRequest {
+  // The user whose email is being removed.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -220,15 +273,9 @@ message RemoveUserEmailRequest {
 }
 
 message RequestUserAvatarChangeRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/User"
-    }
-  ];
-}
-
-message RemoveUserAvatarRequest {
+  // The user whose email change is being requested.
+  //
+  // Format: `users/{user}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -238,20 +285,60 @@ message RemoveUserAvatarRequest {
 }
 
 message RequestUserAvatarChangeResponse {
+  // The URL to upload the new avatar image.
   string upload_url = 1;
 }
 
+message RemoveUserAvatarRequest {
+  // The user whose avatar is being removed.
+  //
+  // Format: `users/{user}`
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message RegisterUserRequest {
+  // The username, 3–31 characters long, containing only letters, numbers, and underscores.
+  string username = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The password, 8–64 characters long, containing at least one uppercase letter,
+  // lowercase letter, number, and symbol, with no whitespace.
+  string password = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message RegisterUserResponse {
+  // The access token used to authenticate API requests.
+  string access_token = 1;
+
+  // The refresh token used to renew the user session.
+  string refresh_token = 2;
+}
+
 message LoginUserRequest {
+  // The username or email address used to identify the user.
   string identity = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
+
+  // The password associated with the user.
   string password = 2 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message LoginUserResponse {
-  string access_token  = 1;
+  // The access token used to authenticate API requests.
+  string access_token = 1;
+
+  // The refresh token used to renew the user session.
   string refresh_token = 2;
 }
 
@@ -259,27 +346,17 @@ message LogoutUserRequest {}
 
 message LogoutUserResponse {}
 
-message RegisterUserRequest {
-  string username  = 1 [
-    (google.api.field_behavior) = REQUIRED
-  ];
-  string password  = 2 [
-    (google.api.field_behavior) = REQUIRED
-  ];
-}
-
-message RegisterUserResponse {
-  string access_token  = 1;
-  string refresh_token = 2;
-}
-
 message RefreshUserSessionRequest {
+  // The refresh token used to renew the user session.
   string refresh_token = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message RefreshUserSessionResponse {
-  string access_token  = 1;
+  // The new access token used to authenticate API requests.
+  string access_token = 1;
+
+  // The new refresh token used to renew the session.
   string refresh_token = 2;
 }

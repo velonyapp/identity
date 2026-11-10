@@ -38,19 +38,39 @@ const (
 // IdentityServiceClient is the client API for IdentityService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Provides user identity and session management operations.
+//
+// Most methods that accept a user resource name also support `users/me`
+// to refer to the currently authenticated user.
 type IdentityServiceClient interface {
+	// Retrieves a user by resource name.
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
+	// Retrieves multiple users by their resource names.
 	BatchGetUsers(ctx context.Context, in *BatchGetUsersRequest, opts ...grpc.CallOption) (*BatchGetUsersResponse, error)
+	// Deletes a user account.
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Changes the username of a user.
 	ChangeUserUsername(ctx context.Context, in *ChangeUserUsernameRequest, opts ...grpc.CallOption) (*User, error)
+	// Requests an email change for a user.
+	// Sends a verification email containing the token required to confirm the change.
 	RequestUserEmailChange(ctx context.Context, in *RequestUserEmailChangeRequest, opts ...grpc.CallOption) (*RequestUserEmailChangeResponse, error)
+	// Confirms a pending email change using a verification token.
 	ConfirmUserEmailChange(ctx context.Context, in *ConfirmUserEmailChangeRequest, opts ...grpc.CallOption) (*User, error)
+	// Removes the email address associated with a user.
 	RemoveUserEmail(ctx context.Context, in *RemoveUserEmailRequest, opts ...grpc.CallOption) (*User, error)
+	// Requests an upload URL to change a user's avatar.
+	// The change is automatically confirmed after a successful image upload.
 	RequestUserAvatarChange(ctx context.Context, in *RequestUserAvatarChangeRequest, opts ...grpc.CallOption) (*RequestUserAvatarChangeResponse, error)
+	// Removes the avatar associated with a user.
 	RemoveUserAvatar(ctx context.Context, in *RemoveUserAvatarRequest, opts ...grpc.CallOption) (*User, error)
+	// Registers a new user account and returns authentication tokens.
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
+	// Authenticates a user using a username or email address and password.
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
+	// Logs out a user by invalidating the current session.
 	LogoutUser(ctx context.Context, in *LogoutUserRequest, opts ...grpc.CallOption) (*LogoutUserResponse, error)
+	// Renews a user session using a refresh token.
 	RefreshUserSession(ctx context.Context, in *RefreshUserSessionRequest, opts ...grpc.CallOption) (*RefreshUserSessionResponse, error)
 }
 
@@ -195,19 +215,39 @@ func (c *identityServiceClient) RefreshUserSession(ctx context.Context, in *Refr
 // IdentityServiceServer is the server API for IdentityService service.
 // All implementations must embed UnimplementedIdentityServiceServer
 // for forward compatibility.
+//
+// Provides user identity and session management operations.
+//
+// Most methods that accept a user resource name also support `users/me`
+// to refer to the currently authenticated user.
 type IdentityServiceServer interface {
+	// Retrieves a user by resource name.
 	GetUser(context.Context, *GetUserRequest) (*User, error)
+	// Retrieves multiple users by their resource names.
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
+	// Deletes a user account.
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	// Changes the username of a user.
 	ChangeUserUsername(context.Context, *ChangeUserUsernameRequest) (*User, error)
+	// Requests an email change for a user.
+	// Sends a verification email containing the token required to confirm the change.
 	RequestUserEmailChange(context.Context, *RequestUserEmailChangeRequest) (*RequestUserEmailChangeResponse, error)
+	// Confirms a pending email change using a verification token.
 	ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*User, error)
+	// Removes the email address associated with a user.
 	RemoveUserEmail(context.Context, *RemoveUserEmailRequest) (*User, error)
+	// Requests an upload URL to change a user's avatar.
+	// The change is automatically confirmed after a successful image upload.
 	RequestUserAvatarChange(context.Context, *RequestUserAvatarChangeRequest) (*RequestUserAvatarChangeResponse, error)
+	// Removes the avatar associated with a user.
 	RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error)
+	// Registers a new user account and returns authentication tokens.
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	// Authenticates a user using a username or email address and password.
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	// Logs out a user by invalidating the current session.
 	LogoutUser(context.Context, *LogoutUserRequest) (*LogoutUserResponse, error)
+	// Renews a user session using a refresh token.
 	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
 	mustEmbedUnimplementedIdentityServiceServer()
 }

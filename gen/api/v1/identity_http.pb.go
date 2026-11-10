@@ -33,18 +33,33 @@ const OperationIdentityServiceRequestUserAvatarChange = "/velony.identity.api.v1
 const OperationIdentityServiceRequestUserEmailChange = "/velony.identity.api.v1.IdentityService/RequestUserEmailChange"
 
 type IdentityServiceHTTPServer interface {
+	// BatchGetUsers Retrieves multiple users by their resource names.
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
+	// ChangeUserUsername Changes the username of a user.
 	ChangeUserUsername(context.Context, *ChangeUserUsernameRequest) (*User, error)
+	// ConfirmUserEmailChange Confirms a pending email change using a verification token.
 	ConfirmUserEmailChange(context.Context, *ConfirmUserEmailChangeRequest) (*User, error)
+	// DeleteUser Deletes a user account.
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	// GetUser Retrieves a user by resource name.
 	GetUser(context.Context, *GetUserRequest) (*User, error)
+	// LoginUser Authenticates a user using a username or email address and password.
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	// LogoutUser Logs out a user by invalidating the current session.
 	LogoutUser(context.Context, *LogoutUserRequest) (*LogoutUserResponse, error)
+	// RefreshUserSession Renews a user session using a refresh token.
 	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
+	// RegisterUser Registers a new user account and returns authentication tokens.
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	// RemoveUserAvatar Removes the avatar associated with a user.
 	RemoveUserAvatar(context.Context, *RemoveUserAvatarRequest) (*User, error)
+	// RemoveUserEmail Removes the email address associated with a user.
 	RemoveUserEmail(context.Context, *RemoveUserEmailRequest) (*User, error)
+	// RequestUserAvatarChange Requests an upload URL to change a user's avatar.
+	// The change is automatically confirmed after a successful image upload.
 	RequestUserAvatarChange(context.Context, *RequestUserAvatarChangeRequest) (*RequestUserAvatarChangeResponse, error)
+	// RequestUserEmailChange Requests an email change for a user.
+	// Sends a verification email containing the token required to confirm the change.
 	RequestUserEmailChange(context.Context, *RequestUserEmailChangeRequest) (*RequestUserEmailChangeResponse, error)
 }
 
@@ -337,18 +352,33 @@ func _IdentityService_RefreshUserSession0_HTTP_Handler(srv IdentityServiceHTTPSe
 }
 
 type IdentityServiceHTTPClient interface {
+	// BatchGetUsers Retrieves multiple users by their resource names.
 	BatchGetUsers(ctx context.Context, req *BatchGetUsersRequest, opts ...http.CallOption) (rsp *BatchGetUsersResponse, err error)
+	// ChangeUserUsername Changes the username of a user.
 	ChangeUserUsername(ctx context.Context, req *ChangeUserUsernameRequest, opts ...http.CallOption) (rsp *User, err error)
+	// ConfirmUserEmailChange Confirms a pending email change using a verification token.
 	ConfirmUserEmailChange(ctx context.Context, req *ConfirmUserEmailChangeRequest, opts ...http.CallOption) (rsp *User, err error)
+	// DeleteUser Deletes a user account.
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// GetUser Retrieves a user by resource name.
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
+	// LoginUser Authenticates a user using a username or email address and password.
 	LoginUser(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResponse, err error)
+	// LogoutUser Logs out a user by invalidating the current session.
 	LogoutUser(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResponse, err error)
+	// RefreshUserSession Renews a user session using a refresh token.
 	RefreshUserSession(ctx context.Context, req *RefreshUserSessionRequest, opts ...http.CallOption) (rsp *RefreshUserSessionResponse, err error)
+	// RegisterUser Registers a new user account and returns authentication tokens.
 	RegisterUser(ctx context.Context, req *RegisterUserRequest, opts ...http.CallOption) (rsp *RegisterUserResponse, err error)
+	// RemoveUserAvatar Removes the avatar associated with a user.
 	RemoveUserAvatar(ctx context.Context, req *RemoveUserAvatarRequest, opts ...http.CallOption) (rsp *User, err error)
+	// RemoveUserEmail Removes the email address associated with a user.
 	RemoveUserEmail(ctx context.Context, req *RemoveUserEmailRequest, opts ...http.CallOption) (rsp *User, err error)
+	// RequestUserAvatarChange Requests an upload URL to change a user's avatar.
+	// The change is automatically confirmed after a successful image upload.
 	RequestUserAvatarChange(ctx context.Context, req *RequestUserAvatarChangeRequest, opts ...http.CallOption) (rsp *RequestUserAvatarChangeResponse, err error)
+	// RequestUserEmailChange Requests an email change for a user.
+	// Sends a verification email containing the token required to confirm the change.
 	RequestUserEmailChange(ctx context.Context, req *RequestUserEmailChangeRequest, opts ...http.CallOption) (rsp *RequestUserEmailChangeResponse, err error)
 }
 
@@ -360,6 +390,7 @@ func NewIdentityServiceHTTPClient(client *http.Client) IdentityServiceHTTPClient
 	return &IdentityServiceHTTPClientImpl{client}
 }
 
+// BatchGetUsers Retrieves multiple users by their resource names.
 func (c *IdentityServiceHTTPClientImpl) BatchGetUsers(ctx context.Context, in *BatchGetUsersRequest, opts ...http.CallOption) (*BatchGetUsersResponse, error) {
 	var out BatchGetUsersResponse
 	pattern := "/v1/users:batchGet"
@@ -376,6 +407,7 @@ func (c *IdentityServiceHTTPClientImpl) BatchGetUsers(ctx context.Context, in *B
 	return &out, nil
 }
 
+// ChangeUserUsername Changes the username of a user.
 func (c *IdentityServiceHTTPClientImpl) ChangeUserUsername(ctx context.Context, in *ChangeUserUsernameRequest, opts ...http.CallOption) (*User, error) {
 	var out User
 	pattern := "/v1/{name=users/*}:changeUsername"
@@ -393,6 +425,7 @@ func (c *IdentityServiceHTTPClientImpl) ChangeUserUsername(ctx context.Context, 
 	return &out, nil
 }
 
+// ConfirmUserEmailChange Confirms a pending email change using a verification token.
 func (c *IdentityServiceHTTPClientImpl) ConfirmUserEmailChange(ctx context.Context, in *ConfirmUserEmailChangeRequest, opts ...http.CallOption) (*User, error) {
 	var out User
 	pattern := "/v1/{name=users/*}:confirmEmailChange"
@@ -410,6 +443,7 @@ func (c *IdentityServiceHTTPClientImpl) ConfirmUserEmailChange(ctx context.Conte
 	return &out, nil
 }
 
+// DeleteUser Deletes a user account.
 func (c *IdentityServiceHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/v1/{name=users/*}"
@@ -426,6 +460,7 @@ func (c *IdentityServiceHTTPClientImpl) DeleteUser(ctx context.Context, in *Dele
 	return &out, nil
 }
 
+// GetUser Retrieves a user by resource name.
 func (c *IdentityServiceHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequest, opts ...http.CallOption) (*User, error) {
 	var out User
 	pattern := "/v1/{name=users/*}"
@@ -442,6 +477,7 @@ func (c *IdentityServiceHTTPClientImpl) GetUser(ctx context.Context, in *GetUser
 	return &out, nil
 }
 
+// LoginUser Authenticates a user using a username or email address and password.
 func (c *IdentityServiceHTTPClientImpl) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...http.CallOption) (*LoginUserResponse, error) {
 	var out LoginUserResponse
 	pattern := "/v1/users:login"
@@ -459,6 +495,7 @@ func (c *IdentityServiceHTTPClientImpl) LoginUser(ctx context.Context, in *Login
 	return &out, nil
 }
 
+// LogoutUser Logs out a user by invalidating the current session.
 func (c *IdentityServiceHTTPClientImpl) LogoutUser(ctx context.Context, in *LogoutUserRequest, opts ...http.CallOption) (*LogoutUserResponse, error) {
 	var out LogoutUserResponse
 	pattern := "/v1/users:logout"
@@ -476,6 +513,7 @@ func (c *IdentityServiceHTTPClientImpl) LogoutUser(ctx context.Context, in *Logo
 	return &out, nil
 }
 
+// RefreshUserSession Renews a user session using a refresh token.
 func (c *IdentityServiceHTTPClientImpl) RefreshUserSession(ctx context.Context, in *RefreshUserSessionRequest, opts ...http.CallOption) (*RefreshUserSessionResponse, error) {
 	var out RefreshUserSessionResponse
 	pattern := "/v1/users:refreshSession"
@@ -493,6 +531,7 @@ func (c *IdentityServiceHTTPClientImpl) RefreshUserSession(ctx context.Context, 
 	return &out, nil
 }
 
+// RegisterUser Registers a new user account and returns authentication tokens.
 func (c *IdentityServiceHTTPClientImpl) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...http.CallOption) (*RegisterUserResponse, error) {
 	var out RegisterUserResponse
 	pattern := "/v1/users:register"
@@ -510,6 +549,7 @@ func (c *IdentityServiceHTTPClientImpl) RegisterUser(ctx context.Context, in *Re
 	return &out, nil
 }
 
+// RemoveUserAvatar Removes the avatar associated with a user.
 func (c *IdentityServiceHTTPClientImpl) RemoveUserAvatar(ctx context.Context, in *RemoveUserAvatarRequest, opts ...http.CallOption) (*User, error) {
 	var out User
 	pattern := "/v1/{name=users/*}:removeAvatar"
@@ -527,6 +567,7 @@ func (c *IdentityServiceHTTPClientImpl) RemoveUserAvatar(ctx context.Context, in
 	return &out, nil
 }
 
+// RemoveUserEmail Removes the email address associated with a user.
 func (c *IdentityServiceHTTPClientImpl) RemoveUserEmail(ctx context.Context, in *RemoveUserEmailRequest, opts ...http.CallOption) (*User, error) {
 	var out User
 	pattern := "/v1/{name=users/*}:removeEmail"
@@ -544,6 +585,8 @@ func (c *IdentityServiceHTTPClientImpl) RemoveUserEmail(ctx context.Context, in 
 	return &out, nil
 }
 
+// RequestUserAvatarChange Requests an upload URL to change a user's avatar.
+// The change is automatically confirmed after a successful image upload.
 func (c *IdentityServiceHTTPClientImpl) RequestUserAvatarChange(ctx context.Context, in *RequestUserAvatarChangeRequest, opts ...http.CallOption) (*RequestUserAvatarChangeResponse, error) {
 	var out RequestUserAvatarChangeResponse
 	pattern := "/v1/{name=users/*}:requestAvatarChange"
@@ -561,6 +604,8 @@ func (c *IdentityServiceHTTPClientImpl) RequestUserAvatarChange(ctx context.Cont
 	return &out, nil
 }
 
+// RequestUserEmailChange Requests an email change for a user.
+// Sends a verification email containing the token required to confirm the change.
 func (c *IdentityServiceHTTPClientImpl) RequestUserEmailChange(ctx context.Context, in *RequestUserEmailChangeRequest, opts ...http.CallOption) (*RequestUserEmailChangeResponse, error) {
 	var out RequestUserEmailChangeResponse
 	pattern := "/v1/{name=users/*}:requestEmailChange"
