@@ -9,7 +9,7 @@ func sendEmailPayload(job job.SendEmail) *v1.SendEmailPayload {
 	return &v1.SendEmailPayload{
 		From:           "no-reply@velony.app",
 		To:             []string{job.To()},
-		Template:       job.Template(),
+		TemplateId:     job.TemplateID(),
 		Variables:      job.Variables(),
 		IdempotencyKey: job.ID(),
 	}

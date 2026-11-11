@@ -13,7 +13,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/rs/cors v1.11.1
 	github.com/velonyapp/asset v0.0.0-20261109035050-b5149db68459
-	github.com/velonyapp/email v0.0.0-20261024052759-062f34a4f1ab
+	github.com/velonyapp/email v0.0.0-20261111023145-c4e122a33f37
 	go.einride.tech/aip v0.86.3
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0
