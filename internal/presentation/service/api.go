@@ -88,6 +88,15 @@ func (s *API) BatchGetUsers(ctx context.Context, req *v1.BatchGetUsersRequest) (
 			return nil, err
 		}
 
+		if isSelf(userID) {
+			subject, err := parseSubject(ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			userID = subject
+		}
+
 		userIDs[i] = userID
 	}
 

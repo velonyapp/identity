@@ -24,7 +24,8 @@ func NewAuthentication(c *conf.Auth) (Authentication, error) {
 		"/velony.identity.api.v1.IdentityService/RemoveUserAvatar":        {},
 	}
 	optional := map[string]struct{}{
-		"/velony.identity.api.v1.IdentityService/GetUser": {},
+		"/velony.identity.api.v1.IdentityService/GetUser":       {},
+		"/velony.identity.api.v1.IdentityService/BatchGetUsers": {},
 	}
 
 	auth := kjwt.Server(
