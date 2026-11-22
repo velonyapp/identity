@@ -123,6 +123,58 @@ func (s *API) BatchGetUsers(ctx context.Context, req *v1.BatchGetUsersRequest) (
 	}, nil
 }
 
+func (s *API) LookupUsers(ctx context.Context, req *v1.LookupUsersRequest) (*v1.LookupUsersResponse, error) {
+	if len(req.Names) > userMaximumBatchSize {
+		return nil, ErrInvalidUserBatchSize
+	}
+
+	userIDs := make([]string, len(req.Names))
+	for i, name := range req.Names {
+		userID, err := parseUserName(name)
+		if err != nil {
+			return nil, err
+		}
+
+		if isSelf(userID) {
+			subject, err := parseSubject(ctx)
+			if err != nil {
+				continue
+			}
+
+			userID = subject
+		}
+
+		userIDs[i] = userID
+	}
+
+	result, err := query.Send(ctx, s.queryBus, query.LookupUsers{
+		UserIDs: userIDs,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	users := make(map[string]*v1.User, len(result.Users))
+	for i, name := range req.Names {
+		user, ok := result.Users[userIDs[i]]
+		if !ok {
+			continue
+		}
+
+		users[name] = &v1.User{
+			Name:       formatUserName(user.ID),
+			Username:   user.Username,
+			Email:      user.Email,
+			AvatarKey:  user.AvatarKey,
+			CreateTime: timestamppb.New(user.CreateTime),
+		}
+	}
+
+	return &v1.LookupUsersResponse{
+		Users: users,
+	}, nil
+}
+
 func (s *API) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*emptypb.Empty, error) {
 	userID, err := parseUserName(req.Name)
 	if err != nil {

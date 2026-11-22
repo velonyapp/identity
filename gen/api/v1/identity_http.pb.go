@@ -25,6 +25,7 @@ const OperationIdentityServiceDeleteUser = "/velony.identity.api.v1.IdentityServ
 const OperationIdentityServiceGetUser = "/velony.identity.api.v1.IdentityService/GetUser"
 const OperationIdentityServiceLoginUser = "/velony.identity.api.v1.IdentityService/LoginUser"
 const OperationIdentityServiceLogoutUser = "/velony.identity.api.v1.IdentityService/LogoutUser"
+const OperationIdentityServiceLookupUsers = "/velony.identity.api.v1.IdentityService/LookupUsers"
 const OperationIdentityServiceRefreshUserSession = "/velony.identity.api.v1.IdentityService/RefreshUserSession"
 const OperationIdentityServiceRegisterUser = "/velony.identity.api.v1.IdentityService/RegisterUser"
 const OperationIdentityServiceRemoveUserAvatar = "/velony.identity.api.v1.IdentityService/RemoveUserAvatar"
@@ -47,6 +48,9 @@ type IdentityServiceHTTPServer interface {
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	// LogoutUser Logs out a user by invalidating the current session.
 	LogoutUser(context.Context, *LogoutUserRequest) (*LogoutUserResponse, error)
+	// LookupUsers Looks up multiple users by their resource names.
+	// Returns only users that exist, omitting those that are not found.
+	LookupUsers(context.Context, *LookupUsersRequest) (*LookupUsersResponse, error)
 	// RefreshUserSession Renews a user session using a refresh token.
 	RefreshUserSession(context.Context, *RefreshUserSessionRequest) (*RefreshUserSessionResponse, error)
 	// RegisterUser Registers a new user account and returns authentication tokens.
@@ -67,6 +71,7 @@ func RegisterIdentityServiceHTTPServer(s *http.Server, srv IdentityServiceHTTPSe
 	r := s.Route("/")
 	r.Handle("GET", "/v1/{name:users/[^/]+}", _IdentityService_GetUser0_HTTP_Handler(srv))
 	r.Handle("GET", "/v1/users:batchGet", _IdentityService_BatchGetUsers0_HTTP_Handler(srv))
+	r.Handle("GET", "/v1/users:lookup", _IdentityService_LookupUsers0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:users/[^/]+}", _IdentityService_DeleteUser0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:users/[^/]+}:changeUsername", _IdentityService_ChangeUserUsername0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:users/[^/]+}:requestEmailChange", _IdentityService_RequestUserEmailChange0_HTTP_Handler(srv))
@@ -117,6 +122,25 @@ func _IdentityService_BatchGetUsers0_HTTP_Handler(srv IdentityServiceHTTPServer)
 			return err
 		}
 		reply := out.(*BatchGetUsersResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _IdentityService_LookupUsers0_HTTP_Handler(srv IdentityServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LookupUsersRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationIdentityServiceLookupUsers)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.LookupUsers(ctx, req.(*LookupUsersRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LookupUsersResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -366,6 +390,9 @@ type IdentityServiceHTTPClient interface {
 	LoginUser(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResponse, err error)
 	// LogoutUser Logs out a user by invalidating the current session.
 	LogoutUser(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResponse, err error)
+	// LookupUsers Looks up multiple users by their resource names.
+	// Returns only users that exist, omitting those that are not found.
+	LookupUsers(ctx context.Context, req *LookupUsersRequest, opts ...http.CallOption) (rsp *LookupUsersResponse, err error)
 	// RefreshUserSession Renews a user session using a refresh token.
 	RefreshUserSession(ctx context.Context, req *RefreshUserSessionRequest, opts ...http.CallOption) (rsp *RefreshUserSessionResponse, err error)
 	// RegisterUser Registers a new user account and returns authentication tokens.
@@ -507,6 +534,24 @@ func (c *IdentityServiceHTTPClientImpl) LogoutUser(ctx context.Context, in *Logo
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// LookupUsers Looks up multiple users by their resource names.
+// Returns only users that exist, omitting those that are not found.
+func (c *IdentityServiceHTTPClientImpl) LookupUsers(ctx context.Context, in *LookupUsersRequest, opts ...http.CallOption) (*LookupUsersResponse, error) {
+	var out LookupUsersResponse
+	pattern := "/v1/users:lookup"
+	path := http.BuildPath(pattern, in, http.WithQueryParams())
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.Operation(OperationIdentityServiceLookupUsers),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

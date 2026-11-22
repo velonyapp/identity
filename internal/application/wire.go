@@ -25,6 +25,7 @@ var ProviderSet = wire.NewSet(
 	query.NewBus,
 	query.NewGetUserHandler,
 	query.NewBatchGetUsersHandler,
+	query.NewLookupUsersHandler,
 	domainevent.NewDispatcher,
 	domainevent.NewUserCreatedHandler,
 	domainevent.NewUserUpdatedHandler,

@@ -260,6 +260,27 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.identity.api.v1.LogoutUserResponse'
+    /v1/users:lookup:
+        get:
+            tags:
+                - IdentityService
+            description: "Looks up multiple users by their resource names.\r\n Returns only users that exist, omitting those that are not found."
+            operationId: IdentityService_LookupUsers
+            parameters:
+                - name: names
+                  in: query
+                  description: "The users to look up.\r\n A maximum of `100` users can be looked up in a request.\r\n\r\n Format: `users/{user}`"
+                  schema:
+                    type: array
+                    items:
+                        type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.identity.api.v1.LookupUsersResponse'
     /v1/users:refreshSession:
         post:
             tags:
@@ -359,6 +380,14 @@ components:
         velony.identity.api.v1.LogoutUserResponse:
             type: object
             properties: {}
+        velony.identity.api.v1.LookupUsersResponse:
+            type: object
+            properties:
+                users:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/velony.identity.api.v1.User'
+                    description: "The users found, keyed by their canonical resource names.\r\n Users that do not exist are omitted."
         velony.identity.api.v1.RefreshUserSessionRequest:
             required:
                 - refreshToken

@@ -10,11 +10,13 @@ import (
 func NewBus(
 	getUserHandler GetUserHandler,
 	batchGetUsersHandler BatchGetUsersHandler,
+	lookupUsersHandler LookupUsersHandler,
 ) *Bus {
 	bus := &Bus{}
 
 	Register(bus, getUserHandler)
 	Register(bus, batchGetUsersHandler)
+	Register(bus, lookupUsersHandler)
 
 	return bus
 }

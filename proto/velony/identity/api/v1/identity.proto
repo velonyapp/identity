@@ -34,6 +34,14 @@ service IdentityService {
     };
   }
 
+  // Looks up multiple users by their resource names.
+  // Returns only users that exist, omitting those that are not found.
+  rpc LookupUsers(LookupUsersRequest) returns (LookupUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users:lookup"
+    };
+  }
+
   // Deletes a user account.
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
@@ -193,6 +201,25 @@ message BatchGetUsersRequest {
 message BatchGetUsersResponse {
   // Users requested
   repeated User users = 1;
+}
+
+message LookupUsersRequest {
+  // The users to look up.
+  // A maximum of `100` users can be looked up in a request.
+  //
+  // Format: `users/{user}`
+  repeated string names = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/User"
+    }
+  ];
+}
+
+message LookupUsersResponse {
+  // The users found, keyed by their canonical resource names.
+  // Users that do not exist are omitted.
+  map<string, User> users = 1;
 }
 
 message DeleteUserRequest {

@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	IdentityService_GetUser_FullMethodName                 = "/velony.identity.api.v1.IdentityService/GetUser"
 	IdentityService_BatchGetUsers_FullMethodName           = "/velony.identity.api.v1.IdentityService/BatchGetUsers"
+	IdentityService_LookupUsers_FullMethodName             = "/velony.identity.api.v1.IdentityService/LookupUsers"
 	IdentityService_DeleteUser_FullMethodName              = "/velony.identity.api.v1.IdentityService/DeleteUser"
 	IdentityService_ChangeUserUsername_FullMethodName      = "/velony.identity.api.v1.IdentityService/ChangeUserUsername"
 	IdentityService_RequestUserEmailChange_FullMethodName  = "/velony.identity.api.v1.IdentityService/RequestUserEmailChange"
@@ -48,6 +49,9 @@ type IdentityServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 	// Retrieves multiple users by their resource names.
 	BatchGetUsers(ctx context.Context, in *BatchGetUsersRequest, opts ...grpc.CallOption) (*BatchGetUsersResponse, error)
+	// Looks up multiple users by their resource names.
+	// Returns only users that exist, omitting those that are not found.
+	LookupUsers(ctx context.Context, in *LookupUsersRequest, opts ...grpc.CallOption) (*LookupUsersResponse, error)
 	// Deletes a user account.
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Changes the username of a user.
@@ -96,6 +100,16 @@ func (c *identityServiceClient) BatchGetUsers(ctx context.Context, in *BatchGetU
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BatchGetUsersResponse)
 	err := c.cc.Invoke(ctx, IdentityService_BatchGetUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityServiceClient) LookupUsers(ctx context.Context, in *LookupUsersRequest, opts ...grpc.CallOption) (*LookupUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LookupUsersResponse)
+	err := c.cc.Invoke(ctx, IdentityService_LookupUsers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -225,6 +239,9 @@ type IdentityServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	// Retrieves multiple users by their resource names.
 	BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error)
+	// Looks up multiple users by their resource names.
+	// Returns only users that exist, omitting those that are not found.
+	LookupUsers(context.Context, *LookupUsersRequest) (*LookupUsersResponse, error)
 	// Deletes a user account.
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	// Changes the username of a user.
@@ -264,6 +281,9 @@ func (UnimplementedIdentityServiceServer) GetUser(context.Context, *GetUserReque
 }
 func (UnimplementedIdentityServiceServer) BatchGetUsers(context.Context, *BatchGetUsersRequest) (*BatchGetUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchGetUsers not implemented")
+}
+func (UnimplementedIdentityServiceServer) LookupUsers(context.Context, *LookupUsersRequest) (*LookupUsersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LookupUsers not implemented")
 }
 func (UnimplementedIdentityServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
@@ -351,6 +371,24 @@ func _IdentityService_BatchGetUsers_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentityServiceServer).BatchGetUsers(ctx, req.(*BatchGetUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityService_LookupUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LookupUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityServiceServer).LookupUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityService_LookupUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityServiceServer).LookupUsers(ctx, req.(*LookupUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -567,6 +605,10 @@ var IdentityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchGetUsers",
 			Handler:    _IdentityService_BatchGetUsers_Handler,
+		},
+		{
+			MethodName: "LookupUsers",
+			Handler:    _IdentityService_LookupUsers_Handler,
 		},
 		{
 			MethodName: "DeleteUser",
